@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+.button{
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #646cff;
+    color: #0A0A15;
+    transition: all ease-in-out 0.3s;
+}
+
+.button:hover{
+    filter: brightness(1.2);
+}
+
+.button:focus{
+    outline: 1px solid black;
+}
