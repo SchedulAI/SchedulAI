@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS dialogs (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  schedule_id UUID REFERENCES schedule(id) ON DELETE CASCADE
+);
