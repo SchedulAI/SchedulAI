@@ -1,15 +1,15 @@
-import "./App.css";
-// import { Home } from "./pages/Home";
-import { Login } from "./pages/Login";
-// import { Login } from "./pages/Login";
+import { BrowserRouter as Router } from "react-router-dom";
+import { UserProvider } from "./providers/UserProvider";
+import { AppRoutes } from "./routes/routes";
 
-function App() {
-
+const App = () => {
   return (
-    <div className="container-app">
-      <Login />
-    </div>
+    <UserProvider>
+      <Router>
+        <AppRoutes />
+      </Router>
+    </UserProvider>
   );
-}
+};
 
 export default App;
