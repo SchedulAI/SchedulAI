@@ -15,24 +15,28 @@ declare global {
     }
 }
 
-export const permissionVerify = (req: Request, res: Response, next: NextFunction) => {
-    try{
+export const permissionVerify = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
         const sessionToken = req.cookies.session_id;
 
         if (!sessionToken) {
-            return res.status(401).json({ message: "Unauthorized: No tokens provided" });
+            res.status(401).json({ message: "Unauthorized: No tokens provided" });
         }
 
         jwt.verify(sessionToken, config.SECRET_KEY, async (error: any, decoded: any) => {
-            if(error){
-                return res.status(403).json({ message: "Invalid Token JWT"});
+            if (error) {
+                return res.status(403).json({ message: "Invalid Token JWT" });
             } else {
                 req.user = decoded as UserPayload;
 
                 next();
             }
-        })
+        });
     } catch (error: any) {
-        return res.status(403).json({ message: "Invalid Token JWT" });
+        res.status(403).json({ message: "Invalid Token JWT" });
     }
-}
+};
