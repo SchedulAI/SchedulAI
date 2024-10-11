@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS notifications (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  message VARCHAR(255)
+);
