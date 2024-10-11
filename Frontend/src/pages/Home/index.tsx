@@ -1,14 +1,19 @@
 import styled from "styled-components";
 import { Button } from "../../components/Button";
 import { Icon } from "../../components/Icon";
+import { Navbar } from "../../components/Navbar";
 
 const HomeStyled = styled.div`
+	position: relative;
 	.main-section {
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		gap: 2rem;
+		position: relative;
+		
 
 		.title-div {
 			width: 1090px;
@@ -161,27 +166,16 @@ const HomeStyled = styled.div`
 `;
 
 export const Home = () => {
-	const smoothScrollTo = (endY: number, duration: number) => {
-		const startY = window.scrollY;
-		if (startY === endY) return;
-		const distanceY = endY - startY;
-		let startTime: number | null = null;
-
-		const step = (timestamp: number) => {
-			if (!startTime) startTime = timestamp;
-			const progress = timestamp - startTime;
-			const percent = Math.min(progress / duration, 1);
-			window.scrollTo(0, startY + distanceY * percent);
-			if (progress < duration) {
-				window.requestAnimationFrame(step);
-			}
-		};
-
-		window.requestAnimationFrame(step);
+	const handleScrollToSection = (sectionId: string) => {
+		const section = document.getElementById(sectionId);
+		if (section) {
+			section.scrollIntoView({ behavior: "smooth" });
+		}
 	};
 
 	return (
 		<HomeStyled className="home-div">
+			<Navbar />
 			<section className="main-section">
 				<div className="title-div">
 					<h1 className="h1-title">
@@ -193,7 +187,7 @@ export const Home = () => {
 						<p>Começar Agora</p>
 					</Button>
 					<a
-						onClick={() => smoothScrollTo(1200, 1000)}
+						onClick={() => handleScrollToSection("about-section")}
 						className="read-more"
 					>
 						Ler mais {">"}
@@ -201,12 +195,12 @@ export const Home = () => {
 				</div>
 				<div
 					className="div-arrow-down"
-					onClick={() => smoothScrollTo(500, 1000)}
+					onClick={() => handleScrollToSection("news-section")}
 				>
 					<Icon icon="arrowDown" size={24} color="#0A0A15" />
 				</div>
 			</section>
-			<section className="news-section" id="#news-section">
+			<section className="news-section" id="news-section">
 				<div className="div-title">
 					<h2>Novidades</h2>
 					<h4>
