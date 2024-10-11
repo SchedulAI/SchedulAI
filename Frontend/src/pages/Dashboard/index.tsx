@@ -80,6 +80,8 @@ const StyledDashboard = styled.div`
 
     .message.system {
       align-self: flex-start;
+      align-items: center;
+      gap:0.5rem;
       background-color: #e0e0e0;
       color: #0a0a15;
     }
@@ -135,16 +137,72 @@ export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [conversation, setConversation] = useState<string[]>([]);
   const [isUserMessage, setIsUserMessage] = useState<boolean[]>([]);
+  const [currentSchedule, setCurrentSchedule] = useState<string>("");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { setUser } = useUser();
 
-  function handleSendMessage() {
+  async function handleSendMessage () {
     if (!message) return;
-    setConversation([...conversation, message!]);
-    setIsUserMessage([...isUserMessage, true]);
-    setMessage("");
+  
+    const schedule = currentSchedule || await createSchedule();
+  
+    setConversation(prevConversation => [...prevConversation, message!]);
+    setIsUserMessage(prevIsUserMessage => [...prevIsUserMessage, true]);
+  
+    const aiResponse = await sendMessageToAi(message, schedule.id);
   }
+  
+  const sendMessageToAi = async (message: string, schedule_id: string) => {
+    try {
+      const data = await fetch(apiUrl('/chat/'), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          message: message,
+          schedule_id: schedule_id,
+        }),
+      });
+  
+      setMessage("")
+      const res = await data.json();
+      const iaResponse = res.response;
+  
+      setConversation(prevConversation => [...prevConversation, iaResponse]);
+      setIsUserMessage(prevIsUserMessage => [...prevIsUserMessage, false]);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const createSchedule = async () => {
+    try {
+      const data = await fetch(apiUrl('/schedule/'), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          title: "reunião teste"
+        }),
+      });
+
+      const res = await data.json()
+
+      setCurrentSchedule(res)
+
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  
 
   function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") {
@@ -222,7 +280,7 @@ export const Dashboard = () => {
                   }`}
                 >
                   {!isUserMessage[index] && (
-                    <Icon icon="robot" weight="fill" color="#0a0a15" />
+                    <Icon size={32} icon="robot" weight="fill" color="#0a0a15" />
                   )}
                   {msg}
                 </div>
