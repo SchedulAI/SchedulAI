@@ -64,7 +64,7 @@ export const Login = () => {
   return (
     <div className="login-main-div">
       <div className="btn-back-div">
-        <Button onClick={() => navigate("/home")}>
+        <Button onClick={() => navigate("/")}>
           <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
           <span>Voltar</span>
         </Button>

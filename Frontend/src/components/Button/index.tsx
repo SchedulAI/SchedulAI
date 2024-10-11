@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import styled from "styled-components";
 
 const StyledButton = styled.button<{ width: "full" | "fit" }>`
@@ -28,18 +29,18 @@ interface ButtonProps {
 	onClick: () => void;
 	disabled?: boolean;
 	width?: "full" | "fit";
-	label: string;
+	children: ReactNode; // Removido o 'label' e mantido 'children'
 }
 
 export const Button = ({
 	onClick,
 	disabled,
-	label,
 	width = "fit",
+	children,
 }: ButtonProps) => {
 	return (
 		<StyledButton onClick={onClick} disabled={disabled} width={width}>
-			<p>{label}</p>
+			{children}
 		</StyledButton>
 	);
 };
