@@ -6,29 +6,24 @@ import { Input } from "../../components/Input";
 import { useUser } from "../../hooks/userHooks";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
+import Snackbar from "../../components/Snackbar";
 
 export const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const { setUser } = useUser();
+  const [loading, setLoading] = useState(false);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const savedEmail = localStorage.getItem("email");
-    const savedPassword = localStorage.getItem("password");
-    if (savedEmail && savedPassword) {
-      setEmail(savedEmail);
-      setPassword(savedPassword);
-      setRememberMe(true);
-    }
-  }, []);
 
   const handleRememberMeChange = () => {
     setRememberMe(!rememberMe);
   };
 
   const loginFetch = async () => {
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:3000/api/login", {
         method: "POST",
@@ -39,11 +34,12 @@ export const Login = () => {
           email: email,
           password: password,
         }),
+        credentials: "include"
       });
+      setLoading(false);
       const data = await response.json();
-
+      console.log(data);
       if (data.auth) {
-        console.log("logado");
         setUser(email);
         if (rememberMe) {
           localStorage.setItem("email", email);
@@ -52,14 +48,32 @@ export const Login = () => {
           localStorage.removeItem("email");
           localStorage.removeItem("password");
         }
-        navigate("/home");
+        navigate("/dashboard");
       } else {
-        console.log("Deu error");
+        setSnackbarMessage(data.error);
+        setSnackbarVisible(true);
       }
     } catch (error) {
-      console.error("Erro ao fazer login", error);
+      setSnackbarMessage((error as Error).message);
+      setSnackbarVisible(true);
+      setLoading(false);
+      return;
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      const savedEmail = localStorage.getItem("email");
+      const savedPassword = localStorage.getItem("password");
+      if (savedEmail && savedPassword) {
+        setEmail(savedEmail);
+        setPassword(savedPassword);
+        setRememberMe(true);
+      }
+    }
+  }, [user, navigate]);
 
   return (
     <div className="login-main-div">
@@ -108,12 +122,25 @@ export const Login = () => {
           </a>
         </div>
         <div className="login-enter-register-div">
-          <Button width="full" onClick={() => loginFetch()}>Entrar</Button>
+          <Button
+            width="full"
+            onClick={async () => await loginFetch()}
+            disabled={!email || !password || loading}
+          >
+            Entrar
+          </Button>
           <a id="login-a-create-account">
             Não tem uma conta? <span>Registre-se</span>
           </a>
         </div>
       </div>
+      {snackbarVisible && (
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          variant="error"
+          message={snackbarMessage}
+        />
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { Home } from "../pages/Home";
 import { Login } from "../pages/Login";
 import { useUser } from "../hooks/userHooks";
 import { Error404 } from "../pages/Error404";
+import { Dashboard } from "../pages/Dashboard";
 
 interface ChildrenTypes {
   children: ReactElement;
@@ -35,7 +36,7 @@ export const AppRoutes = () => {
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="*"  element={<Error404 />} />
+        <Route path="*" element={<Error404 />} />
         <Route
           path="/"
           element={
@@ -53,10 +54,10 @@ export const AppRoutes = () => {
           }
         />
         <Route
-          path="/private"
+          path="/dashboard"
           element={
             <PrivateRoute>
-              <Home />
+              <Dashboard />
             </PrivateRoute>
           }
         />

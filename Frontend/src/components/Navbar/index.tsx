@@ -65,7 +65,7 @@ export const Navbar = () => {
 			<div
 				className="logo"
 				onClick={() => {
-					navigate("/");
+					handleScrollToSection('main-section')
 				}}
 			>
 				<Icon icon="robot" weight="fill" size={32} color="#0A0A15" />

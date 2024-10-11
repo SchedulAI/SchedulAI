@@ -30,6 +30,13 @@ const StyledButton = styled.button<{
 		background-color: #6e6bd0;
 		border: 1px solid #6663c8;
 	}
+
+	&:disabled{
+		background-color: #7a77da;
+		border: 1px solid #7a77da;
+		opacity: 50%;
+		cursor: not-allowed;
+	}
 `;
 
 interface ButtonProps {
