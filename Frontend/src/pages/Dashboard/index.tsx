@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "../../components/Button";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../../hooks/userHooks";
+import apiUrl from "../../config/api";
 
 const StyledDashboard = styled.div`
   * {
@@ -153,7 +154,7 @@ export const Dashboard = () => {
 
   const logout = async () => {
     try {
-      await fetch("http://localhost:3000/api/logout", {
+      await fetch(apiUrl('/logout'), {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

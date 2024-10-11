@@ -8,6 +8,7 @@ import {
   IconWeight,
   CaretDown,
   ArrowCircleUp,
+  User,
 } from "@phosphor-icons/react";
 import React from "react";
 
@@ -33,6 +34,9 @@ export interface IconTypes {
   circleArrowUp: React.ForwardRefExoticComponent<
     IconProps & React.RefAttributes<SVGSVGElement>
   >;
+  user: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
 }
 
 const IconList: IconTypes = {
@@ -43,6 +47,7 @@ const IconList: IconTypes = {
   back: ArrowSquareLeft,
   arrowDown: CaretDown,
   circleArrowUp: ArrowCircleUp,
+  user: User,
 };
 
 interface PropTypes {
