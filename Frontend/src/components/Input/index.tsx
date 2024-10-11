@@ -58,7 +58,7 @@ const InputStyled = styled.div`
 interface InputProps {
 	readOnly?: boolean;
 	placeholder: string;
-	type: "email" | "password";
+	type: "email" | "password" | "text";
 	icon?: keyof IconTypes;
 	color?: string;
 	weight?: "regular" | "bold" | "light" | "thin" | "fill" | "duotone";

@@ -7,6 +7,7 @@ import { useUser } from "../../hooks/userHooks";
 import { useNavigate } from "react-router-dom";
 import Snackbar from "../../components/Snackbar";
 import styled from "styled-components";
+import apiUrl from "../../config/api";
 
 const LoginStyled = styled.div`
 	display: flex;
@@ -132,7 +133,7 @@ export const Login = () => {
   const loginFetch = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/login", {
+      const response = await fetch(apiUrl('/login'), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -236,7 +237,7 @@ export const Login = () => {
           >
             Entrar
           </Button>
-          <a id="login-a-create-account">
+          <a id="login-a-create-account" onClick={() => navigate("/register")}>
             Não tem uma conta? <span>Registre-se</span>
           </a>
         </div>
