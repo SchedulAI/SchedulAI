@@ -6,29 +6,31 @@ import { Login } from "../pages/Login";
 import { useUser } from "../hooks/userHooks";
 import { Error404 } from "../pages/Error404";
 import { Dashboard } from "../pages/Dashboard";
+import { Register } from "../pages/Register";
+
 
 interface ChildrenTypes {
-  children: ReactElement;
+	children: ReactElement;
 }
 
 function ScrollToTop() {
-  const { pathname } = useLocation();
+	const { pathname } = useLocation();
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+	useEffect(() => {
+		window.scrollTo(0, 0);
+	}, [pathname]);
 
-  return null;
+	return null;
 }
 
 const Public = ({ children }: ChildrenTypes) => {
-  return children;
+	return children;
 };
 
 const PrivateRoute = ({ children }: ChildrenTypes) => {
-  const { user } = useUser();
+	const { user } = useUser();
 
-  return user ? children : <Navigate to="/login" />;
+	return user ? children : <Navigate to="/login" />;
 };
 
 export const AppRoutes = () => {
@@ -53,6 +55,14 @@ export const AppRoutes = () => {
             </Public>
           }
         />
+        <Route
+					path="/register"
+					element={
+						<Public>
+							<Register />
+						</Public>
+					}
+				/>
         <Route
           path="/dashboard"
           element={
