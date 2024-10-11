@@ -1,15 +1,45 @@
-import './button.css';
+import styled from "styled-components";
+
+const StyledButton = styled.button<{ width: "full" | "fit" }>`
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 4px;
+	padding: 8px 16px;
+	border: 1px solid #7d79e6;
+	border-radius: 4px;
+	background-color: #8380e5;
+	color: #0a0a15;
+	transition: all ease-in-out 0.3s;
+	width: ${({ width }) => (width === "full" ? "100%" : "fit-content")};
+
+	&:hover {
+		background-color: #7a77da;
+		border: 1px solid #716ed2;
+	}
+
+	&:focus {
+		background-color: #6e6bd0;
+		border: 1px solid #6663c8;
+	}
+`;
 
 interface ButtonProps {
-    children: React.ReactNode;
-    onClick: () => void;
-    disabled?: boolean;
+	onClick: () => void;
+	disabled?: boolean;
+	width?: "full" | "fit";
+	label: string;
 }
 
-export const Button = ({ children, onClick, disabled }: ButtonProps) => {
-    return (
-        <button onClick={onClick} disabled={disabled} className='button'>
-            {children}
-        </button>
-    );
-}
+export const Button = ({
+	onClick,
+	disabled,
+	label,
+	width = "fit",
+}: ButtonProps) => {
+	return (
+		<StyledButton onClick={onClick} disabled={disabled} width={width}>
+			<p>{label}</p>
+		</StyledButton>
+	);
+};
