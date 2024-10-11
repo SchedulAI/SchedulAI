@@ -1,9 +1,9 @@
 import * as scheduleRepository from "../repository/scheduleRepository";
 
 export const createSchedule = async (
+    userId: string,
     title: string,
     description: string,
-    userId: string
 ): Promise<void> => {
     try {
         const schedule = await scheduleRepository.createSchedule(
