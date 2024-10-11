@@ -176,7 +176,7 @@ export const Home = () => {
 	return (
 		<HomeStyled className="home-div">
 			<Navbar />
-			<section className="main-section">
+			<section className="main-section" id="main-section">
 				<div className="title-div">
 					<h1 className="h1-title">
 						Organize-se com a IA e Assuma o Controle do Seu Futuro

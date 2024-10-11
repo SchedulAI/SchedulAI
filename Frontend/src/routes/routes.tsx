@@ -5,7 +5,9 @@ import { Home } from "../pages/Home";
 import { Login } from "../pages/Login";
 import { useUser } from "../hooks/userHooks";
 import { Error404 } from "../pages/Error404";
+import { Dashboard } from "../pages/Dashboard";
 import { Register } from "../pages/Register";
+
 
 interface ChildrenTypes {
 	children: ReactElement;
@@ -32,28 +34,28 @@ const PrivateRoute = ({ children }: ChildrenTypes) => {
 };
 
 export const AppRoutes = () => {
-	return (
-		<>
-			<ScrollToTop />
-			<Routes>
-				<Route path="*" element={<Error404 />} />
-				<Route
-					path="/"
-					element={
-						<Public>
-							<Home />
-						</Public>
-					}
-				/>
-				<Route
-					path="/login"
-					element={
-						<Public>
-							<Login />
-						</Public>
-					}
-				/>
-				<Route
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="*" element={<Error404 />} />
+        <Route
+          path="/"
+          element={
+            <Public>
+              <Home />
+            </Public>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Public>
+              <Login />
+            </Public>
+          }
+        />
+        <Route
 					path="/register"
 					element={
 						<Public>
@@ -61,15 +63,15 @@ export const AppRoutes = () => {
 						</Public>
 					}
 				/>
-				<Route
-					path="/private"
-					element={
-						<PrivateRoute>
-							<Home />
-						</PrivateRoute>
-					}
-				/>
-			</Routes>
-		</>
-	);
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
+    </>
+  );
 };
