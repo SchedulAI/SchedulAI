@@ -68,3 +68,24 @@ button:focus-visible {
 		background-color: #f9f9f9;
 	}
 }
+
+a:hover{
+  color: #4944ca;
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background-color: #4944ca;
+  left: 0;
+  bottom: 0;
+  transition: width 0.4s ease-in-out;
+}
+
+#root{
+  height: 100vh;
+  width: 100vw;
+}
+

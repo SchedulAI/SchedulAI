@@ -1,5 +1,5 @@
 import { Icon, IconTypes } from "../Icon";
-import { useState } from "react";
+import { FocusEventHandler, useState } from "react";
 import styled from "styled-components";
 
 const InputStyled = styled.div`
@@ -54,6 +54,7 @@ const InputStyled = styled.div`
 	}
 `;
 
+
 interface InputProps {
 	readOnly?: boolean;
 	placeholder: string;
@@ -62,6 +63,8 @@ interface InputProps {
 	color?: string;
 	weight?: "regular" | "bold" | "light" | "thin" | "fill" | "duotone";
 	size?: number;
+  onChange?: FocusEventHandler<HTMLInputElement>;
+  value?: string;
 }
 
 export const Input = ({
@@ -72,6 +75,8 @@ export const Input = ({
 	size,
 	icon,
 	placeholder,
+  onChange,
+  value,
 }: InputProps) => {
 	const [showPassword, setShowPassword] = useState(false);
 	return (
@@ -80,6 +85,8 @@ export const Input = ({
 				readOnly={readOnly}
 				type={`${showPassword ? "text" : type}`}
 				placeholder={placeholder}
+        onChange={onChange}
+        value={value}
 			/>
 			{icon && type !== "password" && (
 				<Icon
