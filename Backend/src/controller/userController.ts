@@ -1,40 +1,57 @@
-import { createnewUser } from "../services/userService";
-import { Request, Response } from 'express';
+import * as userServices from "../services/userService";
+import { Request, Response } from "express";
 
 const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const specialCharsRegex: RegExp= /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/;
+const specialCharsRegex: RegExp = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/;
 
-export const createNewUser = async (req: Request, res: Response) => {
-    try{
-        const { name, email, password } = req.body as { name: string, email: string, password: string };
+export const createNewUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { name, email, password } = req.body as {
+            name: string;
+            email: string;
+            password: string;
+        };
 
         if (!name) {
-            return res.status(400).json({ error: "Nome é obrigatório" });
+            res.status(400).json({ error: "Nome é obrigatório" });
+            return;
         }
 
         if (!email) {
-            return res.status(400).json({ error: "Email é obrigatório" });
+            res.status(400).json({ error: "Email é obrigatório" });
+            return;
         }
 
         if (!password) {
-            return res.status(400).json({ error: "Senha é obrigatória" });
+            res.status(400).json({ error: "Senha é obrigatória" });
+            return;
         }
 
         if (!emailRegex.test(email)) {
-            return res.status(400).json({ error: "Email inválido" });
+            res.status(400).json({ error: "Email inválido" });
+            return;
         }
 
         if (password.length < 6) {
-            return res.status(400).json({ error: "Senha deve ter no mínimo 6 caracteres" });
+            res.status(400).json({ error: "Senha deve ter no mínimo 6 caracteres" });
+            return;
         }
 
         if (!specialCharsRegex.test(password)) {
-            return res.status(400).json({ error: "Senha deve ter no mínimo 1 caracter especial" });
+            res.status(400).json({
+                error: "Senha deve ter no mínimo 1 caracter especial",
+            });
+            return;
         }
 
-        const newUser = await createnewUser(name, email, password);
-        return res.status(200).json({ sucess: true, message: 'Usuário criado com sucesso', data: newUser });
-    } catch(error: any){
-        return res.status(400).json({ error: error.message });
+        const newUser = await userServices.createnewUser(name, email, password);
+
+        res.status(200).json({
+            sucess: true,
+            message: "Usuário criado com sucesso",
+            data: newUser,
+        });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
     }
-}
+};
