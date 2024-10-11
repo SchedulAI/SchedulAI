@@ -1,6 +1,9 @@
+import { ReactNode } from "react";
 import styled from "styled-components";
 
-const StyledButton = styled.button<{ width: "full" | "fit" }>`
+const StyledButton = styled.button<{
+	width: "full" | "fit";
+}>`
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -12,6 +15,11 @@ const StyledButton = styled.button<{ width: "full" | "fit" }>`
 	color: #0a0a15;
 	transition: all ease-in-out 0.3s;
 	width: ${({ width }) => (width === "full" ? "100%" : "fit-content")};
+
+	> * {
+		white-space: nowrap;
+		margin: 0px;
+	}
 
 	&:hover {
 		background-color: #7a77da;
@@ -28,18 +36,18 @@ interface ButtonProps {
 	onClick: () => void;
 	disabled?: boolean;
 	width?: "full" | "fit";
-	label: string;
+	children: ReactNode;
 }
 
 export const Button = ({
 	onClick,
 	disabled,
-	label,
 	width = "fit",
+	children,
 }: ButtonProps) => {
 	return (
 		<StyledButton onClick={onClick} disabled={disabled} width={width}>
-			<p>{label}</p>
+			{children}
 		</StyledButton>
 	);
 };
