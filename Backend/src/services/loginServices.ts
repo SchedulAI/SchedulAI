@@ -18,7 +18,7 @@ export const getUser = async (username: string) => {
     }
 }
 
-const authenticateUser = async (username: string, password: string) => {
+export const authenticateUser = async (username: string, password: string) => {
     try{
         let user;
         if(!emailRegex.test(username)) {
@@ -36,5 +36,3 @@ const authenticateUser = async (username: string, password: string) => {
         throw error
     }
 }
-
-export default authenticateUser;
