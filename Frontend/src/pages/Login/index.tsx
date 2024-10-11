@@ -108,7 +108,7 @@ export const Login = () => {
           </a>
         </div>
         <div className="login-enter-register-div">
-          <Button onClick={() => loginFetch()}>Entrar</Button>
+          <Button width="full" onClick={() => loginFetch()}>Entrar</Button>
           <a id="login-a-create-account">
             Não tem uma conta? <span>Registre-se</span>
           </a>
