@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { userServices } from "../services/userService";
+import errorResponse from "../utils/errorResponse";
 
 const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const specialCharsRegex: RegExp = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/;
@@ -58,11 +59,7 @@ export const userController = {
                 data: newUser,
             });
         } catch (error: any) {
-            res.status(error.statusCode).json({
-                success: false,
-                error: error.error,
-                message: error.message,
-            });
+            errorResponse(res, error);
         }
     },
 
@@ -111,11 +108,7 @@ export const userController = {
                 data: newUser,
             });
         } catch (error: any) {
-            res.status(error.statusCode).json({
-                sucess: false,
-                error: error.error,
-                message: error.message,
-            });
+            errorResponse(res, error);
         }
     },
 };
