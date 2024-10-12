@@ -9,8 +9,10 @@ import {
   CaretDown,
   ArrowCircleUp,
   User,
-} from "@phosphor-icons/react";
-import React from "react";
+  CaretLineRight,
+  CaretLineLeft,
+} from '@phosphor-icons/react';
+import React from 'react';
 
 export interface IconTypes {
   robot: React.ForwardRefExoticComponent<
@@ -37,6 +39,12 @@ export interface IconTypes {
   user: React.ForwardRefExoticComponent<
     IconProps & React.RefAttributes<SVGSVGElement>
   >;
+  expandRight: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
+  expandLeft: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
 }
 
 const IconList: IconTypes = {
@@ -48,6 +56,8 @@ const IconList: IconTypes = {
   arrowDown: CaretDown,
   circleArrowUp: ArrowCircleUp,
   user: User,
+  expandRight: CaretLineRight,
+  expandLeft: CaretLineLeft,
 };
 
 interface PropTypes {

@@ -1,10 +1,28 @@
-import styled from "styled-components";
-import { Icon } from "../../components/Icon";
-import { useState, useRef, useEffect } from "react";
-import { Button } from "../../components/Button";
-import { useNavigate } from "react-router-dom";
-import { useUser } from "../../hooks/userHooks";
-import apiUrl from "../../config/api";
+import styled, { keyframes } from 'styled-components';
+import { Icon } from '../../components/Icon';
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '../../components/Button';
+import { useNavigate } from 'react-router-dom';
+import { useUser } from '../../hooks/userHooks';
+import apiUrl from '../../config/api';
+
+const shrinkWidth = keyframes`
+  from {
+    width: 20%;
+  }
+  to {
+    width: 4%;
+  }
+`;
+
+const expandWidth = keyframes`
+  from {
+    width: 4%;
+  }
+  to {
+    width: 20%;
+  }
+`;
 
 const StyledDashboard = styled.div`
   * {
@@ -12,11 +30,68 @@ const StyledDashboard = styled.div`
   }
 
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   height: 100%;
   width: 100%;
+
+  .chat-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slide-bar-menu-closed {
+    width: 4%;
+    height: 100%;
+    animation: ${shrinkWidth} 2s forwards;
+    padding: 20px;
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+
+  .slide-bar-menu-open {
+    width: 20%;
+    height: 100%;
+    animation: ${expandWidth} 2s forwards;
+    background-color: #d4d3f3;
+    display: flex;
+    justify-content: flex-end;
+    position: relative;
+  }
+
+  .slide-bar-div-button {
+    background-color: #8380e5;
+    border-radius: 100%;
+    height: 40px;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 50%;
+
+    &.rotate {
+      transform: rotate(180deg);
+    }
+
+    &:hover {
+      background-color: #7a77da;
+    }
+  }
+
+  .div-button-white {
+    height: 100%;
+    width: 15%;
+    background-color: #fff;
+  }
 
   .logo {
     display: flex;
@@ -81,7 +156,7 @@ const StyledDashboard = styled.div`
     .message.system {
       align-self: flex-start;
       align-items: center;
-      gap:0.5rem;
+      gap: 0.5rem;
       background-color: #e0e0e0;
       color: #0a0a15;
     }
@@ -135,45 +210,46 @@ const StyledDashboard = styled.div`
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
+  const [sendingMessage, setSendingMessage] = useState<string>('');
   const [conversation, setConversation] = useState<string[]>([]);
   const [isUserMessage, setIsUserMessage] = useState<boolean[]>([]);
-  const [currentSchedule, setCurrentSchedule] = useState<string>("");
+  const [currentSchedule, setCurrentSchedule] = useState<string>('');
+  const [slideMenuOpen, setSlideMenuOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { setUser } = useUser();
 
-  async function handleSendMessage () {
+  async function handleSendMessage() {
     if (!message) return;
-  
-    const schedule = currentSchedule || await createSchedule();
-  
-    setConversation(prevConversation => [...prevConversation, message!]);
-    setIsUserMessage(prevIsUserMessage => [...prevIsUserMessage, true]);
-  
-    const aiResponse = await sendMessageToAi(message, schedule.id);
+
+    const schedule = currentSchedule || (await createSchedule());
+
+    setConversation((prevConversation) => [...prevConversation, message!]);
+    setIsUserMessage((prevIsUserMessage) => [...prevIsUserMessage, true]);
+
+    await sendMessageToAi(sendingMessage, schedule.id);
   }
-  
+
   const sendMessageToAi = async (message: string, schedule_id: string) => {
+    setMessage('');
     try {
       const data = await fetch(apiUrl('/chat/'), {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({
           message: message,
           schedule_id: schedule_id,
         }),
       });
-  
-      setMessage("")
+
       const res = await data.json();
       const iaResponse = res.response;
-  
-      setConversation(prevConversation => [...prevConversation, iaResponse]);
-      setIsUserMessage(prevIsUserMessage => [...prevIsUserMessage, false]);
-      
+      setSendingMessage('');
+      setConversation((prevConversation) => [...prevConversation, iaResponse]);
+      setIsUserMessage((prevIsUserMessage) => [...prevIsUserMessage, false]);
     } catch (error) {
       console.error(error);
     }
@@ -182,19 +258,19 @@ export const Dashboard = () => {
   const createSchedule = async () => {
     try {
       const data = await fetch(apiUrl('/schedule/'), {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        credentials: "include",
+        credentials: 'include',
         body: JSON.stringify({
-          title: "reunião teste"
+          title: 'reunião teste',
         }),
       });
 
-      const res = await data.json()
+      const res = await data.json();
 
-      setCurrentSchedule(res)
+      setCurrentSchedule(res);
 
       return res;
     } catch (error) {
@@ -202,10 +278,8 @@ export const Dashboard = () => {
     }
   };
 
-  
-
   function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       handleSendMessage();
     }
   }
@@ -213,14 +287,14 @@ export const Dashboard = () => {
   const logout = async () => {
     try {
       await fetch(apiUrl('/logout'), {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        credentials: "include",
+        credentials: 'include',
       });
-      setUser("");
-      navigate("/");
+      setUser('');
+      navigate('/');
     } catch (error) {
       console.error(error);
     }
@@ -228,88 +302,123 @@ export const Dashboard = () => {
 
   useEffect(() => {
     if (chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [conversation]);
 
   return (
     <StyledDashboard>
-      <div className="logo">
-        <div className="schedul-ai">
-          <Icon icon="robot" size={32} weight="fill" />
-          <p>SchedulAI</p>
+      <div
+        className={
+          slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
+        }
+      >
+        <div className="div-button-white">
+          <div
+            className={'slide-bar-div-button'}
+            onClick={() =>
+              slideMenuOpen ? setSlideMenuOpen(false) : setSlideMenuOpen(true)
+            }
+          >
+            <Icon
+              icon={slideMenuOpen ? 'expandLeft' : 'expandRight'}
+              size={20}
+              color="#0a0a15"
+            />
+          </div>
         </div>
-        <Button onClick={() => logout()}>
-          <p>Sair</p>
-        </Button>
       </div>
-      <div className="chat">
-        {conversation.length === 0 ? (
-          <>
-            <h2>Como Posso Ajudar?</h2>
-            <div className="chat-input">
-              <input
-                type="text"
-                placeholder="O que posso agendar para você hoje?"
-                value={message ? message : ""}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyPress}
-              />
-              <button
-                onClick={() => {
-                  handleSendMessage();
-                }}
-              >
-                <Icon
-                  icon="circleArrowUp"
-                  size={32}
-                  weight="fill"
-                  color={message ? "#0a0a15" : "#0a0a1580"}
+      <div className="chat-content">
+        <div className="logo">
+          <div className="schedul-ai">
+            <Icon icon="robot" size={32} weight="fill" />
+            <p>SchedulAI</p>
+          </div>
+          <Button onClick={() => logout()}>
+            <p>Sair</p>
+          </Button>
+        </div>
+        <div className="chat">
+          {conversation.length === 0 ? (
+            <>
+              <h2>Como Posso Ajudar?</h2>
+              <div className="chat-input">
+                <input
+                  type="text"
+                  placeholder="O que posso agendar para você hoje?"
+                  value={message ? message : ''}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    setSendingMessage(e.target.value);
+                  }}
+                  onKeyDown={handleKeyPress}
                 />
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="chat-conversation">
-              {conversation.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`message ${
-                    isUserMessage[index] ? "user" : "system"
-                  }`}
+                <button
+                  onClick={() => {
+                    handleSendMessage();
+                  }}
                 >
-                  {!isUserMessage[index] && (
-                    <Icon size={32} icon="robot" weight="fill" color="#0a0a15" />
-                  )}
-                  {msg}
-                </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
-            <div className="chat-input">
-              <input
-                type="text"
-                placeholder="Mensagem SchedulAI"
-                value={message ? message : ""}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={handleKeyPress}
-              />
-              <button
-                onClick={() => {
-                  handleSendMessage();
-                }}
-              >
-                <Icon
-                  icon="circleArrowUp"
-                  size={32}
-                  weight="fill"
-                  color={message ? "#0a0a15" : "#0a0a1580"}
+                  <Icon
+                    icon="circleArrowUp"
+                    size={32}
+                    weight="fill"
+                    color={message ? '#0a0a15' : '#0a0a1580'}
+                  />
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="chat-conversation">
+                {conversation.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`message ${
+                      isUserMessage[index] ? 'user' : 'system'
+                    }`}
+                  >
+                    {!isUserMessage[index] && (
+                      <div className="icon-system">
+                        <Icon
+                          size={32}
+                          icon="robot"
+                          weight="fill"
+                          color="#0a0a15"
+                        />
+                      </div>
+                    )}
+                    {msg}
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+              <div className="chat-input">
+                <input
+                  type="text"
+                  placeholder="Mensagem SchedulAI"
+                  value={message ? message : ''}
+                  onChange={(e) => {
+                    setMessage(e.target.value);
+                    setSendingMessage(e.target.value);
+                  }}
+                  onKeyDown={handleKeyPress}
                 />
-              </button>
-            </div>
-          </>
-        )}
+                <button
+                  onClick={() => {
+                    handleSendMessage();
+                  }}
+                >
+                  <Icon
+                    icon="circleArrowUp"
+                    size={32}
+                    weight="fill"
+                    color={message ? '#0a0a15' : '#0a0a1580'}
+                  />
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </StyledDashboard>
   );
