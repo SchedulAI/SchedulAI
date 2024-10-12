@@ -1,6 +1,7 @@
-import * as express from 'express';
-import { createNewUser } from '../controller/userController';
+import { Router } from "express";
+import { userController } from "../controller/userController";
 
-export const userRouter = express.Router();
+export const userRouter = Router();
 
-userRouter.post('/create', createNewUser);
+userRouter.post("/create", userController.createNewUser);
+userRouter.patch("/update/:id", userController.updateExistentUser);

@@ -1,10 +1,36 @@
-import * as dialogRepository from "../repository/dialogRepository";
+import { Message } from "../entities/messageEntity";
+import { dialogRepository } from "../repository/dialogRepository";
+import {
+    InternalServerException,
+    NotFoundException,
+} from "../utils/exceptions";
 
-export const getMessagesByDialogId = async (dialog_id: string, user_id: string): Promise<any> => {
-    try {
-        const dialog = await dialogRepository.getMessagesByDialogId(dialog_id);
-        return dialog;
-    } catch (error: any) {
-        throw error;
-    }
+export const dialogServices = {
+    getMessages: async (
+        dialogId: string,
+        userId: string
+    ): Promise<Message[]> => {
+        try {
+            const dialog = await dialogRepository.getDialogsByUserId(userId);
+
+            if (!dialog) {
+                throw new NotFoundException(
+                    "Não há diálogos associados ao User ID"
+                );
+            }
+
+            const messages = await dialogRepository.getMessagesByDialogId(
+                dialogId
+            );
+
+            if (!messages) {
+                throw new NotFoundException(
+                    "Não há mensagens associadas ao User ID"
+                );
+            }
+            return messages;
+        } catch (error: any) {
+            throw new InternalServerException("Erro ao Buscar Mensagens");
+        }
+    },
 };
