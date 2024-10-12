@@ -1,36 +1,39 @@
-import { ReactElement, useEffect } from "react";
-import { Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { ReactElement, useEffect } from 'react';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
 
-import { Home } from "../pages/Home";
-import { Login } from "../pages/Login";
-import { useUser } from "../hooks/userHooks";
-import { Error404 } from "../pages/Error404";
-import { Dashboard } from "../pages/Dashboard";
-import { Register } from "../pages/Register";
-
+import { Home } from '../pages/Home';
+import { Login } from '../pages/Login';
+import { useUser } from '../hooks/userHooks';
+import { Error404 } from '../pages/Error404';
+import { Dashboard } from '../pages/Dashboard';
+import { Register } from '../pages/Register';
+import { useCheckAuth } from '../Utils/ValidateAuth';
 
 interface ChildrenTypes {
-	children: ReactElement;
+  children: ReactElement;
 }
 
 function ScrollToTop() {
-	const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	}, [pathname]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-	return null;
+  return null;
 }
 
 const Public = ({ children }: ChildrenTypes) => {
-	return children;
+  return children;
 };
 
 const PrivateRoute = ({ children }: ChildrenTypes) => {
-	const { user } = useUser();
-
-	return user ? children : <Navigate to="/login" />;
+  const { user } = useUser();
+  const { checkAuth } = useCheckAuth();
+  if (!user) {
+    checkAuth();
+  }
+  return user ? children : <Navigate to="/login" />;
 };
 
 export const AppRoutes = () => {
@@ -56,13 +59,13 @@ export const AppRoutes = () => {
           }
         />
         <Route
-					path="/register"
-					element={
-						<Public>
-							<Register />
-						</Public>
-					}
-				/>
+          path="/register"
+          element={
+            <Public>
+              <Register />
+            </Public>
+          }
+        />
         <Route
           path="/dashboard"
           element={

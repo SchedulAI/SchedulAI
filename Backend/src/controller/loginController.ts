@@ -1,4 +1,6 @@
 import * as loginServices from "../services/loginServices";
+import jwt from "jsonwebtoken";
+import config from "../config";
 import { Request, Response } from "express";
 
 export const authenticate = async (req: Request, res: Response): Promise<void> => {
@@ -41,3 +43,19 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
         res.status(400).json({ error: error.message });
     }
 };
+
+export const validateToken = async (req: Request, res: Response): Promise<void> => {
+    const token = req.cookies.session_id;
+    if (!token) {
+        res.status(401).json({ error: "Token não encontrado" });
+        return;
+    }
+    try {
+        const decoded = jwt.verify(token, config.SECRET_KEY);
+        res.status(200).json({ auth: true, user: decoded });
+        return;
+    } catch (error:any) {
+        res.status(401).json({ error: "Token inválido" });
+        return;
+    }
+}
