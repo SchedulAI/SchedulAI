@@ -45,7 +45,6 @@ export const userController = {
             });
             return;
         }
-
         try {
             const newUser = await userServices.createUser({
                 name,
@@ -59,7 +58,11 @@ export const userController = {
                 data: newUser,
             });
         } catch (error: any) {
-            res.status(error.statusCode).json({ error: error.message });
+            res.status(error.statusCode).json({
+                success: false,
+                error: error.error,
+                message: error.message,
+            });
         }
     },
 
@@ -93,6 +96,7 @@ export const userController = {
                 return;
             }
         }
+
         try {
             const newUser = await userServices.updateUser({
                 id,
@@ -107,7 +111,11 @@ export const userController = {
                 data: newUser,
             });
         } catch (error: any) {
-            res.status(error.statusCode).json({ error: error.message });
+            res.status(error.statusCode).json({
+                sucess: false,
+                error: error.error,
+                message: error.message,
+            });
         }
     },
 };

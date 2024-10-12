@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { ForbiddenException, UnauthorizedException } from "../utils/exceptions";
 import jwt from "jsonwebtoken";
 import config from "../config";
 
@@ -24,19 +25,26 @@ export const permissionVerify = (
         const sessionToken = req.cookies.session_id;
 
         if (!sessionToken) {
-            res.status(401).json({ message: "Unauthorized: No tokens provided" });
+            throw new ForbiddenException("No Token Provided");
         }
 
-        jwt.verify(sessionToken, config.SECRET_KEY, async (error: any, decoded: any) => {
-            if (error) {
-                return res.status(403).json({ message: "Invalid Token JWT" });
-            } else {
+        jwt.verify(
+            sessionToken,
+            config.SECRET_KEY,
+            async (error: any, decoded: any) => {
+                if (error) {
+                    throw new UnauthorizedException("Invalid Token JWT");
+                }
                 req.user = decoded as UserPayload;
 
                 next();
             }
-        });
+        );
     } catch (error: any) {
-        res.status(403).json({ message: "Invalid Token JWT" });
+        res.status(error.statusCode).json({
+            success: false,
+            error: error.error,
+            message: error.message,
+        });
     }
 };
