@@ -8,7 +8,7 @@ export const scheduleRepository = {
     description: string,
     userId: string
   ): Promise<Schedule> => {
-    const client = await pool.connect(); // Conecta ao pool
+    const client = await pool.connect();
     const query = `INSERT INTO schedule (title, description, user_id) VALUES ($1, $2, $3) RETURNING *`;
     try {
       const userResult = await client.query(query, [
@@ -20,7 +20,41 @@ export const scheduleRepository = {
     } catch (error: any) {
       throw new InternalServerException('Erro ao criar agendamento');
     } finally {
-      client.release(); // Certifique-se de liberar a conexão
+      client.release();
+    }
+  },
+
+  getScheduleById: async (scheduleId: string): Promise<Schedule> => {
+    const client = await pool.connect();
+    const query = `
+          SELECT * 
+          FROM schedule
+          WHERE id = $1
+        `;
+    try {
+      const userResult = await client.query(query, [scheduleId]);
+      return userResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao buscar agendamento');
+    } finally {
+      client.release();
+    }
+  },
+  cancelSchedule: async (scheduleId: string): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+          UPDATE schedule
+          SET status = 'cancelled'
+          WHERE id = $1
+          RETURNING *;
+        `;
+    try {
+      const updateResult = await client.query(queryUpdate, [scheduleId]);
+      return updateResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao cancelar o agendamento');
+    } finally {
+      client.release();
     }
   },
 };
