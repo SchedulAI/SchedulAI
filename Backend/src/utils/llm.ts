@@ -1,19 +1,19 @@
 // // import { OpenAI } from "@langchain/openai";
-import { ChatOpenAI } from "@langchain/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
-import config from "../config";
+import { ChatOpenAI } from '@langchain/openai';
+import { PromptTemplate } from '@langchain/core/prompts';
+import config from '../config';
 
 export const llm = {
-    // Instancia o modelo com as configurações
-    model: new ChatOpenAI({
-        openAIApiKey: config.OPENAIKEY,
-        temperature: 0.7,
-        modelName: "gpt-3.5-turbo",
-    }),
+  // Instancia o modelo com as configurações
+  model: new ChatOpenAI({
+    openAIApiKey: config.OPENAIKEY,
+    temperature: 0.7,
+    modelName: 'gpt-3.5-turbo',
+  }),
 
-    // Define o template do prompt com as regras de agendamento
-    prompt: new PromptTemplate({
-        template: `
+  // Define o template do prompt com as regras de agendamento
+  prompt: new PromptTemplate({
+    template: `
 Você é um assistente de agendamento de reuniões com IA. Sua função é ajudar o host a agendar compromissos e reuniões, gerenciando horários e recebendo respostas dos convidados.
 
 Regras:
@@ -28,6 +28,6 @@ Regras:
 Entrada do usuário: {input}
 
 Resposta do Assistente:`,
-        inputVariables: ["input"],
-    }),
+    inputVariables: ['input'],
+  }),
 };
