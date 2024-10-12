@@ -1,7 +1,7 @@
-import express from "express";
-import * as chatController from './../controller/chatController';
+import { Router } from "express";
 import { permissionVerify } from "../middleware/permissionVerify";
+import { chatController } from "../controller/chatController";
 
-export const chatRouter = express.Router();
+export const chatRouter = Router();
 
 chatRouter.post("/", permissionVerify, chatController.handleChat);
