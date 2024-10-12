@@ -1,7 +1,7 @@
-import * as scheduleController from './../controller/scheduleController';
-import * as express from "express";;
+import { Router } from "express";
 import { permissionVerify } from "../middleware/permissionVerify";
+import { scheduleController } from "../controller/scheduleController";
 
-export const scheduleRouter = express.Router();
+export const scheduleRouter = Router();
 
-scheduleRouter.post("/", permissionVerify , scheduleController.createSchedule);
+scheduleRouter.post("/", permissionVerify, scheduleController.createSchedule);

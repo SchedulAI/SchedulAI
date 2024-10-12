@@ -7,7 +7,7 @@ export const loginRepository = {
         try {
             const query = `SELECT * FROM users WHERE email = $1`;
             const { rows } = await pool.query(query, [email]);
-            return rows[0] as User;
+            return rows[0];
         } catch (error: any) {
             throw new InternalServerException("Erro ao encontrar usuário");
         }

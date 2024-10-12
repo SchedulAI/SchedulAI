@@ -12,7 +12,7 @@ export const dialogRepository = {
             LIMIT 1;
         `;
             const { rows } = await pool.query(query, [userId, scheduleId]);
-            return rows[0] as Dialog;
+            return rows[0];
         } catch (error: any) {
             throw new InternalServerException("Erro ao encontrar diálogo");
         }
@@ -29,7 +29,7 @@ export const dialogRepository = {
             RETURNING *;
         `;
             const { rows } = await pool.query(query, [userId, scheduleId]);
-            return rows[0] as Dialog; // Retorna o diálogo criado
+            return rows[0]; // Retorna o diálogo criado
         } catch (error: any) {
             throw new InternalServerException("Erro ao criar diálogo");
         }
@@ -51,7 +51,7 @@ export const dialogRepository = {
                 message,
                 sender,
             ]);
-            return rows[0] as Message; // Retorna a mensagem salva
+            return rows[0]; // Retorna a mensagem salva
         } catch (error: any) {
             console.log("erro no saveMessage:", error);
             throw new InternalServerException("Erro ao salvar mensagem");
@@ -67,7 +67,7 @@ export const dialogRepository = {
             ORDER BY created_at ASC;
         `;
             const { rows } = await pool.query(query, [userId]);
-            return rows as Dialog[];
+            return rows;
         } catch (error) {
             throw new InternalServerException("Erro ao buscar diálogo");
         }
@@ -82,7 +82,7 @@ export const dialogRepository = {
             ORDER BY created_at ASC;
         `;
             const { rows } = await pool.query(query, [dialogId]);
-            return rows as Message[];
+            return rows;
         } catch (error: any) {
             console.log("Erro do pegar mensagem:", error);
 

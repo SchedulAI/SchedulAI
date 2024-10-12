@@ -11,7 +11,7 @@ export const userRepository = {
         const query = `INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email`;
         try {
             const { rows } = await pool.query(query, [name, email, password]);
-            return rows[0] as User;
+            return rows[0];
         } catch (error: any) {
             throw new InternalServerException("Erro ao criar usuário");
         }
@@ -21,7 +21,7 @@ export const userRepository = {
         const query = `SELECT id, name, email FROM users WHERE email = $1`;
         try {
             const { rows } = await pool.query(query, [email]);
-            return rows[0] ? (rows[0] as User) : null;
+            return rows[0];
         } catch (error: any) {
             throw new InternalServerException("Erro ao buscar usuário");
         }
@@ -31,7 +31,7 @@ export const userRepository = {
         const query = `SELECT id, name, email FROM users WHERE id = $1`;
         try {
             const { rows } = await pool.query(query, [id]);
-            return rows[0] ? (rows[0] as User) : null;
+            return rows[0];
         } catch (error: any) {
             throw new InternalServerException("Erro ao buscar usuário");
         }
@@ -65,17 +65,16 @@ export const userRepository = {
           RETURNING id, name, email`;
         try {
             const { rows } = await pool.query(query, values);
-            return rows[0] as User;
+            return rows[0];
         } catch (error: any) {
             throw new InternalServerException("Erro ao atualizar usuário");
         }
     },
 
-    delete: async (id: number): Promise<{ id: number } | null> => {
+    delete: async (id: number): Promise<void> => {
         const query = `DELETE FROM users WHERE id = $1 RETURNING id`;
         try {
-            const { rows } = await pool.query(query, [id]);
-            return rows[0] ? { id: rows[0].id } : null;
+            await pool.query(query, [id]);
         } catch (error: any) {
             throw new InternalServerException("Erro ao deletar usuário");
         }
