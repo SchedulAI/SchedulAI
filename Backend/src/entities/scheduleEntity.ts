@@ -3,9 +3,9 @@ export interface Schedule {
   user_id: string;
   title: string;
   description: string;
-  status: string;
+  status: 'planning' | 'pending' | 'reviewing' | 'scheduled' | 'cancelled';
   access_code: string;
   expiry_time: string;
   invite_link: string;
-  schedule_date: Date;
+  duration: number;
 }

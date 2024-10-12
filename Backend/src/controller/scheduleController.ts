@@ -22,10 +22,36 @@ export const scheduleController = {
         title,
         description
       );
-
       res.status(200).json({
         sucess: true,
         message: 'Agendamento criado com sucesso',
+        data: schedule,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+  cancelSchedule: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+    const scheduleId = req.params.scheduleId;
+    try {
+      if (!scheduleId) {
+        errorResponse(res, {
+          error: 'BAD_REQUEST',
+          message: 'Por favor, infome o ID do agendamento.',
+          statusCode: 400,
+        });
+        return;
+      }
+
+      const schedule = await scheduleServices.cancelSchedule(
+        user.id,
+        scheduleId
+      );
+
+      res.status(200).json({
+        sucess: true,
+        message: 'Agendamento cancelado com sucesso',
         data: schedule,
       });
     } catch (error: any) {

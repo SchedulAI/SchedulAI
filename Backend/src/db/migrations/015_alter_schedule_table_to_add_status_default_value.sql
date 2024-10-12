@@ -1,0 +1,1 @@
+ALTER TABLE schedule ALTER COLUMN status SET DEFAULT 'planning';
