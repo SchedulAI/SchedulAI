@@ -1,7 +1,13 @@
-import * as dialogController from './../controller/dialogController';
-import * as express from "express";;
+import { Router } from "express";
 import { permissionVerify } from "../middleware/permissionVerify";
+import { dialogController } from "../controller/dialogController";
 
-export const dialogRoutes = express.Router();
+export const dialogRoutes = Router();
 
-dialogRoutes.get("/:dialog_id/messages", permissionVerify , dialogController.getMessagesByDialogId);
+dialogRoutes.get(
+    "/:dialog_id/messages",
+    permissionVerify,
+    dialogController.getMessages
+);
+
+dialogRoutes.post("/create", permissionVerify, dialogController.getMessages);
