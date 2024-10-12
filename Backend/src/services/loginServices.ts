@@ -1,38 +1,47 @@
-import * as jwt from 'jsonwebtoken';
-import comparePassword from '../utils/comparePassword';
-import config from '../config';
-import getUserByEmail from '../repository/loginRepository';
+import jwt from "jsonwebtoken";
+import comparePassword from "../utils/comparePassword";
+import { loginRepository } from "../repository/loginRepository";
+import config from "../config";
+import {
+    BadRequestException,
+    InternalServerException,
+    NotFoundException,
+} from "../utils/exceptions";
+import { User } from "../entities/userEntity";
 
 const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-export const getUser = async (username: string) => {
-    try {
-        let user;
-        if(!emailRegex.test(username)) {
-            throw new Error("Email inválido")
-        } 
-        user = await getUserByEmail(username)
-        return user;
-    } catch(error: any){
-        throw error
-    }
-}
-
-export const authenticateUser = async (username: string, password: string) => {
-    try{
-        let user;
-        if(!emailRegex.test(username)) {
-            throw new Error("Email inválido")
+export const loginServices = {
+    getUser: async (email: string): Promise<User> => {
+        try {
+            if (!emailRegex.test(email)) {
+                throw new BadRequestException("Email inválido");
+            }
+            const user = await loginRepository.getUserByEmail(email);
+            return user;
+        } catch (error: any) {
+            throw new InternalServerException("Erro ao Buscar Usuário");
         }
-        user = await getUserByEmail(username);
+    },
 
-        if (user &&(await comparePassword(password, user.password))) {
-            const token = jwt.sign({ id: user.id }, config.SECRET_KEY, { expiresIn: 864000})
-            return { auth: true, token: token }
+    authenticateUser: async (email: string, password: string) => {
+        const user = await loginRepository.getUserByEmail(email);
+
+        if (!user) {
+            throw new NotFoundException("Usuário não encontrado");
         }
 
-        return { auth: false, token: null, error: "Usuário e/ou senha inválidos" }
-    } catch(error: any){
-        throw error
-    }
-}
+        if (!(await comparePassword(password, user.password!))) {
+            throw new BadRequestException("Senha Incorreta!");
+        }
+
+        try {
+            const token = jwt.sign({ id: user.id }, config.SECRET_KEY, {
+                expiresIn: 864000,
+            });
+            return { auth: true, token: token };
+        } catch (error: any) {
+            throw new InternalServerException("Erro ao Autenticar Usuário");
+        }
+    },
+};

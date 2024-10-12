@@ -1,7 +1,7 @@
-import * as express from "express";
-import * as loginController from "../controller/loginController";
+import { Router } from "express";
+import { loginController } from "../controller/loginController";
 
-export const loginRouter = express.Router();
+export const loginRouter = Router();
 
 loginRouter.post("/login", loginController.authenticate);
-loginRouter.delete("/logout", loginController.logout)
+loginRouter.delete("/logout", loginController.logout);

@@ -1,43 +1,49 @@
-import * as loginServices from "../services/loginServices";
 import { Request, Response } from "express";
+import { loginServices } from "../services/loginServices";
+import errorResponse from "../utils/errorResponse";
 
-export const authenticate = async (req: Request, res: Response): Promise<void> => {
-    const { email, password } = req.body as { email: string; password: string };
+export const loginController = {
+    authenticate: async (req: Request, res: Response): Promise<void> => {
+        const { email, password } = req.body as {
+            email: string;
+            password: string;
+        };
 
-    try {
         if (!req.body.email || !req.body.password) {
-            throw new Error("Email e senha são obrigatórios");
-        }
-
-        const user = await loginServices.getUser(email);
-        if (!user) {
-            res.status(400).json({ error: "Usuário e/ou senha inválidos!" });
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Email e senha são obrigatórios",
+                statusCode: 400,
+            });
             return;
         }
-        const { auth, token } = await loginServices.authenticateUser(email, password);
 
-        if (auth) {
+        try {
+            const { auth, token } = await loginServices.authenticateUser(
+                email,
+                password
+            );
+
             res.cookie("session_id", token, {
                 httpOnly: true,
                 expires: new Date(Date.now() + 864000000),
             });
             res.status(200).json({ auth });
             return;
+        } catch (error: any) {
+            errorResponse(res, error);
         }
-        res.status(400).json({ error: "Usuário e/ou senha inválidos!" });
-    } catch (error: any) {
-        res.status(400).json({ error: error.message });
-    }
-};
+    },
 
-export const logout = async (req: Request, res: Response): Promise<void> => {
-    try {
-        res.clearCookie("session_id");
-        res.status(200).json({
-            success: true,
-            message: "Sua conta foi desconectada com sucesso!",
-        });
-    } catch (error: any) {
-        res.status(400).json({ error: error.message });
-    }
+    logout: async (req: Request, res: Response): Promise<void> => {
+        try {
+            res.clearCookie("session_id");
+            res.status(200).json({
+                success: true,
+                message: "Sua conta foi desconectada com sucesso!",
+            });
+        } catch (error: any) {
+            errorResponse(res, error);
+        }
+    },
 };
