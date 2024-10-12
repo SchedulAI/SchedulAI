@@ -1,11 +1,11 @@
-import * as userServices from "../services/userService";
 import { Request, Response } from "express";
+import { userServices } from "../services/userService";
 
 const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const specialCharsRegex: RegExp = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?\s]+/;
 
-export const createNewUser = async (req: Request, res: Response): Promise<void> => {
-    try {
+export const userController = {
+    createNewUser: async (req: Request, res: Response): Promise<void> => {
         const { name, email, password } = req.body as {
             name: string;
             email: string;
@@ -33,7 +33,9 @@ export const createNewUser = async (req: Request, res: Response): Promise<void> 
         }
 
         if (password.length < 6) {
-            res.status(400).json({ error: "Senha deve ter no mínimo 6 caracteres" });
+            res.status(400).json({
+                error: "Senha deve ter no mínimo 6 caracteres",
+            });
             return;
         }
 
@@ -44,14 +46,68 @@ export const createNewUser = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        const newUser = await userServices.createnewUser(name, email, password);
+        try {
+            const newUser = await userServices.createUser({
+                name,
+                email,
+                password,
+            });
 
-        res.status(200).json({
-            sucess: true,
-            message: "Usuário criado com sucesso",
-            data: newUser,
-        });
-    } catch (error: any) {
-        res.status(400).json({ error: error.message });
-    }
+            res.status(200).json({
+                sucess: true,
+                message: "Usuário criado com sucesso",
+                data: newUser,
+            });
+        } catch (error: any) {
+            res.status(error.statusCode).json({ error: error.message });
+        }
+    },
+
+    updateExistentUser: async (req: Request, res: Response): Promise<void> => {
+        const id = req.params.id;
+        const { name, email, password } = req.body as {
+            name?: string;
+            email: string;
+            password?: string;
+        };
+
+        if (email) {
+            if (!emailRegex.test(email)) {
+                res.status(400).json({ error: "Email inválido" });
+                return;
+            }
+        }
+
+        if (password) {
+            if (password.length < 6) {
+                res.status(400).json({
+                    error: "Senha deve ter no mínimo 6 caracteres",
+                });
+                return;
+            }
+
+            if (!specialCharsRegex.test(password)) {
+                res.status(400).json({
+                    error: "Senha deve ter no mínimo 1 caracter especial",
+                });
+                return;
+            }
+        }
+        try {
+            const newUser = await userServices.updateUser({
+                id,
+                name,
+                email,
+                password,
+            });
+
+            res.status(200).json({
+                sucess: true,
+                message: "Usuário Atualizado com sucesso",
+                data: newUser,
+            });
+        } catch (error: any) {
+            res.status(error.statusCode).json({ error: error.message });
+        }
+    },
 };
