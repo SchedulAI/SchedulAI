@@ -1,34 +1,26 @@
-// // import { OpenAI } from "@langchain/openai";
+// import { OpenAI } from "@langchain/openai";
 import { llm } from '../utils/llm';
-import { BufferMemory } from 'langchain/memory';
-import { ConversationChain } from 'langchain/chains';
 import { dialogRepository } from '../repository/dialogRepository';
+import { StringOutputParser } from '@langchain/core/output_parsers';
 
 export const chatServices = {
   chat: async (message: string, dialog: any): Promise<string> => {
     try {
-      // Recuperar o histórico de mensagens para o diálogo
       const previousMessages = await dialogRepository.getMessagesByDialogId(
         dialog.id
       );
-
       const history = previousMessages
         .map((msg: any) => `${msg.sender}: ${msg.message}`)
         .join('\n');
 
-      // Criar a instância de chain com memória e histórico
-      const chain = new ConversationChain({
-        llm: llm.model,
-        memory: new BufferMemory(), // Memória automática para gerenciar o histórico
-        prompt: llm.prompt,
-      });
+      const chain = llm.prompt.pipe(llm.model).pipe(new StringOutputParser());
 
-      // Passa apenas a nova mensagem do usuário
-      const res = await chain.call({
+      const res = await chain.invoke({
         input: message,
+        history: history,
       });
 
-      return res.response;
+      return res;
     } catch (error) {
       console.error('Erro ao se comunicar com a IA:', error);
       throw new Error(

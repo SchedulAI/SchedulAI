@@ -7,13 +7,15 @@ export const dialogRepository = {
   getDialog: async (userId: string, scheduleId: string): Promise<Dialog> => {
     try {
       const query = `
-            SELECT * FROM dialog
+            SELECT * FROM dialogs
             WHERE user_id = $1 AND schedule_id = $2
             LIMIT 1;
         `;
       const { rows } = await pool.query(query, [userId, scheduleId]);
       return rows[0];
     } catch (error: any) {
+      console.log(error);
+
       throw new InternalServerException('Erro ao encontrar diálogo');
     }
   },
@@ -21,7 +23,7 @@ export const dialogRepository = {
   createDialog: async (userId: string, scheduleId: string): Promise<Dialog> => {
     try {
       const query = `
-            INSERT INTO dialog (user_id, schedule_id)
+            INSERT INTO dialogs (user_id, schedule_id)
             VALUES ($1, $2)
             RETURNING *;
         `;
@@ -55,7 +57,7 @@ export const dialogRepository = {
     try {
       const query = `
             SELECT *
-            FROM dialog
+            FROM dialogs
             WHERE user_id = $1
             ORDER BY created_at ASC;
         `;
