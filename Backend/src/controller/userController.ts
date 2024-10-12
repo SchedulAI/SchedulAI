@@ -14,35 +14,55 @@ export const userController = {
         };
 
         if (!name) {
-            res.status(400).json({ error: "Nome é obrigatório" });
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Nome é obrigatório",
+                statusCode: 400,
+            });
             return;
         }
 
         if (!email) {
-            res.status(400).json({ error: "Email é obrigatório" });
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Email é obrigatório",
+                statusCode: 400,
+            });
             return;
         }
 
         if (!password) {
-            res.status(400).json({ error: "Senha é obrigatória" });
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Senha é obrigatória",
+                statusCode: 400,
+            });
             return;
         }
 
         if (!emailRegex.test(email)) {
-            res.status(400).json({ error: "Email inválido" });
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Email inválido",
+                statusCode: 400,
+            });
             return;
         }
 
         if (password.length < 6) {
-            res.status(400).json({
-                error: "Senha deve ter no mínimo 6 caracteres",
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Senha deve ter no mínimo 6 caracteres",
+                statusCode: 400,
             });
             return;
         }
 
         if (!specialCharsRegex.test(password)) {
-            res.status(400).json({
-                error: "Senha deve ter no mínimo 1 caracter especial",
+            errorResponse(res, {
+                error: "BAD_REQUEST",
+                message: "Senha deve ter no mínimo 1 caracter especial",
+                statusCode: 400,
             });
             return;
         }

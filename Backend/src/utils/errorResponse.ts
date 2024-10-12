@@ -3,7 +3,7 @@ import { ErrorType } from "./exceptions";
 
 interface CustomError {
     statusCode: number;
-    data: any;
+    data?: any;
     error: ErrorType | null;
     message: string;
 }
