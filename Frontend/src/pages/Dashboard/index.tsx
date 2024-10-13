@@ -233,7 +233,7 @@ export const Dashboard = () => {
   const sendMessageToAi = async (message: string, schedule_id: string) => {
     setMessage('');
     try {
-      const data = await fetch(apiUrl('/chat/'), {
+      const data = await fetch(apiUrl('chat/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -246,7 +246,7 @@ export const Dashboard = () => {
       });
 
       const res = await data.json();
-      const iaResponse = res.response;
+      const iaResponse = res.data;
       setSendingMessage('');
       setConversation((prevConversation) => [...prevConversation, iaResponse]);
       setIsUserMessage((prevIsUserMessage) => [...prevIsUserMessage, false]);
@@ -270,9 +270,9 @@ export const Dashboard = () => {
 
       const res = await data.json();
 
-      setCurrentSchedule(res);
+      setCurrentSchedule(res.data);
 
-      return res;
+      return res.data;
     } catch (error) {
       console.error(error);
     }
