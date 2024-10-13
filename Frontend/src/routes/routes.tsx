@@ -7,6 +7,7 @@ import { useUser } from '../hooks/userHooks';
 import { Error404 } from '../pages/Error404';
 import { Dashboard } from '../pages/Dashboard';
 import { Register } from '../pages/Register';
+import { RecoverPassword } from '../pages/RecoverPassword';
 import { useCheckAuth } from '../Utils/ValidateAuth';
 
 interface ChildrenTypes {
@@ -63,6 +64,14 @@ export const AppRoutes = () => {
           element={
             <Public>
               <Register />
+            </Public>
+          }
+        />
+        <Route
+          path="/recover-password"
+          element={
+            <Public>
+              <RecoverPassword />
             </Public>
           }
         />

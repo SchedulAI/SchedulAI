@@ -26,7 +26,7 @@ const LoginStyled = styled.div`
     gap: 8px;
     top: 0;
     left: 0;
-    padding: 8px;
+    padding: 32px;
   }
 
   .login-div-section {
@@ -224,7 +224,7 @@ export const Login = () => {
             checked={rememberMe}
             onChange={handleRememberMeChange}
           />
-          <a id="forget-password">
+          <a id="forget-password" onClick={() => navigate('/recover-password')}>
             Esqueceu a senha? <span>Recupere agora</span>
           </a>
         </div>
