@@ -11,6 +11,8 @@ import {
   User,
   CaretLineRight,
   CaretLineLeft,
+  SidebarSimple,
+  Plus,
 } from '@phosphor-icons/react';
 import React from 'react';
 
@@ -45,6 +47,12 @@ export interface IconTypes {
   expandLeft: React.ForwardRefExoticComponent<
     IconProps & React.RefAttributes<SVGSVGElement>
   >;
+  sidebarSimple: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
+  plus: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
 }
 
 const IconList: IconTypes = {
@@ -58,6 +66,8 @@ const IconList: IconTypes = {
   user: User,
   expandRight: CaretLineRight,
   expandLeft: CaretLineLeft,
+  sidebarSimple: SidebarSimple,
+  plus: Plus,
 };
 
 interface PropTypes {

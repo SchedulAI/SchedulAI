@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/userHooks';
+import { Card } from '../../components/Card';
 import apiUrl from '../../config/api';
 
 const shrinkWidth = keyframes`
@@ -20,11 +21,11 @@ const expandWidth = keyframes`
     width: 4%;
   }
   to {
-    width: 20%;
+    width: 19%;
   }
 `;
 
-const StyledDashboard = styled.div`
+const StyledDashboard = styled.div<{ slideMenuOpen: boolean }>`
   * {
     transition: all ease-in-out 0.3s;
   }
@@ -43,54 +44,106 @@ const StyledDashboard = styled.div`
     width: 100%;
     justify-content: center;
     align-items: center;
+    padding: 21px;
+  }
+
+  .div-cover-open {
+    width: 0;
+    height: 100vh;
+    background-color: #0a0a1575;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+  }
+
+  .div-cover-open {
+    width: 100vw;
+    height: 100vh;
+    background-color: #0a0a1575;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    left: 0;
+  }
+
+  .div-cover-closed {
+    width: 0;
+    height: 100vh;
+    background-color: #0a0a1575;
+    position: absolute;
+    z-index: 0;
+    top: 0;
+  }
+
+  .guest-div,
+  .host-div {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    user-select: none;
+
+    .guest-cards,
+    .host-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
   }
 
   .slide-bar-menu-closed {
     width: 4%;
     height: 100%;
     animation: ${shrinkWidth} 2s forwards;
-    padding: 20px;
+    padding: 21px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     position: relative;
   }
 
   .slide-bar-menu-open {
-    width: 20%;
+    width: 19%;
     height: 100%;
     animation: ${expandWidth} 2s forwards;
     background-color: #d4d3f3;
+    padding: 21px;
     display: flex;
-    justify-content: flex-end;
+    gap: 2rem;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
     position: relative;
   }
 
   .slide-bar-div-button {
-    background-color: #8380e5;
-    border-radius: 100%;
+    border-radius: 8px;
     height: 40px;
     width: 40px;
+    padding: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    position: absolute;
-    right: 0;
-    top: 50%;
-
-    &.rotate {
-      transform: rotate(180deg);
-    }
 
     &:hover {
-      background-color: #7a77da;
+      background-color: #cdccee;
     }
   }
 
-  .div-button-white {
+  .sideBar-content {
     height: 100%;
-    width: 15%;
-    background-color: #fff;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+
+    p {
+      display: ${(props) => (props.slideMenuOpen ? 'flex' : 'none')};
+    }
+
+    button {
+      display: ${(props) => (props.slideMenuOpen ? 'flex' : 'none')};
+    }
   }
 
   .logo {
@@ -99,15 +152,8 @@ const StyledDashboard = styled.div`
     color: #0a0a15;
     gap: 0.5rem;
     user-select: none;
-    padding: 1rem 2rem;
     width: 100%;
-    justify-content: space-between;
-
-    .schedul-ai {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
+    justify-content: flex-end;
   }
 
   .chat {
@@ -208,12 +254,21 @@ const StyledDashboard = styled.div`
   }
 `;
 
+// Função para formatar a data
+const formatDate = (date: Date): string => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+};
+
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [sendingMessage, setSendingMessage] = useState<string>('');
   const [conversation, setConversation] = useState<string[]>([]);
   const [isUserMessage, setIsUserMessage] = useState<boolean[]>([]);
   const [currentSchedule, setCurrentSchedule] = useState<string>('');
+  const [schedules, setSchedules] = useState<ScheduleResponse | null>(null);
   const [slideMenuOpen, setSlideMenuOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -233,7 +288,7 @@ export const Dashboard = () => {
   const sendMessageToAi = async (message: string, schedule_id: string) => {
     setMessage('');
     try {
-      const data = await fetch(apiUrl('chat/'), {
+      const data = await fetch(apiUrl('/chat/'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -300,40 +355,126 @@ export const Dashboard = () => {
     }
   };
 
+  const getSchedules = async () => {
+    try {
+      const response = await fetch(apiUrl('/user/schedules'), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const data: ScheduleResponse = await response.json();
+      setSchedules(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [conversation]);
 
+  useEffect(() => {
+    getSchedules();
+  });
+
   return (
-    <StyledDashboard>
-      <div
-        className={
-          slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
-        }
-      >
-        <div className="div-button-white">
+    <StyledDashboard slideMenuOpen={slideMenuOpen}>
+      <div className={slideMenuOpen ? 'div-cover-open' : 'div-cover-closed'}>
+        <div
+          className={
+            slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
+          }
+        >
           <div
             className={'slide-bar-div-button'}
-            onClick={() =>
-              slideMenuOpen ? setSlideMenuOpen(false) : setSlideMenuOpen(true)
-            }
+            onClick={() => setSlideMenuOpen(!slideMenuOpen)}
           >
             <Icon
-              icon={slideMenuOpen ? 'expandLeft' : 'expandRight'}
-              size={20}
-              color="#0a0a15"
+              icon="sidebarSimple"
+              size={32}
+              weight="regular"
+              color="#0A0A15"
             />
+          </div>
+          <div className="sideBar-content">
+            <Button
+              width="full"
+              onClick={() => {
+                createSchedule();
+                setSlideMenuOpen(false);
+              }}
+            >
+              <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
+            </Button>
+            <div className="host-div">
+              {schedules ? <p>Host</p> : <p></p>}
+              <div className="host-cards">
+                {schedules &&
+                  schedules.Schedules.map(
+                    (schedule) =>
+                      schedule.is_host && (
+                        <div key={schedule.schedule_id}>
+                          <Card
+                            Display={slideMenuOpen ? 'Flex' : 'none'}
+                            key={String(schedule.schedule_id)}
+                            status={schedule.status}
+                            subject={schedule.event_title}
+                            eventDate={
+                              schedule.event_date
+                                ? formatDate(schedule.event_date)
+                                : undefined
+                            }
+                            eventTime={schedule.event_time}
+                            proposedDateRange={
+                              schedule.proposed_date
+                                ? formatDate(schedule.proposed_date)
+                                : undefined
+                            }
+                          />
+                        </div>
+                      )
+                  )}
+              </div>
+            </div>
+            <div className="guest-div">
+              {schedules ? <p>Convidado</p> : <p></p>}
+              <div className="guest-cards">
+                {schedules &&
+                  schedules.Schedules.map(
+                    (schedule) =>
+                      !schedule.is_host && (
+                        <div key={schedule.schedule_id}>
+                          <Card
+                            Display={slideMenuOpen ? 'Flex' : 'none'}
+                            key={String(schedule.schedule_id)}
+                            status={schedule.status}
+                            subject={schedule.event_title}
+                            eventDate={
+                              schedule.event_date
+                                ? formatDate(schedule.event_date)
+                                : undefined
+                            }
+                            eventTime={schedule.event_time}
+                            proposedDateRange={
+                              schedule.proposed_date
+                                ? formatDate(schedule.proposed_date)
+                                : undefined
+                            }
+                          />
+                        </div>
+                      )
+                  )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div className="chat-content">
         <div className="logo">
-          <div className="schedul-ai">
-            <Icon icon="robot" size={32} weight="fill" />
-            <p>SchedulAI</p>
-          </div>
           <Button onClick={() => logout()}>
             <p>Sair</p>
           </Button>

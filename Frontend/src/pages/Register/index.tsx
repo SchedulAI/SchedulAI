@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "../../components/Button";
-import { Icon } from "../../components/Icon";
-import { Input } from "../../components/Input";
-import styled from "styled-components";
-import apiUrl from "../../config/api";
-import { useState } from "react";
-import Snackbar from "../../components/Snackbar";
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/Button';
+import { Icon } from '../../components/Icon';
+import { Input } from '../../components/Input';
+import styled from 'styled-components';
+import apiUrl from '../../config/api';
+import { useState } from 'react';
+import Snackbar from '../../components/Snackbar';
 
 const RegisterStyled = styled.div`
   display: flex;
@@ -24,7 +24,7 @@ const RegisterStyled = styled.div`
     gap: 8px;
     top: 0;
     left: 0;
-    padding: 8px;
+    padding: 32px;
   }
 
   .register-div-section {
@@ -115,13 +115,13 @@ const RegisterStyled = styled.div`
 `;
 
 export const Register = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
-    "success"
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
+    'success'
   );
   const [loading, setLoading] = useState(false);
 
@@ -130,10 +130,10 @@ export const Register = () => {
   const registerFetch = async () => {
     setLoading(true);
     try {
-      const response = await fetch(apiUrl("/user/create"), {
-        method: "POST",
+      const response = await fetch(apiUrl('/user/create'), {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: name,
@@ -145,20 +145,20 @@ export const Register = () => {
 
       if (data.sucess) {
         setSnackbarMessage(data.message);
-        setSnackbarType("success");
+        setSnackbarType('success');
         setSnackbarVisible(true);
         setTimeout(() => {
-          navigate("/login");
+          navigate('/login');
           setLoading(false);
         }, 5000);
       } else {
         setSnackbarMessage(data.message);
-        setSnackbarType("error");
+        setSnackbarType('error');
         setSnackbarVisible(true);
       }
     } catch (error) {
       setSnackbarMessage((error as Error).message);
-      setSnackbarType("error");
+      setSnackbarType('error');
       setSnackbarVisible(true);
       setLoading(false);
     }
@@ -167,7 +167,7 @@ export const Register = () => {
   return (
     <RegisterStyled className="register-main-div">
       <div className="btn-back-div">
-        <Button onClick={() => navigate("/")}>
+        <Button onClick={() => navigate('/')}>
           <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
           <span>Voltar</span>
         </Button>
@@ -219,14 +219,14 @@ export const Register = () => {
           >
             Registrar
           </Button>
-          <a id="register-a-create-account" onClick={() => navigate("/login")}>
+          <a id="register-a-create-account" onClick={() => navigate('/login')}>
             Já possui uma conta? <span>Acesse agora</span>
           </a>
         </div>
       </div>
       {snackbarVisible && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
           variant={snackbarType}
           message={snackbarMessage}
         />
