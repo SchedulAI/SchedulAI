@@ -16,3 +16,9 @@ scheduleRouter.post(
   permissionVerify,
   scheduleController.createInvite
 );
+
+scheduleRouter.patch(
+  '/:scheduleId/invites',
+  permissionVerify,
+  scheduleController.updateInviteStatus
+);
