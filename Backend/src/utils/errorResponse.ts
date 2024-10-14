@@ -12,9 +12,11 @@ export default function errorResponse(
   res: Response,
   error: CustomError
 ): Response {
-  return res.status(error.statusCode).json({
+  const statusCode = error.statusCode || 500;
+  const err = error.error || 'INTERNAL_SERVER_ERROR';
+  return res.status(statusCode).json({
     success: false,
-    error: error.error,
+    error: err,
     message: error.message,
   });
 }
