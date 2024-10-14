@@ -58,4 +58,30 @@ export const scheduleController = {
       errorResponse(res, error);
     }
   },
+
+  createInvite: async (req: Request, res: Response): Promise<void> => {
+    const scheduleId = req.params.scheduleId;
+    const emails = req.body.emails;
+    console.log(emails);
+    try {
+      if (!emails) {
+        errorResponse(res, {
+          error: 'BAD_REQUEST',
+          message: 'Por favor, infome emails dos Convidados.',
+          statusCode: 400,
+        });
+        return;
+      }
+
+      const schedule = await scheduleServices.createInvites(scheduleId, emails);
+
+      res.status(200).json({
+        sucess: true,
+        message: 'Convites criados com Sucesso',
+        data: schedule,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
 };
