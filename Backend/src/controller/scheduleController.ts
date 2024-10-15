@@ -58,4 +58,36 @@ export const scheduleController = {
       errorResponse(res, error);
     }
   },
+
+  updateScheduleInfo: async (req: Request, res: Response): Promise<void> => {
+    const { scheduleId } = req.params;
+    const { title, description } = req.body;
+    const user = req.user!;
+
+    try {
+      if (!scheduleId) {
+        errorResponse(res, {
+          error: 'BAD_REQUEST',
+          message: 'Por favor, informe o ID do agendamento.',
+          statusCode: 400,
+        });
+        return;
+      }
+
+      const updatedSchedule = await scheduleServices.updateScheduleInfo(
+        user.id,
+        scheduleId,
+        title,
+        description,
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Agendamento atualizado com sucesso',
+        data: updatedSchedule,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
 };

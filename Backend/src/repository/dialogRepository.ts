@@ -43,7 +43,7 @@ export const dialogRepository = {
   saveMessage: async (
     dialogId: string,
     message: string,
-    sender: 'user' | 'IA'
+    sender: 'user' | 'IA' | 'system' | 'tool'
   ): Promise<Message> => {
     const client = await pool.connect();
     try {

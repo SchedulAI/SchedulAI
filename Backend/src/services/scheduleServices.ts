@@ -45,4 +45,32 @@ export const scheduleServices = {
       throw error;
     }
   },
+  updateScheduleInfo: async (
+    userId: string,
+    scheduleId: string,
+    title?: string,
+    description?: string,
+  ): Promise<Schedule> => {
+    try {
+      const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+      if (!schedule) {
+        throw new BadRequestException('Agendamento não encontrado.');
+      }
+
+      if (schedule.user_id !== userId) {
+        throw new ForbiddenException('Você não é o dono desse agendamento.');
+      }
+
+      const updatedSchedule = await scheduleRepository.updateScheduleInfo(
+        scheduleId,
+        title || schedule.title,
+        description || schedule.description,
+      );
+
+      return updatedSchedule;
+    } catch (error: any) {
+      throw error;
+    }
+  },
 };
