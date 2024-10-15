@@ -9,6 +9,7 @@ import { Dashboard } from '../pages/Dashboard';
 import { Register } from '../pages/Register';
 import { RecoverPassword } from '../pages/RecoverPassword';
 import { useCheckAuth } from '../Utils/ValidateAuth';
+import { InvitedRegister } from '../pages/InvitedRegister';
 
 interface ChildrenTypes {
   children: ReactElement;
@@ -72,6 +73,14 @@ export const AppRoutes = () => {
           element={
             <Public>
               <RecoverPassword />
+            </Public>
+          }
+        />
+        <Route
+          path="/invite/:schedule_id"
+          element={
+            <Public>
+              <InvitedRegister />
             </Public>
           }
         />

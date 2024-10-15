@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled, { css } from "styled-components";
 
 interface SnackbarProps {
-  anchorOrigin: {
+  anchororigin: {
     vertical: "top" | "bottom";
     horizontal: "left" | "center" | "right";
   };
@@ -11,14 +11,14 @@ interface SnackbarProps {
 }
 
 const SnackbarContainer = styled.div<{
-  anchorOrigin: SnackbarProps["anchorOrigin"];
+  anchororigin: SnackbarProps["anchororigin"];
   variant: SnackbarProps["variant"];
   visible: boolean;
 }>`
   position: fixed;
-  ${({ anchorOrigin }) => css`
-    ${anchorOrigin.vertical}: 20px;
-    ${anchorOrigin.horizontal}: 20px;
+  ${({ anchororigin }) => css`
+    ${anchororigin.vertical}: 20px;
+    ${anchororigin.horizontal}: 20px;
   `}
   padding: 16px;
   border-radius: 4px;
@@ -31,7 +31,7 @@ const SnackbarContainer = styled.div<{
 `;
 
 const Snackbar: React.FC<SnackbarProps> = ({
-  anchorOrigin,
+  anchororigin,
   variant,
   message,
 }) => {
@@ -39,14 +39,14 @@ const Snackbar: React.FC<SnackbarProps> = ({
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 50000000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <SnackbarContainer
-      anchorOrigin={anchorOrigin}
+      anchororigin={anchororigin}
       variant={variant}
       visible={visible}
     >

@@ -4,8 +4,9 @@ import { Icon } from '../../components/Icon';
 import { Input } from '../../components/Input';
 import styled from 'styled-components';
 import apiUrl from '../../config/api';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import Snackbar from '../../components/Snackbar';
+import { ScheduleContext } from '../../providers/ScheduleProvider';
 
 const RegisterStyled = styled.div`
   display: flex;
@@ -114,6 +115,14 @@ const RegisterStyled = styled.div`
   }
 `;
 
+interface RegisterResponse {
+  id: string;
+  name: string;
+  email: string;
+  success: boolean;
+  message: string;
+}
+
 export const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -124,8 +133,28 @@ export const Register = () => {
     'success'
   );
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const scheduleContext = useContext(ScheduleContext);
+  const schedule_id = scheduleContext?.schedule_id;
 
   const navigate = useNavigate();
+
+  const createInvite = async () => {
+    try {
+      await fetch(apiUrl('/invite/create'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          schedule_id: schedule_id,
+          user_id: userId,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const registerFetch = async () => {
     setLoading(true);
@@ -141,9 +170,12 @@ export const Register = () => {
           password: password,
         }),
       });
-      const data = await response.json();
-
-      if (data.sucess) {
+      const data: RegisterResponse = await response.json();
+      setUserId(data.id);
+      if (schedule_id) {
+        await createInvite();
+      }
+      if (response.ok) {
         setSnackbarMessage(data.message);
         setSnackbarType('success');
         setSnackbarVisible(true);
@@ -155,6 +187,7 @@ export const Register = () => {
         setSnackbarMessage(data.message);
         setSnackbarType('error');
         setSnackbarVisible(true);
+        setLoading(false);
       }
     } catch (error) {
       setSnackbarMessage((error as Error).message);
@@ -226,7 +259,7 @@ export const Register = () => {
       </div>
       {snackbarVisible && (
         <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          anchororigin={{ vertical: 'top', horizontal: 'right' }}
           variant={snackbarType}
           message={snackbarMessage}
         />

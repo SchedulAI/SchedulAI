@@ -243,7 +243,7 @@ export const Login = () => {
       </div>
       {snackbarVisible && (
         <Snackbar
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          anchororigin={{ vertical: 'top', horizontal: 'right' }}
           variant="error"
           message={snackbarMessage}
         />
