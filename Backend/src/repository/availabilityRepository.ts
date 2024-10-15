@@ -29,10 +29,8 @@ export const availabilityRepository = {
         WHERE schedule_id = $1;
       `;
       const { rows } = await client.query(query, [scheduleId]);
-      console.log(rows);
       return rows;
     } catch (error: any) {
-      console.log(error);
       throw new InternalServerException('Erro ao listar as disponibilidades');
     } finally {
       client.release();

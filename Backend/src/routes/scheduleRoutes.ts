@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { permissionVerify } from '../middleware/permissionVerify';
 import { scheduleController } from '../controller/scheduleController';
 import { availabilityController } from '../controller/availabilityController';
+import { proposedDateController } from '../controller/proposedDateController';
 
 export const scheduleRouter = Router();
 
@@ -56,4 +57,23 @@ scheduleRouter.delete(
   '/:scheduleId/availability/:availabilityId',
   permissionVerify,
   availabilityController.deleteAvailability
+);
+
+// Parte da gestão das Proposed Dates
+scheduleRouter.get(
+  '/:scheduleId/proposed',
+  permissionVerify,
+  proposedDateController.getProposedDate
+);
+
+scheduleRouter.post(
+  '/:scheduleId/proposed',
+  permissionVerify,
+  proposedDateController.createProposedDate
+);
+
+scheduleRouter.patch(
+  '/:scheduleId/proposed',
+  permissionVerify,
+  proposedDateController.updateProposedDate
 );
