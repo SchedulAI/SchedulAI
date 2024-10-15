@@ -98,4 +98,24 @@ export const dialogRepository = {
       client.release(); // Certifique-se de liberar a conexão
     }
   },
+
+  getConversationByDialogId: async (dialogId: string): Promise<Message[]> => {
+    const client = await pool.connect();
+    try {
+      const query = `
+            SELECT sender, message 
+            FROM messages
+            WHERE dialog_id = $1
+            AND sender IN ('IA', 'user')
+            ORDER BY created_at ASC;
+        `;
+      const { rows } = await client.query(query, [dialogId]);
+      return rows;
+    } catch (error: any) {
+      console.log('Erro ao pegar mensagem:', error);
+      throw new InternalServerException('Erro ao buscar mensagens do diálogo');
+    } finally {
+      client.release(); // Certifique-se de liberar a conexão
+    }
+  },
 };

@@ -6,18 +6,18 @@ import {
 } from '../utils/exceptions';
 
 export const dialogServices = {
-  getMessages: async (dialogId: string, userId: string): Promise<Message[]> => {
+  getMessages: async (scheduleId: string, userId: string): Promise<Message[]> => {
     try {
-      const dialog = await dialogRepository.getDialogsByUserId(userId);
+      const dialog = await dialogRepository.getDialog(userId, scheduleId);
 
       if (!dialog) {
-        throw new NotFoundException('Não há diálogos associados ao User ID');
+        throw new NotFoundException('Não há diálogos do usuário associado ao agendamento.');
       }
 
-      const messages = await dialogRepository.getMessagesByDialogId(dialogId);
+      const messages = await dialogRepository.getConversationByDialogId(dialog.id);
 
       if (!messages) {
-        throw new NotFoundException('Não há mensagens associadas ao User ID');
+        throw new NotFoundException('Não há mensagens neste dialogo.');
       }
       return messages;
     } catch (error: any) {
