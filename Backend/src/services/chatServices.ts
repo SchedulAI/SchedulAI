@@ -1,7 +1,8 @@
 // import { OpenAI } from "@langchain/openai";
 import { llm } from '../utils/llm';
 import { dialogRepository } from '../repository/dialogRepository';
-import { StringOutputParser } from '@langchain/core/output_parsers';
+import { toolsByName } from '../utils/tools';
+import { scheduleRepository } from '../repository/scheduleRepository';
 
 export const chatServices = {
   chat: async (
@@ -10,31 +11,58 @@ export const chatServices = {
     userId: string
   ): Promise<string> => {
     try {
+      const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
       let dialog = await dialogRepository.getDialog(userId, scheduleId);
 
       if (!dialog) {
         dialog = await dialogRepository.createDialog(userId, scheduleId);
+        await dialogRepository.saveMessage(
+          dialog.id,
+          `O id do usuário é ${userId}, O id do agendamento é ${scheduleId}, O id do criador do agendamento é ${schedule.user_id}`,
+          'system'
+        );
       }
 
       const previousMessages = await dialogRepository.getMessagesByDialogId(
         dialog.id
       );
-      const history = previousMessages
+      let history = previousMessages
         .map((msg: any) => `${msg.sender}: ${msg.message}`)
         .join('\n');
 
-      const chain = llm.prompt.pipe(llm.model).pipe(new StringOutputParser());
+      // Cria a cadeia de execução usando o modelo e ferramentas (tools)
+      const chain = llm.prompt.pipe(llm.model);
 
-      const res = await chain.invoke({
+      // Passa o histórico e a mensagem do usuário como entrada para o modelo
+      let res = await chain.invoke({
         input: message,
         history: history,
       });
 
-      // Salva a mensagem no banco de dados (tanto do usuário quanto da IA)
-      await dialogRepository.saveMessage(dialog.id, message, 'user'); // Mensagem do usuário
-      await dialogRepository.saveMessage(dialog.id, res, 'IA'); // Resposta da IA
+      await dialogRepository.saveMessage(dialog.id, message, 'user');
 
-      return res;
+      if (res.tool_calls) {
+        const toolsMessages = [];
+
+        for (const toolCall of res.tool_calls) {
+          const selectedTool = toolsByName[toolCall.name];
+          const toolResponse = await selectedTool.invoke(toolCall);
+
+          toolsMessages.push(toolResponse);
+        }
+
+        res = await chain.invoke({
+          input: toolsMessages,
+          history: history,
+        });
+      }
+
+      const aiResponse = res.content as string;
+
+      await dialogRepository.saveMessage(dialog.id, aiResponse, 'IA');
+
+      return aiResponse;
     } catch (error) {
       console.error('Erro ao se comunicar com a IA:', error);
       throw new Error(

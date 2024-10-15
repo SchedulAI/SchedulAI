@@ -2,6 +2,7 @@
 import { ChatOpenAI } from '@langchain/openai';
 import { PromptTemplate } from '@langchain/core/prompts';
 import config from '../config';
+import tools from './tools';
 
 export const llm = {
   // Instancia o modelo com as configurações
@@ -9,7 +10,7 @@ export const llm = {
     openAIApiKey: config.OPENAIKEY,
     temperature: 0.7,
     modelName: 'gpt-4o-mini',
-  }),
+  }).bindTools(tools),
 
   // Define o template do prompt com as regras de agendamento
   prompt: PromptTemplate.fromTemplate(`
