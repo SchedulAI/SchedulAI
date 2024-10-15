@@ -1,7 +1,7 @@
 -- Remover a coluna 'important'
-ALTER TABLE invites
-DROP COLUMN important;
+ALTER TABLE IF EXISTS invites
+DROP COLUMN IF EXISTS important;
 
 -- Setar default na coluna status
-ALTER TABLE invites 
+ALTER TABLE IF EXISTS invites 
 ALTER COLUMN status SET DEFAULT 'pending';
