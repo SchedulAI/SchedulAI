@@ -33,17 +33,17 @@ export const scheduleServices = {
     userId: string,
     scheduleId: string
   ): Promise<Schedule> => {
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+    if (schedule.user_id !== userId) {
+      throw new ForbiddenException('Você não é o dono desse agendamento.');
+    }
+
+    if (schedule.status === 'cancelled') {
+      throw new BadRequestException('O agendamento já está cancelado.');
+    }
+
     try {
-      const schedule = await scheduleRepository.getScheduleById(scheduleId);
-
-      if (schedule.user_id !== userId) {
-        throw new ForbiddenException('Você não é o dono desse agendamento.');
-      }
-
-      if (schedule.status === 'cancelled') {
-        throw new BadRequestException('O agendamento já está cancelado.');
-      }
-
       const cancelledSchedule = await scheduleRepository.cancelSchedule(
         scheduleId
       );
@@ -126,7 +126,20 @@ export const scheduleServices = {
     if (!foundUser) {
       throw new NotFoundException('Email não encontrado');
     }
-    const updatedInvite = await invitesRepository.updateStatus(foundUser.id);
-    return updatedInvite;
+
+    const foundInvite = await invitesRepository.listInvite(
+      scheduleId,
+      foundUser.id
+    );
+
+    if (!foundInvite) {
+      throw new NotFoundException('Convite não encontrado');
+    }
+    try {
+      const updatedInvite = await invitesRepository.updateStatus(foundUser.id);
+      return updatedInvite;
+    } catch (error) {
+      throw new InternalServerException('Não foi possivel atualizar convite');
+    }
   },
 };
