@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/userHooks';
 import { Card } from '../../components/Card';
 import apiUrl from '../../config/api';
+import { Modal } from '../../components/Modal';
 
 const shrinkWidth = keyframes`
   from {
@@ -21,7 +22,7 @@ const expandWidth = keyframes`
     width: 4%;
   }
   to {
-    width: 19%;
+    width: 100%;
   }
 `;
 
@@ -48,7 +49,7 @@ const StyledDashboard = styled.div<{ slideMenuOpen: boolean }>`
   }
 
   .div-cover-open {
-    width: 0;
+    width: 100%;
     height: 100vh;
     background-color: #0a0a1575;
     position: absolute;
@@ -81,7 +82,6 @@ const StyledDashboard = styled.div<{ slideMenuOpen: boolean }>`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    user-select: none;
 
     .guest-cards,
     .host-cards {
@@ -102,7 +102,8 @@ const StyledDashboard = styled.div<{ slideMenuOpen: boolean }>`
   }
 
   .slide-bar-menu-open {
-    width: 19%;
+    max-width: 25rem;
+    width: 100%;
     height: 100%;
     animation: ${expandWidth} 2s forwards;
     background-color: #d4d3f3;
@@ -143,6 +144,7 @@ const StyledDashboard = styled.div<{ slideMenuOpen: boolean }>`
 
     button {
       display: ${(props) => (props.slideMenuOpen ? 'flex' : 'none')};
+      overflow: hidden;
     }
   }
 
@@ -254,7 +256,6 @@ const StyledDashboard = styled.div<{ slideMenuOpen: boolean }>`
   }
 `;
 
-// Função para formatar a data
 const formatDate = (date: Date): string => {
   const day = String(date.getDate()).padStart(2, '0');
   const month = String(date.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
@@ -273,6 +274,16 @@ export const Dashboard = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { setUser } = useUser();
+
+  const [activeModalId, setActiveModalId] = useState<number | null>(null);
+
+  function openModal(schedule_id: number) {
+    setActiveModalId(schedule_id); // Abre o modal do card específico
+  }
+
+  function closeModal() {
+    setActiveModalId(null);
+  }
 
   async function handleSendMessage() {
     if (!message) return;
@@ -411,7 +422,7 @@ export const Dashboard = () => {
               <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
             </Button>
             <div className="host-div">
-              {schedules ? <p>Host</p> : <p></p>}
+              <p>Host</p>
               <div className="host-cards">
                 {schedules &&
                   schedules.Schedules.map(
@@ -431,17 +442,21 @@ export const Dashboard = () => {
                             eventTime={schedule.event_time}
                             proposedDateRange={
                               schedule.proposed_date
-                                ? formatDate(schedule.proposed_date)
+                                ? formatDate(schedule.proposed_date[0])
                                 : undefined
                             }
+                            onClick={() => openModal(schedule.schedule_id)}
                           />
+                          {activeModalId === schedule.schedule_id && (
+                            <Modal onClick={closeModal} schedule={schedule} />
+                          )}
                         </div>
                       )
                   )}
               </div>
             </div>
             <div className="guest-div">
-              {schedules ? <p>Convidado</p> : <p></p>}
+              <p>Convidado</p>
               <div className="guest-cards">
                 {schedules &&
                   schedules.Schedules.map(
@@ -461,7 +476,7 @@ export const Dashboard = () => {
                             eventTime={schedule.event_time}
                             proposedDateRange={
                               schedule.proposed_date
-                                ? formatDate(schedule.proposed_date)
+                                ? formatDate(schedule.proposed_date[0])
                                 : undefined
                             }
                           />

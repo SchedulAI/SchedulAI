@@ -15,6 +15,7 @@ const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
   color: black;
   transition: all ease-in-out 0.3s;
   cursor: pointer;
+  user-select: none;
 
   .div-subject {
     font-weight: 500;

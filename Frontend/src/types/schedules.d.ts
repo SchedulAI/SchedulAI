@@ -6,7 +6,7 @@ interface Invite {
   interface Schedule {
     schedule_id: number;
     status: 'pending' | 'confirmed' | 'cancelled';
-    proposed_date?: Date;
+    proposed_date?: Date[];
     time_limit?: Date;
     event_date?: Date;
     event_time?: string;
