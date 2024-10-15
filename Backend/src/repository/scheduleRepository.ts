@@ -57,4 +57,30 @@ export const scheduleRepository = {
       client.release();
     }
   },
+
+  updateScheduleInfo: async (
+    scheduleId: string,
+    title: string,
+    description: string,
+  ): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+      UPDATE schedule
+      SET title = $1, description = $2
+      WHERE id = $3
+      RETURNING *;
+    `;
+    try {
+      const updateResult = await client.query(queryUpdate, [
+        title,
+        description,
+        scheduleId,
+      ]);
+      return updateResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao atualizar informações do agendamento');
+    } finally {
+      client.release();
+    }
+  },
 };
