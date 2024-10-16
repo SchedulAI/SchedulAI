@@ -28,6 +28,7 @@ scheduleRouter.patch(
   '/:scheduleId',
   permissionVerify,
   scheduleController.updateScheduleInfo
+);
 
 // Parte da gestão dos Invites
 scheduleRouter.post(
