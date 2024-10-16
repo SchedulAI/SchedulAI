@@ -40,6 +40,24 @@ export const scheduleRepository = {
       client.release();
     }
   },
+
+  getScheduleByUserId: async (scheduleId: string): Promise<Schedule[]> => {
+    const client = await pool.connect();
+    const query = `
+          SELECT * 
+          FROM schedule
+          WHERE user_id = $1
+        `;
+    try {
+      const { rows } = await client.query(query, [scheduleId]);
+      return rows;
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao buscar agendamentos');
+    } finally {
+      client.release();
+    }
+  },
+
   cancelSchedule: async (scheduleId: string): Promise<Schedule> => {
     const client = await pool.connect();
     const queryUpdate = `

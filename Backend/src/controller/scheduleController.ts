@@ -31,6 +31,41 @@ export const scheduleController = {
       errorResponse(res, error);
     }
   },
+
+  getSchedule: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+    const scheduleId = req.params.scheduleId;
+
+    try {
+      const schedule = await scheduleServices.getScheduleById(
+        scheduleId,
+        user.id
+      );
+      res.status(200).json({
+        sucess: true,
+        message: 'Busca realizada com sucesso',
+        data: schedule,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+
+  getSchedules: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+
+    try {
+      const schedules = await scheduleServices.getAllSchedules(user.id);
+      res.status(200).json({
+        sucess: true,
+        message: 'Busca realizada com sucesso',
+        data: schedules,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+
   cancelSchedule: async (req: Request, res: Response): Promise<void> => {
     const user = req.user!;
     const scheduleId = req.params.scheduleId;
