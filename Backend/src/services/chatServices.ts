@@ -38,13 +38,16 @@ export const chatServices = {
 
       const history = previousMessages
         .map((msg) => {
+          const inputMessage =
+            msg.message + ' - Data de envio: ' + new Date(msg.created_at);
+
           switch (msg.sender) {
             case 'user':
-              return new HumanMessage(msg.message);
+              return new HumanMessage(inputMessage);
             case 'IA':
-              return new AIMessage(msg.message);
+              return new AIMessage(inputMessage);
             case 'system':
-              return new SystemMessage(msg.message);
+              return new SystemMessage(inputMessage);
           }
         })
         .filter((msg) => msg !== undefined);
@@ -52,17 +55,21 @@ export const chatServices = {
       // Cria a cadeia de execução usando o modelo e ferramentas (tools)
       const model = llm.model;
 
-      history.push(new HumanMessage(message));
+      const todayDate = new Date();
+
+      history.push(
+        new HumanMessage(message + ' - Data de envio: ' + todayDate)
+      );
 
       // Passa o histórico e a mensagem do usuário como entrada para o modelo
       let res = await model.invoke(history);
 
       await dialogRepository.saveMessage(dialog.id, message, 'user');
 
-      if (res.tool_calls) {
+      if (res.tool_calls!.length > 0) {
         history.push(res);
 
-        for (const toolCall of res.tool_calls) {
+        for (const toolCall of res.tool_calls!) {
           const selectedTool = toolsByName[toolCall.name];
           const toolResponse = await selectedTool.invoke(toolCall);
 
@@ -75,7 +82,7 @@ export const chatServices = {
       const aiResponse = res.content as string;
 
       await dialogRepository.saveMessage(dialog.id, aiResponse, 'IA');
-
+      
       return aiResponse;
     } catch (error) {
       console.error('Erro ao se comunicar com a IA:', error);

@@ -3,4 +3,5 @@ export interface Message {
   dialog_id: string;
   sender: string;
   message: string;
+  created_at: string;
 }

@@ -84,7 +84,7 @@ export const dialogRepository = {
     const client = await pool.connect();
     try {
       const query = `
-            SELECT sender, message 
+            SELECT * 
             FROM messages
             WHERE dialog_id = $1
             ORDER BY created_at ASC;
