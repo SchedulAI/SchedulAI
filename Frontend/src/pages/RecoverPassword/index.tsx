@@ -5,7 +5,6 @@ import { Input } from '../../components/Input';
 import { useNavigate } from 'react-router-dom';
 import { RecoverPasswordStyled } from './RecoverPasswordStyled';
 
-
 export const RecoverPassword = () => {
   const navigate = useNavigate();
 
@@ -32,7 +31,9 @@ export const RecoverPassword = () => {
               icon="mail"
               color="#0A0A1579"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
             />
           </div>
         </div>
