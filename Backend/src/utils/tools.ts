@@ -1,15 +1,10 @@
 import { tool } from '@langchain/core/tools';
-import { z } from 'zod';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import { ForbiddenException } from './exceptions';
-
-const updateScheduleSchema = z.object({
-  scheduleId: z.string().describe('O id do agendamento.'),
-  title: z.string().describe('O titulo do agendamento.'),
-  description: z.string().describe('A descrição do evento.'),
-  userId: z.string().describe('O id do usuário que fez a requisição.'),
-  hostId: z.string().describe('O id do dono do agendamento.'),
-});
+import { invitedEmailsRepository } from '../repository/invitedEmailsRepository';
+import updateScheduleInfoSchema from '../schemas/updateScheduleInfo';
+import invitedEmailSchema from '../schemas/invitedEmails';
+import { z } from 'zod';
 
 const updateScheduleInfo = tool(
   async ({ scheduleId, title, description, userId, hostId }) => {
@@ -34,14 +29,37 @@ const updateScheduleInfo = tool(
     name: 'updateScheduleInfo',
     description:
       'Pode preencher o titulo e a descrição, quando o user fornecer pela primeira vez.',
-    schema: updateScheduleSchema,
+    schema: updateScheduleInfoSchema,
   }
 );
 
-const tools = [updateScheduleInfo];
+const createInvitedEmails = tool(
+  async ({ invitedEmails }) => {
+    try {
+      for (const invitedEmail of invitedEmails) {
+        const { email, scheduleId } = invitedEmail;
+        await invitedEmailsRepository.createInvitedEmail(email, scheduleId);
+      }
+
+      return 'Os emails dos convidados foram criados com sucesso!';
+    } catch (error: any) {
+      return error.message;
+    }
+  },
+  {
+    name: 'createInvitedEmails',
+    description:
+      'Cria a lista de e-emails dos convidados para aquele agendamento, após o usuário fornecer.',
+    schema: z.object({
+      invitedEmails: invitedEmailSchema,
+    }),
+  }
+);
+const tools = [updateScheduleInfo, createInvitedEmails];
 
 export const toolsByName: { [key: string]: any } = {
   updateScheduleInfo: updateScheduleInfo,
+  createInvitedEmails: createInvitedEmails,
 };
 
 export default tools;
