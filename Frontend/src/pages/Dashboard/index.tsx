@@ -10,6 +10,7 @@ import Snackbar from '../../components/Snackbar';
 import { StyledDashboard, Dot } from './StyleDashboard';
 import { formatDate } from '../../Utils/FormatDate';
 import { formatMessage } from '../../Utils/FormatMessage';
+import { compareStatus } from '../../Utils/sortSchedules';
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
@@ -141,6 +142,7 @@ export const Dashboard = () => {
       });
       const schedules: ScheduleResponse = await response.json();
       if (schedules.success) {
+        schedules.data.sort(compareStatus);
         setSchedules(schedules);
       }
       if (schedules.success && schedules.data.length === 0) {
