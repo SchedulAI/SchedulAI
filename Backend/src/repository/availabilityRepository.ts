@@ -19,9 +19,7 @@ export const availabilityRepository = {
     }
   },
 
-  getAllAvailabilitiesBySchedule: async (
-    scheduleId: string
-  ): Promise<Availability[]> => {
+  getAllAvailabilities: async (scheduleId: string): Promise<Availability[]> => {
     const client = await pool.connect();
     try {
       const query = `

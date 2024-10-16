@@ -1,6 +1,7 @@
-import { Invites } from '../entities/invitesEntity';
 import { Schedule } from '../entities/scheduleEntity';
+import { availabilityRepository } from '../repository/availabilityRepository';
 import { invitesRepository } from '../repository/invitesRepository';
+import { proposedDateRepository } from '../repository/proposedDateRepository';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import { userRepository } from '../repository/userRepository';
 import {
@@ -29,6 +30,120 @@ export const scheduleServices = {
     }
   },
 
+  getScheduleById: async (
+    scheduleId: string,
+    userId: string
+  ): Promise<Schedule> => {
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+    if (!schedule) {
+      throw new NotFoundException('Agendamento não encontrado para o ID.');
+    }
+
+    const is_host = userId === schedule.user_id;
+
+    try {
+      // Buscar o nome do host (criador do agendamento)
+      const host = await userRepository.findById(schedule.user_id);
+
+      // Buscar as informações complementares
+      const [proposedDate, invites, availability] = await Promise.all([
+        proposedDateRepository.listProposedDate(scheduleId),
+        invitesRepository.listAllInvites(scheduleId),
+        availabilityRepository.getAllAvailabilities(scheduleId),
+      ]);
+
+      const invitesWithNames = await Promise.all(
+        invites.map(async (invite) => {
+          const user = await userRepository.findById(invite.user_id);
+          return {
+            ...invite,
+            guest_name: user!.name,
+          };
+        })
+      );
+
+      // Retornar o agendamento com todos os dados complementares, incluindo o nome do host e convidados
+      return {
+        ...schedule,
+        is_host,
+        host_name: host!.name, // Adiciona o nome do host
+        proposed_date: proposedDate || null,
+        invites: invitesWithNames,
+        availability,
+      };
+    } catch (error) {
+      throw new InternalServerException(
+        'Erro ao carregar os dados complementares do agendamento.'
+      );
+    }
+  },
+
+  getAllSchedules: async (userId: string): Promise<Schedule[]> => {
+    const invites = await invitesRepository.listInvitesByUserId(userId);
+
+    // Buscar os agendamentos baseados nos convites recebidos
+    const schedulesFromInvites = await Promise.all(
+      invites.map(async (invite) => {
+        return await scheduleRepository.getScheduleById(invite.schedule_id);
+      })
+    );
+
+    // Buscar os agendamentos criados pelo usuário
+    const userSchedules = await scheduleRepository.getScheduleByUserId(userId);
+
+    // Combinar os agendamentos e remover duplicatas
+    const allSchedules = [...schedulesFromInvites, ...userSchedules];
+    const uniqueSchedules = allSchedules.filter(
+      (schedule, index, self) =>
+        index === self.findIndex((s) => s.id === schedule.id)
+    );
+
+    // Processar cada agendamento para incluir informações adicionais
+    const completeSchedules = await Promise.all(
+      uniqueSchedules.map(async (schedule) => {
+        const is_host = userId === schedule.user_id;
+
+        // Buscar o nome do host (criador do agendamento)
+        const host = await userRepository.findById(schedule.user_id);
+
+        // Buscar as informações complementares para cada schedule
+        const [proposedDate, invites, availability] = await Promise.all([
+          proposedDateRepository.listProposedDate(schedule.id),
+          invitesRepository.listAllInvites(schedule.id),
+          availabilityRepository.getAllAvailabilities(schedule.id),
+        ]);
+
+        // Incluir o nome dos convidados
+        const invitesWithNames = await Promise.all(
+          invites.map(async (invite) => {
+            const user = await userRepository.findById(invite.user_id);
+            return {
+              ...invite,
+              guest_name: user!.name,
+            };
+          })
+        );
+
+        // Retornar o schedule com as informações complementares e nome do host
+        return {
+          ...schedule,
+          is_host,
+          host_name: host!.name,
+          proposed_date: proposedDate || null,
+          invites: invitesWithNames,
+          availability,
+        };
+      })
+    );
+
+    if (completeSchedules.length === 0) {
+      throw new NotFoundException('Usuário não possui agendamentos');
+    }
+
+    return completeSchedules; // Retorna todos os schedules processados
+  },
+
   cancelSchedule: async (
     userId: string,
     scheduleId: string
@@ -53,93 +168,6 @@ export const scheduleServices = {
       throw new InternalServerException(
         'Não foi possível Cancelar o Agendamento'
       );
-    }
-  },
-  createInvites: async (
-    scheduleId: string,
-    userEmails: string[]
-  ): Promise<Invites[]> => {
-    const schedule = await scheduleRepository.getScheduleById(scheduleId);
-
-    if (!schedule) {
-      throw new NotFoundException('Agendamento não encontrado');
-    }
-
-    // Obtém os usuários e lida com os erros.
-    const users = await Promise.all(
-      userEmails.map(async (email) => {
-        try {
-          const foundUser = await userRepository.findByEmail(email);
-          if (!foundUser) {
-            throw new Error();
-          }
-          return { user: foundUser.id, error: false };
-        } catch (error: any) {
-          return { user: email, error: true };
-        }
-      })
-    );
-
-    // Filtra apenas os usuários válidos
-    const validUsers = users
-      .filter((user) => user.error !== true)
-      .map((user) => user.user);
-
-    // Filtra os usuários inválidos
-    const invalidUsers = users
-      .filter((user) => user.error !== false)
-      .map((user) => user.user); // Mapeia para obter apenas os emails inválidos
-
-    // Aqui, `validEmails` contém os emails dos usuários válidos e `invalidEmails` contém os emails inválidos.
-    console.log('Emails válidos:', validUsers);
-    console.log('Emails inválidos:', invalidUsers);
-
-    if (validUsers.length < 1) {
-      throw new BadRequestException('Email(s) fornecido(s) Inválido(s)');
-    }
-
-    // Agora são lançados no banco os Invites para os usuários válidos
-    try {
-      const inviteList = await Promise.all(
-        validUsers.map(async (user) => {
-          const invite = await invitesRepository.createInvite(scheduleId, user);
-          return invite;
-        })
-      );
-
-      return inviteList;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao processar os Convites');
-    }
-  },
-  updateInvite: async (
-    scheduleId: string,
-    userEmail: string
-  ): Promise<Invites> => {
-    const schedule = await scheduleRepository.getScheduleById(scheduleId);
-
-    if (!schedule) {
-      throw new NotFoundException('Agendamento não encontrado');
-    }
-
-    const foundUser = await userRepository.findByEmail(userEmail);
-    if (!foundUser) {
-      throw new NotFoundException('Email não encontrado');
-    }
-
-    const foundInvite = await invitesRepository.listInvite(
-      scheduleId,
-      foundUser.id
-    );
-
-    if (!foundInvite) {
-      throw new NotFoundException('Convite não encontrado');
-    }
-    try {
-      const updatedInvite = await invitesRepository.updateStatus(foundUser.id);
-      return updatedInvite;
-    } catch (error) {
-      throw new InternalServerException('Não foi possivel atualizar convite');
     }
   },
 };

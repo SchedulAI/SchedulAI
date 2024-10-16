@@ -31,6 +31,41 @@ export const scheduleController = {
       errorResponse(res, error);
     }
   },
+
+  getSchedule: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+    const scheduleId = req.params.scheduleId;
+
+    try {
+      const schedule = await scheduleServices.getScheduleById(
+        scheduleId,
+        user.id
+      );
+      res.status(200).json({
+        sucess: true,
+        message: 'Busca realizada com sucesso',
+        data: schedule,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+
+  getSchedules: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+
+    try {
+      const schedules = await scheduleServices.getAllSchedules(user.id);
+      res.status(200).json({
+        sucess: true,
+        message: 'Busca realizada com sucesso',
+        data: schedules,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+
   cancelSchedule: async (req: Request, res: Response): Promise<void> => {
     const user = req.user!;
     const scheduleId = req.params.scheduleId;
@@ -53,56 +88,6 @@ export const scheduleController = {
         sucess: true,
         message: 'Agendamento cancelado com sucesso',
         data: schedule,
-      });
-    } catch (error: any) {
-      errorResponse(res, error);
-    }
-  },
-
-  createInvite: async (req: Request, res: Response): Promise<void> => {
-    const scheduleId = req.params.scheduleId;
-    const emails = req.body.emails;
-    try {
-      if (!emails) {
-        errorResponse(res, {
-          error: 'BAD_REQUEST',
-          message: 'Por favor, infome emails dos Convidados.',
-          statusCode: 400,
-        });
-        return;
-      }
-
-      const invites = await scheduleServices.createInvites(scheduleId, emails);
-
-      res.status(200).json({
-        sucess: true,
-        message: 'Convite(s) criado(s) com Sucesso',
-        data: invites,
-      });
-    } catch (error: any) {
-      errorResponse(res, error);
-    }
-  },
-
-  updateInviteStatus: async (req: Request, res: Response): Promise<void> => {
-    const scheduleId = req.params.scheduleId;
-    const email = req.body.email;
-    try {
-      if (!email) {
-        errorResponse(res, {
-          error: 'BAD_REQUEST',
-          message: 'Por favor, infome email do Convidado.',
-          statusCode: 400,
-        });
-        return;
-      }
-
-      const invites = await scheduleServices.updateInvite(scheduleId, email);
-
-      res.status(200).json({
-        sucess: true,
-        message: 'Convite atualizado com Sucesso',
-        data: invites,
       });
     } catch (error: any) {
       errorResponse(res, error);

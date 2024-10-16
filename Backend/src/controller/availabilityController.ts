@@ -153,8 +153,9 @@ export const availabilityController = {
     }
 
     try {
-      const availabilities =
-        await availabilityServices.getAllAvailabilitiesBySchedule(scheduleId);
+      const availabilities = await availabilityServices.getAllAvailabilities(
+        scheduleId
+      );
 
       res.status(200).json({
         success: true,

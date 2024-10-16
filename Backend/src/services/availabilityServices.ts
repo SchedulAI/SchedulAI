@@ -153,17 +153,16 @@ export const availabilityServices = {
   },
 
   // Listar todas as disponibilidades de um agendamento
-  getAllAvailabilitiesBySchedule: async (
-    scheduleId: string
-  ): Promise<Availability[]> => {
+  getAllAvailabilities: async (scheduleId: string): Promise<Availability[]> => {
     // Verifica se o agendamento existe
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
     if (!schedule) {
       throw new NotFoundException('Agendamento não encontrado');
     }
 
-    const availabilities =
-      await availabilityRepository.getAllAvailabilitiesBySchedule(scheduleId);
+    const availabilities = await availabilityRepository.getAllAvailabilities(
+      scheduleId
+    );
 
     if (availabilities.length < 1) {
       throw new NotFoundException(

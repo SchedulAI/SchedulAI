@@ -51,8 +51,42 @@ export const invitesRepository = {
           WHERE user_id = $1 AND schedule_id = $2;
         `;
     try {
-      const listResult = await client.query(queryList, [userId, scheduleId]);
-      return listResult.rows[0]; // Retorna todos os convites encontrados
+      const { rows } = await client.query(queryList, [userId, scheduleId]);
+      return rows[0]; // Retorna todos os convites encontrados
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao listar os convites');
+    } finally {
+      client.release();
+    }
+  },
+
+  listInvitesByUserId: async (userId: string): Promise<Invites[]> => {
+    const client = await pool.connect();
+    const queryList = `
+          SELECT *
+          FROM invites
+          WHERE user_id = $1;
+        `;
+    try {
+      const { rows } = await client.query(queryList, [userId]);
+      return rows; // Retorna todos os convites encontrados
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao listar os convites');
+    } finally {
+      client.release();
+    }
+  },
+
+  listAllInvites: async (scheduleId: string): Promise<Invites[]> => {
+    const client = await pool.connect();
+    const queryList = `
+          SELECT *
+          FROM invites
+          WHERE schedule_id = $1;
+        `;
+    try {
+      const { rows } = await client.query(queryList, [scheduleId]);
+      return rows; // Retorna todos os convites encontrados
     } catch (error: any) {
       throw new InternalServerException('Erro ao listar os convites');
     } finally {

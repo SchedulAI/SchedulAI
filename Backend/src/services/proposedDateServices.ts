@@ -20,7 +20,7 @@ export const proposedDateServices = {
       throw new NotFoundException('O agendamento não foi encontrado');
     }
 
-    const existentProposedDate = await proposedDateRepository.listProposedDates(
+    const existentProposedDate = await proposedDateRepository.listProposedDate(
       scheduleId
     );
 
@@ -43,24 +43,24 @@ export const proposedDateServices = {
   },
 
   // Listar datas propostas para um agendamento
-  getProposedDates: async (scheduleId: string): Promise<ProposedDate[]> => {
+  getProposedDates: async (scheduleId: string): Promise<ProposedDate> => {
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
 
     if (!schedule) {
       throw new NotFoundException('O agendamento não foi encontrado');
     }
 
-    const proposedDates = await proposedDateRepository.listProposedDates(
+    const proposedDate = await proposedDateRepository.listProposedDate(
       scheduleId
     );
 
-    if (!proposedDates || proposedDates.length === 0) {
+    if (!proposedDate) {
       throw new NotFoundException(
         'Nenhuma data proposta encontrada para este agendamento'
       );
     }
 
-    return proposedDates;
+    return proposedDate;
   },
 
   // Atualizar o status de uma data proposta
@@ -75,7 +75,7 @@ export const proposedDateServices = {
       throw new NotFoundException('O agendamento não foi encontrado');
     }
 
-    const existentProposedDate = await proposedDateRepository.listProposedDates(
+    const existentProposedDate = await proposedDateRepository.listProposedDate(
       scheduleId
     );
 

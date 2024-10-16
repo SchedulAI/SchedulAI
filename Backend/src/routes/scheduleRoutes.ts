@@ -3,11 +3,20 @@ import { permissionVerify } from '../middleware/permissionVerify';
 import { scheduleController } from '../controller/scheduleController';
 import { availabilityController } from '../controller/availabilityController';
 import { proposedDateController } from '../controller/proposedDateController';
+import { invitesController } from '../controller/invitesController';
 
 export const scheduleRouter = Router();
 
 // Parte da gestão do Próprio Schedule
 scheduleRouter.post('/', permissionVerify, scheduleController.createSchedule);
+
+scheduleRouter.get('/', permissionVerify, scheduleController.getSchedules);
+
+scheduleRouter.get(
+  '/:scheduleId/',
+  permissionVerify,
+  scheduleController.getSchedule
+);
 
 scheduleRouter.patch(
   '/:scheduleId/cancel',
@@ -19,13 +28,13 @@ scheduleRouter.patch(
 scheduleRouter.post(
   '/:scheduleId/invites',
   permissionVerify,
-  scheduleController.createInvite
+  invitesController.createInvite
 );
 
 scheduleRouter.patch(
   '/:scheduleId/invites',
   permissionVerify,
-  scheduleController.updateInviteStatus
+  invitesController.updateInviteStatus
 );
 
 // Parte da gestão das Availabilities

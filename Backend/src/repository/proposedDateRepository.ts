@@ -29,8 +29,8 @@ export const proposedDateRepository = {
     }
   },
 
-  // Listar datas propostas por ID do agendamento
-  listProposedDates: async (scheduleId: string): Promise<ProposedDate[]> => {
+  // Listar data proposta por ID do agendamento
+  listProposedDate: async (scheduleId: string): Promise<ProposedDate> => {
     const client = await pool.connect();
     try {
       const query = `
