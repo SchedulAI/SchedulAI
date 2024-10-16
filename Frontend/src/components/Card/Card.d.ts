@@ -1,9 +1,7 @@
 interface CardProps {
-  status: 'pending' | 'cancelled' | 'confirmed';
-  eventDate?: string;
-  eventTime?: string;
-  proposedDateRange?: string;
-  subject?: string;
+  status: 'planning' | 'pending' | 'reviewing' | 'scheduled' | 'cancelled';
+  proposed_date: proposed_date | string;
+  title?: string;
   Display: 'Flex' | 'none';
   onClick?: () => void;
 }

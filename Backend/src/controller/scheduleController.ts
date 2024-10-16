@@ -23,7 +23,7 @@ export const scheduleController = {
         description
       );
       res.status(200).json({
-        sucess: true,
+        success: true,
         message: 'Agendamento criado com sucesso',
         data: schedule,
       });
@@ -42,7 +42,7 @@ export const scheduleController = {
         user.id
       );
       res.status(200).json({
-        sucess: true,
+        success: true,
         message: 'Busca realizada com sucesso',
         data: schedule,
       });
@@ -57,7 +57,7 @@ export const scheduleController = {
     try {
       const schedules = await scheduleServices.getAllSchedules(user.id);
       res.status(200).json({
-        sucess: true,
+        success: true,
         message: 'Busca realizada com sucesso',
         data: schedules,
       });
@@ -85,7 +85,7 @@ export const scheduleController = {
       );
 
       res.status(200).json({
-        sucess: true,
+        success: true,
         message: 'Agendamento cancelado com sucesso',
         data: schedule,
       });

@@ -1,13 +1,11 @@
 export const renderDateInfo = (
-  status: 'pending' | 'confirmed' | 'cancelled',
-  eventDate?: string,
-  eventTime?: string,
-  proposedDateRange?: string
+  status: 'planning' | 'pending' | 'reviewing' | 'scheduled' | 'cancelled',
+  proposed_date: proposed_date | string
 ) => {
-  if (status === 'confirmed') {
-    return `${eventDate} - ${eventTime}`;
-  } else if (status === 'pending' && proposedDateRange) {
-    return proposedDateRange.toString();
+  if (status === 'pending') {
+    return 'A definir';
+  } else if (status === 'scheduled') {
+    return typeof proposed_date === 'string' ? proposed_date : proposed_date.proposed_date;
   }
   return null;
 };

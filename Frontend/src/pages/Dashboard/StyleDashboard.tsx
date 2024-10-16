@@ -52,6 +52,10 @@ export const StyledDashboard = styled.div<{
   height: 100%;
   width: 100%;
 
+  pre {
+    white-space: break-spaces;
+  }
+
   .chat-content {
     display: flex;
     flex-direction: column;
@@ -96,6 +100,8 @@ export const StyledDashboard = styled.div<{
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    max-height: 50vh;
+    overflow-y: auto;
 
     .guest-cards,
     .host-cards {
@@ -190,8 +196,8 @@ export const StyledDashboard = styled.div<{
       display: flex;
       flex-direction: column;
       gap: 1rem;
-      max-height: 300px;
-      min-height: 300px;
+      max-height: 70vh;
+      min-height: 70vh;
       width: 100%;
       overflow-y: auto;
       padding: 1rem;
@@ -217,7 +223,8 @@ export const StyledDashboard = styled.div<{
 
     .message.ia {
       align-self: flex-start;
-      align-items: center;
+      align-items: flex-start;
+      background-color: #cdccee;
       gap: 0.5rem;
       background-color: #e0e0e0;
       color: #0a0a15;
