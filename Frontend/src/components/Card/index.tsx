@@ -7,11 +7,9 @@ import { renderDateInfo } from '../../Utils/RenderDateInfo';
 
 export const Card = ({
   status,
-  eventDate,
-  eventTime,
-  proposedDateRange,
-  subject,
+  title,
   Display,
+  proposed_date,
   onClick,
 }: CardProps) => {
   return (
@@ -21,10 +19,10 @@ export const Card = ({
       onClick={onClick}
     >
       <div className="div-subject">
-        <p>{subject}</p>
+        <p>{title}</p>
       </div>
       <div className="div-data-status">
-        <p>{renderDateInfo(status, eventDate, eventTime, proposedDateRange)}</p>
+        <p>{renderDateInfo(status, proposed_date)?.toString()}</p>
         <div className="div-status">
           <p>{handleRenderStatus(status)}</p>
           <div className={`status-circle ${handleStatusColor(status)}`} />

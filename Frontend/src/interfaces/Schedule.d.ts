@@ -1,27 +1,53 @@
-export interface Schedule {
+interface Invite {
+  id: string;
+  schedule_id: string;
+  user_id: string;
+  status: 'pending' | 'answered';
+  guest_name: string;
+}
+
+interface Availability {
+  id: string;
+  schedule_id: string;
+  user_id: string;
+  week_day: string | null;
+  start_time: string | null;
+  end_time: string | null;
+  notes: string | null;
+}
+
+interface proposed_date {
+  id: string;
+  schedule_id: string;
+  proposed_date: Date | string;
+  status: string;
+}
+
+interface Schedule {
   id: string;
   user_id: string;
   title: string;
-  description: string;
-  status: string;
-  access_code: string;
-  expiry_time: string;
-  invite_link: string;
-  schedule_date: Date;
+  description?: string | null;
+  status: 'planning' | 'pending' | 'reviewing' | 'scheduled' | 'cancelled';
+  access_code?: string | null;
+  expiry_time?: string | null;
+  invite_link?: string | null;
+  proposed_date?: proposed_date | string;
+  duration?: number | null;
+  is_host: boolean;
+  host_name: string;
+  invites?: Invite[] | null;
+  availability?: Availability[] | null;
 }
 
-export interface SchedulesResponse {
-  data: {
-    acess_code: string;
-    description: string | null;
-    expiry_time: string | null;
-    id: string;
-    invite_link: string | null;
-    schedule_date: string | null;
-    status: string;
-    title: string;
-    user_id: string;
-  }
+interface ScheduleResponse {
+  data: Schedule[];
   message: string;
-  sucess: boolean;
+  success: boolean;
+}
+
+interface ScheduleCreateResponse {
+  data: Schedule;
+  message: string;
+  success: boolean
 }

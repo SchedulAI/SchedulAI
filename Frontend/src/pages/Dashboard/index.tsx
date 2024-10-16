@@ -6,18 +6,17 @@ import { useUser } from '../../hooks/userHooks';
 import { Card } from '../../components/Card';
 import apiUrl from '../../config/api';
 import { Modal } from '../../components/Modal';
-import { SchedulesResponse } from '../../interfaces/Schedule';
 import Snackbar from '../../components/Snackbar';
-import { StyledDashboard, Dot } from './StyleDashbord';
+import { StyledDashboard, Dot } from './StyleDashboard';
 import { formatDate } from '../../Utils/FormatDate';
+import { formatMessage } from '../../Utils/FormatMessage';
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [sendingMessage, setSendingMessage] = useState<string>('');
   const [conversation, setConversation] = useState<ConversationMessage[]>([]);
-  const [oldConversation, setOldConversation] = useState<Message[]>([]);
   const [currentSchedule, setCurrentSchedule] =
-    useState<SchedulesResponse | null>(null);
+    useState<ScheduleCreateResponse | null>(null);
   const [schedules, setSchedules] = useState<ScheduleResponse | null>(null);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -40,7 +39,7 @@ export const Dashboard = () => {
   async function handleSendMessage() {
     if (!message) return;
 
-    const schedule = currentSchedule?.data || (await createSchedule());
+    const schedule = currentSchedule || (await createSchedule());
 
     setConversation((prevConversation) => [
       ...prevConversation,
@@ -48,7 +47,7 @@ export const Dashboard = () => {
     ]);
 
     if (schedule) {
-      await sendMessageToAi(sendingMessage, schedule.id);
+      await sendMessageToAi(sendingMessage, schedule.data.id);
     }
   }
 
@@ -97,28 +96,11 @@ export const Dashboard = () => {
         }),
       });
 
-      const res: SchedulesResponse = await data.json();
-      const newSchedule: Schedule = {
-        id: res.data.id,
-        status: 'pending',
-        event_title: res.data.title,
-        proposed_date: 'A definir',
-        event_description: 'A definir',
-        is_host: true,
-      };
-      const scheduleResponse: SchedulesResponse = {
-        data: res.data,
-        message: res.message,
-        sucess: res.sucess,
-      };
+      const res: ScheduleCreateResponse = await data.json();
 
-      setCurrentSchedule(scheduleResponse);
-      setSchedules((prevSchedules) => ({
-        ...prevSchedules,
-        Schedules: [...(prevSchedules?.Schedules || []), newSchedule],
-      }));
-
-      return res.data;
+      setCurrentSchedule(res);
+      await getSchedules();
+      return res;
     } catch (error) {
       setSnackbarMessage('Erro ao criar novo chat');
       setSnackbarVisible(true);
@@ -150,16 +132,18 @@ export const Dashboard = () => {
 
   const getSchedules = async () => {
     try {
-      const response = await fetch(apiUrl('/user/schedules'), {
+      const response = await fetch(apiUrl('/schedule'), {
         method: 'GET',
         headers: {
           'Content-type': 'application/json',
         },
         credentials: 'include',
       });
-      const data: ScheduleResponse = await response.json();
-      setSchedules(data);
-      if (data.Schedules.length === 0) {
+      const schedules: ScheduleResponse = await response.json();
+      if (schedules.success) {
+        setSchedules(schedules);
+      }
+      if (schedules.success && schedules.data.length === 0) {
         return;
       }
     } catch (error) {
@@ -178,15 +162,6 @@ export const Dashboard = () => {
   useEffect(() => {
     getSchedules();
   }, []);
-
-  useEffect(() => {
-    setConversation(
-      oldConversation.map((msg) => ({
-        sender: msg.sender === 'user' ? 'user' : 'ia',
-        message: msg.message,
-      }))
-    );
-  }, [oldConversation]);
 
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
@@ -225,7 +200,7 @@ export const Dashboard = () => {
               {schedules && <p>Host</p>}
               <div className="host-cards">
                 {schedules &&
-                  schedules.Schedules.map(
+                  schedules.data.map(
                     (schedule) =>
                       schedule.is_host && (
                         <div key={schedule.id}>
@@ -233,17 +208,15 @@ export const Dashboard = () => {
                             Display={slideMenuOpen ? 'Flex' : 'none'}
                             key={String(schedule.id)}
                             status={schedule.status}
-                            subject={schedule.event_title}
-                            eventDate={
-                              schedule.event_date
-                                ? formatDate(schedule.event_date)
-                                : undefined
-                            }
-                            eventTime={schedule.event_time}
-                            proposedDateRange={
+                            title={schedule.title}
+                            proposed_date={
                               schedule.proposed_date
-                                ? formatDate(schedule.proposed_date)
-                                : undefined
+                                ? typeof schedule.proposed_date === 'object'
+                                  ? formatDate(
+                                      schedule.proposed_date.proposed_date
+                                    )
+                                  : formatDate(schedule.proposed_date)
+                                : 'A definir'
                             }
                             onClick={() => openModal(schedule.id)}
                           />
@@ -251,8 +224,12 @@ export const Dashboard = () => {
                             <Modal
                               onClick={closeModal}
                               schedule={schedule}
-                              setOldConversation={setOldConversation}
+                              setSchedules={setSchedules}
+                              schedules={schedules}
+                              setCurrentSchedule={setCurrentSchedule}
+                              setConversation={setConversation}
                               setActiveModalId={setActiveModalId}
+                              setSlideMenuOpen={setSlideMenuOpen}
                             />
                           )}
                         </div>
@@ -264,7 +241,7 @@ export const Dashboard = () => {
               {schedules && <p>Convidado</p>}
               <div className="guest-cards">
                 {schedules &&
-                  schedules.Schedules.map(
+                  schedules.data.map(
                     (schedule) =>
                       !schedule.is_host && (
                         <div key={schedule.id}>
@@ -272,17 +249,15 @@ export const Dashboard = () => {
                             Display={slideMenuOpen ? 'Flex' : 'none'}
                             key={String(schedule.id)}
                             status={schedule.status}
-                            subject={schedule.event_title}
-                            eventDate={
-                              schedule.event_date
-                                ? formatDate(schedule.event_date)
-                                : undefined
-                            }
-                            eventTime={schedule.event_time}
-                            proposedDateRange={
+                            title={schedule.title}
+                            proposed_date={
                               schedule.proposed_date
-                                ? formatDate(schedule.proposed_date)
-                                : undefined
+                                ? typeof schedule.proposed_date === 'object'
+                                  ? formatDate(
+                                      schedule.proposed_date.proposed_date
+                                    )
+                                  : formatDate(schedule.proposed_date)
+                                : 'A definir'
                             }
                           />
                         </div>
@@ -344,7 +319,7 @@ export const Dashboard = () => {
                         />
                       </div>
                     )}
-                    {msg.message}
+                    <pre>{formatMessage(msg.message)}</pre>
                   </div>
                 ))}
                 {loadingMessage && (

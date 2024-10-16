@@ -140,5 +140,11 @@ export const ModalStyled = styled.div`
     .red {
       background-color: #dc2828;
     }
-  }
+    .div-status{
+      display: flex;
+      flex-direction: row;
+      gap: 0.5rem;
+      align-items: center;
+    }
+ }
 `;
