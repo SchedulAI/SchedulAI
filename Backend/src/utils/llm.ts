@@ -1,6 +1,5 @@
 // // import { OpenAI } from "@langchain/openai";
 import { ChatOpenAI } from '@langchain/openai';
-import { PromptTemplate } from '@langchain/core/prompts';
 import config from '../config';
 import tools from './tools';
 
@@ -18,7 +17,7 @@ export const llm = {
     
     Regras:
     1. Se o usuário for o host, solicite informações sobre o evento (título, descrição, datas e horários disponíveis, nome dos convidados e email dos convidados) e ofereça-se para enviar convites.
-    2. Se o usuário for um convidado, pergunte sobre sua disponibilidade e confirme sua presença.
+    2. Se o usuário for um convidado, pergunte sobre sua disponibilidade com base na do host e confirme sua presença.
     3. Foque APENAS em tarefas relacionadas ao agendamento de reuniões.
     4. Se o usuário perguntar algo fora do escopo, lembre-o gentilmente que você só pode ajudar com agendamentos.
     5. Suas respostas devem sempre ser orientadas ao agendamento, organizando e sugerindo datas conforme a disponibilidade informada.
