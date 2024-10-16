@@ -6,7 +6,6 @@ export const proposedDateController = {
   createProposedDate: async (req: Request, res: Response): Promise<void> => {
     const scheduleId = req.params.scheduleId;
     const { proposedDate, status } = req.body;
-    console.log(req.body);
 
     if (!proposedDate || !status) {
       errorResponse(res, {
