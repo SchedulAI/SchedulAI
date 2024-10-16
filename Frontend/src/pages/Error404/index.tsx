@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Icon } from "../../components/Icon";
+import { StyledError404 } from "./StyledError404";
 
 export const Error404 = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export const Error404 = () => {
   }, [navigate]);
 
   return (
-    <div className="error-404">
+    <StyledError404 className="error-404">
       <h1>
         SchedulAI
         <span>
@@ -31,6 +32,6 @@ export const Error404 = () => {
       </h1>
       <h2>Ops... Parece que essa página não existe</h2>
       <p>Você será redirecionado para a página inicial em {count} segundos...</p>
-    </div>
+    </StyledError404>
   );
 };

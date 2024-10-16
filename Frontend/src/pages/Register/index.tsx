@@ -1,139 +1,54 @@
-import { useNavigate } from "react-router-dom";
-import { Button } from "../../components/Button";
-import { Icon } from "../../components/Icon";
-import { Input } from "../../components/Input";
-import styled from "styled-components";
-import apiUrl from "../../config/api";
-import { useState } from "react";
-import Snackbar from "../../components/Snackbar";
+import { useNavigate } from 'react-router-dom';
+import { Button } from '../../components/Button';
+import { Icon } from '../../components/Icon';
+import { Input } from '../../components/Input';
 
-const RegisterStyled = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  color: #0a0a15;
-
-  .btn-back-div {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 8px;
-    top: 0;
-    left: 0;
-    padding: 8px;
-  }
-
-  .register-div-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    width: 100%;
-    height: 100%;
-  }
-
-  .register-title-div {
-    width: 390px;
-    text-align: left;
-
-    h1 {
-      font-size: 3.16rem;
-      font-weight: 600;
-    }
-
-    span {
-      font-size: 1rem;
-      font-weight: 400;
-      color: #0a0a15;
-      opacity: 50%;
-    }
-  }
-
-  .register-field {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    width: 100%;
-  }
-
-  .input-email,
-  .input-password {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    width: fit-content;
-    gap: 8px;
-  }
-
-  .input-email label,
-  .input-password label {
-    padding-left: 4px;
-    font-weight: 500;
-  }
-
-  .register-remember-me-div {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 390px;
-    font-size: 0.875rem;
-  }
-
-  #forget-password {
-    font-size: 0.875rem;
-  }
-
-  #forget-password span {
-    font-weight: 500;
-  }
-
-  .register-enter-register-div {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 390px;
-  }
-
-  #register-a-create-account {
-    font-size: 0.875rem;
-  }
-
-  #register-a-create-account span {
-    font-weight: 500;
-  }
-`;
+import { RegisterStyled } from './RegisterStyled';
+import apiUrl from '../../config/api';
+import { useContext, useState } from 'react';
+import Snackbar from '../../components/Snackbar';
+import { ScheduleContext } from '../../providers/ScheduleProvider';
 
 export const Register = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarType, setSnackbarType] = useState<"success" | "error">(
-    "success"
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
+    'success'
   );
   const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const scheduleContext = useContext(ScheduleContext);
+  const schedule_id = scheduleContext?.schedule_id;
 
   const navigate = useNavigate();
+
+  const createInvite = async () => {
+    try {
+      await fetch(apiUrl('/invite/create'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          schedule_id: schedule_id,
+          user_id: userId,
+        }),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const registerFetch = async () => {
     setLoading(true);
     try {
-      const response = await fetch(apiUrl("/user/create"), {
-        method: "POST",
+      const response = await fetch(apiUrl('/user/create'), {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name: name,
@@ -141,24 +56,28 @@ export const Register = () => {
           password: password,
         }),
       });
-      const data = await response.json();
-
-      if (data.sucess) {
+      const data: RegisterResponse = await response.json();
+      setUserId(data.id);
+      if (schedule_id) {
+        await createInvite();
+      }
+      if (response.ok) {
         setSnackbarMessage(data.message);
-        setSnackbarType("success");
+        setSnackbarType('success');
         setSnackbarVisible(true);
         setTimeout(() => {
-          navigate("/login");
+          navigate('/login');
           setLoading(false);
         }, 5000);
       } else {
         setSnackbarMessage(data.message);
-        setSnackbarType("error");
+        setSnackbarType('error');
         setSnackbarVisible(true);
+        setLoading(false);
       }
     } catch (error) {
       setSnackbarMessage((error as Error).message);
-      setSnackbarType("error");
+      setSnackbarType('error');
       setSnackbarVisible(true);
       setLoading(false);
     }
@@ -167,7 +86,7 @@ export const Register = () => {
   return (
     <RegisterStyled className="register-main-div">
       <div className="btn-back-div">
-        <Button onClick={() => navigate("/")}>
+        <Button onClick={() => navigate('/')}>
           <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
           <span>Voltar</span>
         </Button>
@@ -186,7 +105,9 @@ export const Register = () => {
               icon="user"
               color="#0a0a1579"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setName(e.target.value)
+              }
             />
           </div>
           <div className="input-email">
@@ -196,7 +117,9 @@ export const Register = () => {
               placeholder="Insira Seu Email"
               icon="mail"
               color="#0a0a1579"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
               value={email}
             />
           </div>
@@ -206,8 +129,15 @@ export const Register = () => {
               type="password"
               placeholder="Insira sua senha"
               color="#0a0a1579"
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
               value={password}
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                if (e.key === 'Enter') {
+                  registerFetch();
+                }
+              }}
             />
           </div>
         </div>
@@ -219,14 +149,14 @@ export const Register = () => {
           >
             Registrar
           </Button>
-          <a id="register-a-create-account" onClick={() => navigate("/login")}>
+          <a id="register-a-create-account" onClick={() => navigate('/login')}>
             Já possui uma conta? <span>Acesse agora</span>
           </a>
         </div>
       </div>
       {snackbarVisible && (
         <Snackbar
-          anchorOrigin={{ vertical: "top", horizontal: "right" }}
+          anchororigin={{ vertical: 'top', horizontal: 'right' }}
           variant={snackbarType}
           message={snackbarMessage}
         />

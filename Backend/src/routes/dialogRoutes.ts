@@ -5,7 +5,7 @@ import { dialogController } from '../controller/dialogController';
 export const dialogRoutes = Router();
 
 dialogRoutes.get(
-  '/:dialog_id/messages',
+  '/messages/:scheduleId',
   permissionVerify,
   dialogController.getMessages
 );

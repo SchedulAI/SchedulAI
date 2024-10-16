@@ -1,238 +1,61 @@
-import styled, { keyframes } from 'styled-components';
 import { Icon } from '../../components/Icon';
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/userHooks';
+import { Card } from '../../components/Card';
 import apiUrl from '../../config/api';
-
-const shrinkWidth = keyframes`
-  from {
-    width: 20%;
-  }
-  to {
-    width: 4%;
-  }
-`;
-
-const expandWidth = keyframes`
-  from {
-    width: 4%;
-  }
-  to {
-    width: 20%;
-  }
-`;
-
-const StyledDashboard = styled.div`
-  * {
-    transition: all ease-in-out 0.3s;
-  }
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-
-  .chat-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .slide-bar-menu-closed {
-    width: 4%;
-    height: 100%;
-    animation: ${shrinkWidth} 2s forwards;
-    padding: 20px;
-    display: flex;
-    justify-content: flex-end;
-    position: relative;
-  }
-
-  .slide-bar-menu-open {
-    width: 20%;
-    height: 100%;
-    animation: ${expandWidth} 2s forwards;
-    background-color: #d4d3f3;
-    display: flex;
-    justify-content: flex-end;
-    position: relative;
-  }
-
-  .slide-bar-div-button {
-    background-color: #8380e5;
-    border-radius: 100%;
-    height: 40px;
-    width: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: absolute;
-    right: 0;
-    top: 50%;
-
-    &.rotate {
-      transform: rotate(180deg);
-    }
-
-    &:hover {
-      background-color: #7a77da;
-    }
-  }
-
-  .div-button-white {
-    height: 100%;
-    width: 15%;
-    background-color: #fff;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    color: #0a0a15;
-    gap: 0.5rem;
-    user-select: none;
-    padding: 1rem 2rem;
-    width: 100%;
-    justify-content: space-between;
-
-    .schedul-ai {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
-  .chat {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 40%;
-    gap: 2rem;
-
-    h2 {
-      font-size: 3rem;
-      font-weight: 600;
-    }
-
-    .chat-conversation {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      max-height: 300px;
-      min-height: 300px;
-      width: 100%;
-      overflow-y: auto;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-    }
-
-    .message {
-      display: flex;
-      align-items: flex-end;
-      max-width: 80%;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 1rem;
-      line-height: 1.4;
-    }
-
-    .message.user {
-      align-self: flex-end;
-      background-color: #d4d3f3;
-      color: #0a0a15;
-    }
-
-    .message.system {
-      align-self: flex-start;
-      align-items: center;
-      gap: 0.5rem;
-      background-color: #e0e0e0;
-      color: #0a0a15;
-    }
-
-    .chat-input {
-      display: flex;
-      background-color: #d4d3f3;
-      border: 1px solid #d4d3f3;
-      border-radius: 4px;
-      padding: 0.5rem 1rem;
-      width: 100%;
-      transition: all ease-in-out 0.3s;
-
-      input {
-        border: none;
-        border-radius: 4px;
-        color: #0a0a15;
-        font-size: 1rem;
-        background-color: transparent;
-        width: 100%;
-
-        &::placeholder {
-          color: #0a0a1579;
-        }
-
-        &:focus {
-          outline: none;
-        }
-      }
-
-      &:hover {
-        background-color: #e6e6f5;
-        border: 1px solid #e2e2f5;
-      }
-
-      &:focus-within {
-        background-color: #e0e0f5;
-        border: 1px solid #dcdcf5;
-      }
-
-      button {
-        background-color: transparent;
-        border: none;
-        outline: none;
-        cursor: pointer;
-        padding: 0;
-      }
-    }
-  }
-`;
+import { Modal } from '../../components/Modal';
+import { SchedulesResponse } from '../../interfaces/Schedule';
+import Snackbar from '../../components/Snackbar';
+import { StyledDashboard, Dot } from './StyleDashbord';
+import { formatDate } from '../../Utils/FormatDate';
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [sendingMessage, setSendingMessage] = useState<string>('');
-  const [conversation, setConversation] = useState<string[]>([]);
-  const [isUserMessage, setIsUserMessage] = useState<boolean[]>([]);
-  const [currentSchedule, setCurrentSchedule] = useState<string>('');
+  const [conversation, setConversation] = useState<ConversationMessage[]>([]);
+  const [oldConversation, setOldConversation] = useState<Message[]>([]);
+  const [currentSchedule, setCurrentSchedule] =
+    useState<SchedulesResponse | null>(null);
+  const [schedules, setSchedules] = useState<ScheduleResponse | null>(null);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [slideMenuOpen, setSlideMenuOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [activeModalId, setActiveModalId] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState(false);
+
   const navigate = useNavigate();
   const { setUser } = useUser();
+
+  function openModal(schedule_id: string) {
+    setActiveModalId(schedule_id);
+  }
+
+  function closeModal() {
+    setActiveModalId(null);
+  }
 
   async function handleSendMessage() {
     if (!message) return;
 
-    const schedule = currentSchedule || (await createSchedule());
+    const schedule = currentSchedule?.data || (await createSchedule());
 
-    setConversation((prevConversation) => [...prevConversation, message!]);
-    setIsUserMessage((prevIsUserMessage) => [...prevIsUserMessage, true]);
+    setConversation((prevConversation) => [
+      ...prevConversation,
+      { sender: 'user', message: message! },
+    ]);
 
-    await sendMessageToAi(sendingMessage, schedule.id);
+    if (schedule) {
+      await sendMessageToAi(sendingMessage, schedule.id);
+    }
   }
 
   const sendMessageToAi = async (message: string, schedule_id: string) => {
     setMessage('');
     try {
+      setLoadingMessage(true);
       const data = await fetch(apiUrl('/chat/'), {
         method: 'POST',
         headers: {
@@ -246,11 +69,17 @@ export const Dashboard = () => {
       });
 
       const res = await data.json();
-      const iaResponse = res.response;
+      const iaResponse = res.data;
       setSendingMessage('');
-      setConversation((prevConversation) => [...prevConversation, iaResponse]);
-      setIsUserMessage((prevIsUserMessage) => [...prevIsUserMessage, false]);
+      setConversation((prevConversation) => [
+        ...prevConversation,
+        { sender: 'ia', message: iaResponse },
+      ]);
+      setLoadingMessage(false);
     } catch (error) {
+      setSnackbarMessage('Erro ao enviar mensagem');
+      setSnackbarVisible(true);
+      setLoadingMessage(false);
       console.error(error);
     }
   };
@@ -264,16 +93,35 @@ export const Dashboard = () => {
         },
         credentials: 'include',
         body: JSON.stringify({
-          title: 'reunião teste',
+          title: 'Nova reunião',
         }),
       });
 
-      const res = await data.json();
+      const res: SchedulesResponse = await data.json();
+      const newSchedule: Schedule = {
+        id: res.data.id,
+        status: 'pending',
+        event_title: res.data.title,
+        proposed_date: 'A definir',
+        event_description: 'A definir',
+        is_host: true,
+      };
+      const scheduleResponse: SchedulesResponse = {
+        data: res.data,
+        message: res.message,
+        sucess: res.sucess,
+      };
 
-      setCurrentSchedule(res);
+      setCurrentSchedule(scheduleResponse);
+      setSchedules((prevSchedules) => ({
+        ...prevSchedules,
+        Schedules: [...(prevSchedules?.Schedules || []), newSchedule],
+      }));
 
-      return res;
+      return res.data;
     } catch (error) {
+      setSnackbarMessage('Erro ao criar novo chat');
+      setSnackbarVisible(true);
       console.error(error);
     }
   };
@@ -300,40 +148,153 @@ export const Dashboard = () => {
     }
   };
 
+  const getSchedules = async () => {
+    try {
+      const response = await fetch(apiUrl('/user/schedules'), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const data: ScheduleResponse = await response.json();
+      setSchedules(data);
+      if (data.Schedules.length === 0) {
+        return;
+      }
+    } catch (error) {
+      setSnackbarMessage('Erro ao buscar chats');
+      setSnackbarVisible(true);
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [conversation]);
 
+  useEffect(() => {
+    getSchedules();
+  }, []);
+
+  useEffect(() => {
+    setConversation(
+      oldConversation.map((msg) => ({
+        sender: msg.sender === 'user' ? 'user' : 'ia',
+        message: msg.message,
+      }))
+    );
+  }, [oldConversation]);
+
   return (
-    <StyledDashboard>
+    <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
       <div
-        className={
-          slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
-        }
+        className={slideMenuOpen ? 'div-cover-open' : 'div-cover-closed'}
+        onClick={() => setSlideMenuOpen(!slideMenuOpen)}
       >
-        <div className="div-button-white">
+        <div
+          className={
+            slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
+          }
+          onClick={(e) => e.stopPropagation()}
+        >
           <div
             className={'slide-bar-div-button'}
-            onClick={() =>
-              slideMenuOpen ? setSlideMenuOpen(false) : setSlideMenuOpen(true)
-            }
+            onClick={() => setSlideMenuOpen(!slideMenuOpen)}
           >
             <Icon
-              icon={slideMenuOpen ? 'expandLeft' : 'expandRight'}
-              size={20}
-              color="#0a0a15"
+              icon="sidebarSimple"
+              size={32}
+              weight="regular"
+              color="#0A0A15"
             />
+          </div>
+          <div className="sideBar-content">
+            <Button
+              width="full"
+              onClick={() => {
+                createSchedule();
+                setSlideMenuOpen(false);
+              }}
+            >
+              <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
+            </Button>
+            <div className="host-div">
+              {schedules && <p>Host</p>}
+              <div className="host-cards">
+                {schedules &&
+                  schedules.Schedules.map(
+                    (schedule) =>
+                      schedule.is_host && (
+                        <div key={schedule.id}>
+                          <Card
+                            Display={slideMenuOpen ? 'Flex' : 'none'}
+                            key={String(schedule.id)}
+                            status={schedule.status}
+                            subject={schedule.event_title}
+                            eventDate={
+                              schedule.event_date
+                                ? formatDate(schedule.event_date)
+                                : undefined
+                            }
+                            eventTime={schedule.event_time}
+                            proposedDateRange={
+                              schedule.proposed_date
+                                ? formatDate(schedule.proposed_date)
+                                : undefined
+                            }
+                            onClick={() => openModal(schedule.id)}
+                          />
+                          {activeModalId === schedule.id && (
+                            <Modal
+                              onClick={closeModal}
+                              schedule={schedule}
+                              setOldConversation={setOldConversation}
+                              setActiveModalId={setActiveModalId}
+                            />
+                          )}
+                        </div>
+                      )
+                  )}
+              </div>
+            </div>
+            <div className="guest-div">
+              {schedules && <p>Convidado</p>}
+              <div className="guest-cards">
+                {schedules &&
+                  schedules.Schedules.map(
+                    (schedule) =>
+                      !schedule.is_host && (
+                        <div key={schedule.id}>
+                          <Card
+                            Display={slideMenuOpen ? 'Flex' : 'none'}
+                            key={String(schedule.id)}
+                            status={schedule.status}
+                            subject={schedule.event_title}
+                            eventDate={
+                              schedule.event_date
+                                ? formatDate(schedule.event_date)
+                                : undefined
+                            }
+                            eventTime={schedule.event_time}
+                            proposedDateRange={
+                              schedule.proposed_date
+                                ? formatDate(schedule.proposed_date)
+                                : undefined
+                            }
+                          />
+                        </div>
+                      )
+                  )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div className="chat-content">
         <div className="logo">
-          <div className="schedul-ai">
-            <Icon icon="robot" size={32} weight="fill" />
-            <p>SchedulAI</p>
-          </div>
           <Button onClick={() => logout()}>
             <p>Sair</p>
           </Button>
@@ -341,7 +302,7 @@ export const Dashboard = () => {
         <div className="chat">
           {conversation.length === 0 ? (
             <>
-              <h2>Como Posso Ajudar?</h2>
+              <h2>O que gostaria de agendar hoje?</h2>
               <div className="chat-input">
                 <input
                   type="text"
@@ -357,6 +318,7 @@ export const Dashboard = () => {
                   onClick={() => {
                     handleSendMessage();
                   }}
+                  disabled={!message}
                 >
                   <Icon
                     icon="circleArrowUp"
@@ -371,14 +333,9 @@ export const Dashboard = () => {
             <>
               <div className="chat-conversation">
                 {conversation.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`message ${
-                      isUserMessage[index] ? 'user' : 'system'
-                    }`}
-                  >
-                    {!isUserMessage[index] && (
-                      <div className="icon-system">
+                  <div key={index} className={`message ${msg.sender}`}>
+                    {msg.sender === 'ia' && (
+                      <div className="icon-ia">
                         <Icon
                           size={32}
                           icon="robot"
@@ -387,9 +344,16 @@ export const Dashboard = () => {
                         />
                       </div>
                     )}
-                    {msg}
+                    {msg.message}
                   </div>
                 ))}
+                {loadingMessage && (
+                  <div className="typing">
+                    Digitando algo <Dot>.</Dot>
+                    <Dot>.</Dot>
+                    <Dot>.</Dot>
+                  </div>
+                )}
                 <div ref={chatEndRef} />
               </div>
               <div className="chat-input">
@@ -420,6 +384,13 @@ export const Dashboard = () => {
           )}
         </div>
       </div>
+      {snackbarVisible && (
+        <Snackbar
+          anchororigin={{ vertical: 'bottom', horizontal: 'right' }}
+          variant="error"
+          message={snackbarMessage}
+        />
+      )}
     </StyledDashboard>
   );
 };
