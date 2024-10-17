@@ -48,10 +48,6 @@ export const invitesServices = {
     console.log('Emails válidos:', validUsers);
     console.log('Emails inválidos:', invalidUsers);
 
-    if (validUsers.length < 1) {
-      throw new BadRequestException('Email(s) fornecido(s) Inválido(s)');
-    }
-
     // Agora são lançados no banco os Invites para os usuários válidos
     try {
       const inviteList = await Promise.all(
