@@ -1,10 +1,6 @@
 import { User } from '../entities/userEntity';
 import { userRepository } from '../repository/userRepository';
-import {
-  ConflictException,
-  InternalServerException,
-  NotFoundException,
-} from '../utils/exceptions';
+import { ConflictException, NotFoundException } from '../utils/exceptions';
 import hashPassword from '../utils/hashPassword';
 
 type CreateProps = {
@@ -29,11 +25,7 @@ export const userServices = {
     }
 
     const hashedPassword = await hashPassword(password);
-    try {
-      return await userRepository.create(name, email, hashedPassword);
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao criar usuário');
-    }
+    return await userRepository.create(name, email, hashedPassword);
   },
 
   updateUser: async ({ id, name, email, password }: UpdateProps) => {
@@ -54,15 +46,6 @@ export const userServices = {
       hashedPassword = await hashPassword(password);
     }
 
-    try {
-      return await userRepository.updateUserById(
-        id,
-        name,
-        email,
-        hashedPassword
-      );
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao Atualizar usuário');
-    }
+    return await userRepository.updateUserById(id, name, email, hashedPassword);
   },
 };
