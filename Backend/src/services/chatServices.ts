@@ -1,7 +1,7 @@
 // import { OpenAI } from "@langchain/openai";
 import { llm } from '../utils/llm';
 import { dialogRepository } from '../repository/dialogRepository';
-import { toolsByName } from '../utils/tools';
+import { toolsByName } from '../tools/tools';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import {
   AIMessage,
@@ -21,11 +21,15 @@ export const chatServices = {
 
       let dialog = await dialogRepository.getDialog(userId, scheduleId);
 
+      const isUserHost = userId === schedule.user_id ? true : false;
+
       if (!dialog) {
         dialog = await dialogRepository.createDialog(userId, scheduleId);
         await dialogRepository.saveMessage(
           dialog.id,
-          `O id do usuário é ${userId}, O id do agendamento é ${scheduleId}, O id do criador do agendamento é ${schedule.user_id}`,
+          `O id do usuário é ${userId}, O id do agendamento é ${scheduleId}, ${
+            isUserHost ? 'O usuário é o host' : 'O usuário é um convidado'
+          }`,
           'system'
         );
 
@@ -38,27 +42,26 @@ export const chatServices = {
 
       const history = previousMessages
         .map((msg) => {
-          const inputMessage =
-            msg.message + ' - Data de envio: ' + new Date(msg.created_at);
+          const messageWithTime =
+            msg.message + ' - [Sent at: ' + new Date(msg.created_at) + ']';
 
           switch (msg.sender) {
             case 'user':
-              return new HumanMessage(inputMessage);
+              return new HumanMessage(messageWithTime);
             case 'IA':
-              return new AIMessage(inputMessage);
+              return new AIMessage(msg.message);
             case 'system':
-              return new SystemMessage(inputMessage);
+              return new SystemMessage(msg.message);
           }
         })
         .filter((msg) => msg !== undefined);
 
-      // Cria a cadeia de execução usando o modelo e ferramentas (tools)
       const model = llm.model;
 
       const todayDate = new Date();
 
       history.push(
-        new HumanMessage(message + ' - Data de envio: ' + todayDate)
+        new HumanMessage(message + ' - [Sent at: ' + todayDate + ']')
       );
 
       // Passa o histórico e a mensagem do usuário como entrada para o modelo
@@ -66,10 +69,12 @@ export const chatServices = {
 
       await dialogRepository.saveMessage(dialog.id, message, 'user');
 
-      if (res.tool_calls!.length > 0) {
+      while (res.tool_calls!.length > 0) {
         history.push(res);
 
         for (const toolCall of res.tool_calls!) {
+          console.log('Tool call:', toolCall);
+
           const selectedTool = toolsByName[toolCall.name];
           const toolResponse = await selectedTool.invoke(toolCall);
 
@@ -79,10 +84,12 @@ export const chatServices = {
         res = await model.invoke(history);
       }
 
+      history.push(res);
+
       const aiResponse = res.content as string;
 
       await dialogRepository.saveMessage(dialog.id, aiResponse, 'IA');
-      
+
       return aiResponse;
     } catch (error) {
       console.error('Erro ao se comunicar com a IA:', error);
