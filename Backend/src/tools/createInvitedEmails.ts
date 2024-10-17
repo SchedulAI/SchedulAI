@@ -27,7 +27,7 @@ const createInvitedEmails = tool(
   {
     name: 'createInvitedEmails',
     description:
-      'Cria a lista de e-emails dos convidados para aquele agendamento, após o usuário fornecer.',
+      'Cria a lista de e-emails dos convidados para aquele agendamento, após o usuário fornecer os emails.',
     schema: z.object({
       invitedEmails: invitedEmailSchema,
     }),
