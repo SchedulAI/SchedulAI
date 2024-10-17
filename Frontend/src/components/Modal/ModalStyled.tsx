@@ -19,12 +19,20 @@ export const ModalStyled = styled.div`
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    .close-button {
+      position: absolute;
+      padding: 1rem;
+      right: 0;
+      top: 0;
+    }
 
     .header {
       padding: 0.5rem 0rem;
       display: flex;
       justify-content: space-between;
-      width: 100%;
+      width: 80%;
 
       div {
         cursor: pointer;
@@ -140,11 +148,11 @@ export const ModalStyled = styled.div`
     .red {
       background-color: #dc2828;
     }
-    .div-status{
+    .div-status {
       display: flex;
       flex-direction: row;
       gap: 0.5rem;
       align-items: center;
     }
- }
+  }
 `;

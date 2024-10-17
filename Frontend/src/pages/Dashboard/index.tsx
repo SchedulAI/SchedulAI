@@ -192,14 +192,15 @@ export const Dashboard = () => {
             <Button
               width="full"
               onClick={() => {
-                createSchedule();
                 setSlideMenuOpen(false);
+                setConversation([]);
+                setCurrentSchedule(null);
               }}
             >
               <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
             </Button>
             <div className="host-div">
-              {schedules && <p>Host</p>}
+              {schedules && <p className="bold-card">Host</p>}
               <div className="host-cards">
                 {schedules &&
                   schedules.data.map(
@@ -240,7 +241,7 @@ export const Dashboard = () => {
               </div>
             </div>
             <div className="guest-div">
-              {schedules && <p>Convidado</p>}
+              {schedules && <p className="bold-card">Convidado</p>}
               <div className="guest-cards">
                 {schedules &&
                   schedules.data.map(

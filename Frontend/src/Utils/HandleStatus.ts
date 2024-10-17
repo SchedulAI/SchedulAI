@@ -32,7 +32,20 @@ export const handleInviteStatus = (status: string) => {
   switch (status) {
     case 'pending':
       return 'Aguardando resposta do convidado';
+    case 'rejected':
+      return 'Convite rejeitado';
     default:
       return 'Presença confirmada';
+  }
+};
+
+export const handleRenderInviteStatus = (status: string) => {
+  switch (status) {
+    case 'pending':
+      return 'yellow';
+    case 'rejected':
+      return 'red';
+    default:
+      return 'green';
   }
 };

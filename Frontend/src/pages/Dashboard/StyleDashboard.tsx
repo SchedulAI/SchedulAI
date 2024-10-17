@@ -100,8 +100,27 @@ export const StyledDashboard = styled.div<{
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    max-height: 50vh;
+    max-height: 40vh;
+    padding: 0.5rem;
     overflow-y: auto;
+
+    .bold-card {
+      font-weight: 600;
+    }
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #8380e5;
+      border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #4c4c4c;
+      border-radius: 10px;
+    }
 
     .guest-cards,
     .host-cards {
@@ -203,6 +222,20 @@ export const StyledDashboard = styled.div<{
       padding: 1rem;
       border-radius: 8px;
       border: 1px solid #e0e0e0;
+
+      &::-webkit-scrollbar {
+        width: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: #8380e5;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: #4c4c4c;
+        border-radius: 10px;
+      }
     }
 
     .message {
@@ -282,7 +315,7 @@ export const StyledDashboard = styled.div<{
     .typing {
       display: flex;
       align-items: center;
-      align-self: flex-end;
+      align-self: flex-start;
       margin-top: auto;
       font-size: 1rem;
       color: #0a0a15;

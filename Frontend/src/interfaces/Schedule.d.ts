@@ -2,8 +2,8 @@ interface Invite {
   id: string;
   schedule_id: string;
   user_id: string;
-  status: 'pending' | 'answered';
   guest_name: string;
+  status: 'pending' | 'accepted' | 'rejected';
 }
 
 interface Availability {
