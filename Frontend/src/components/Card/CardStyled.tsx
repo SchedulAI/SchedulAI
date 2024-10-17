@@ -7,7 +7,7 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
   justify-content: space-between;
   height: 78px;
   width: 100%;
-  padding: 1rem;
+  padding: 0.5rem;
   gap: 8px;
   border: 1px solid #c8c6ee;
   border-radius: 4px;
@@ -20,6 +20,17 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
   .div-subject {
     font-weight: 500;
     height: 19px;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    p {
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .div-data-status {
@@ -30,9 +41,15 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
     width: 100%;
     height: 19px;
     font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 
     p {
       color: #2a2a42;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
@@ -65,7 +82,7 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
   }
 
   &:hover {
-    background-color: #bebce7;
+    background-color: #c9c8e9;
     border: 1px solid #b4b2e1;
   }
 `;
