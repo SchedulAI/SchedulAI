@@ -41,4 +41,16 @@ interface IconTypes {
   x: React.ForwardRefExoticComponent<
     IconProps & React.RefAttributes<SVGSVGElement>
   >;
+  xLogo: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
+  instagramLogo: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
+  facebookLogo: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
+  at: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
 }

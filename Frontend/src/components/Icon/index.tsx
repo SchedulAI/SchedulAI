@@ -14,6 +14,10 @@ import {
   Plus,
   XSquare,
   X,
+  InstagramLogo,
+  XLogo,
+  FacebookLogo,
+  At,
 } from '@phosphor-icons/react';
 
 const IconList: IconTypes = {
@@ -31,6 +35,10 @@ const IconList: IconTypes = {
   plus: Plus,
   close: XSquare,
   x: X,
+  xLogo: XLogo,
+  instagramLogo: InstagramLogo,
+  facebookLogo: FacebookLogo,
+  at: At,
 };
 
 interface PropTypes {
