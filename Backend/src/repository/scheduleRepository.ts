@@ -78,6 +78,29 @@ export const scheduleRepository = {
       client.release();
     }
   },
+  updateScheduleStatus: async (
+    scheduleId: string,
+    status: string
+  ): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+          UPDATE schedule
+          SET status = $1
+          WHERE id = $2
+          RETURNING *;
+        `;
+    try {
+      const updateResult = await client.query(queryUpdate, [
+        status,
+        scheduleId,
+      ]);
+      return updateResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao cancelar o agendamento');
+    } finally {
+      client.release();
+    }
+  },
 
   updateScheduleInfo: async (
     scheduleId: string,

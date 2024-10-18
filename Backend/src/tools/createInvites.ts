@@ -2,6 +2,12 @@ import { z } from 'zod';
 import { invitesServices } from '../services/invitesServices';
 import config from '../config';
 import { tool } from '@langchain/core/tools';
+import { scheduleRepository } from '../repository/scheduleRepository';
+import { dialogRepository } from '../repository/dialogRepository';
+import { availabilityRepository } from '../repository/availabilityRepository';
+import { llm } from '../utils/llm';
+import formatAvailability from '../utils/formatAvailability';
+import { dialogServices } from '../services/dialogServices';
 
 const createInvitesSchema = z
   .object({
@@ -15,7 +21,37 @@ const createInvitesSchema = z
 const createInvites = tool(
   async ({ scheduleId, emails }) => {
     try {
-      const invites = await invitesServices.createInvites(scheduleId, emails);
+      const invites = await invitesServices.createInvitesByListOfEmails(
+        scheduleId,
+        emails
+      );
+
+      const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+      const hostAvailabilities =
+        await availabilityRepository.getAvailabilitiesByUserAndSchedule(
+          schedule.user_id,
+          scheduleId
+        );
+
+      const formatedAvailabilities = hostAvailabilities
+        .map((availability) => formatAvailability(availability))
+        .join('\n');
+
+      invites.forEach(async (invite) => {
+        const dialog = await dialogServices.createDialog(
+          scheduleId,
+          invite.user_id,
+          invite.id
+        );
+
+        const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe em se tem disponibilide em uma ou mais das seguintes disponibilidades:\n\n${formatedAvailabilities}
+        `;
+
+        await dialogRepository.saveMessage(dialog.id, message, 'IA');
+      });
+
+      await scheduleRepository.updateScheduleStatus(scheduleId, 'pending');
 
       return `Os convites para os usuários que já possuem conta foram criadas com sucesso, para aqueles que não têm conta devem acessar o seguinte link: ${config.HOSTNAME}:5173/invite/${scheduleId}`;
     } catch (error: any) {

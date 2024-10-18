@@ -4,24 +4,33 @@ import errorResponse from '../utils/errorResponse';
 
 export const invitesController = {
   createInvite: async (req: Request, res: Response): Promise<void> => {
-    const scheduleId = req.params.scheduleId;
-    const emails = req.body.emails;
+    const { user_id, schedule_id } = req.body;
+
     try {
-      if (!emails) {
+      if (!schedule_id) {
         errorResponse(res, {
           error: 'BAD_REQUEST',
-          message: 'Por favor, infome emails dos Convidados.',
+          message: 'Por favor, infome o id do agendamento.',
           statusCode: 400,
         });
         return;
       }
 
-      const invites = await invitesServices.createInvites(scheduleId, emails);
+      if (!user_id) {
+        errorResponse(res, {
+          error: 'BAD_REQUEST',
+          message: 'Por favor, infome o id do usuário.',
+          statusCode: 400,
+        });
+        return;
+      }
+
+      const invite = await invitesServices.createInvite(user_id, schedule_id);
 
       res.status(200).json({
         sucess: true,
         message: 'Convite(s) criado(s) com Sucesso',
-        data: invites,
+        data: invite,
       });
     } catch (error: any) {
       errorResponse(res, error);
