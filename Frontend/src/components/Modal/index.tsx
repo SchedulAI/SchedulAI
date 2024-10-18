@@ -61,12 +61,14 @@ export const Modal = ({
         setActiveModalId(null);
       }
       const data: ConversationMessage[] = await result.json();
-      setConversation(
-        data.map((msg) => ({
-          sender: msg.sender === 'user' ? 'user' : 'ia',
-          message: msg.message,
-        }))
-      );
+      if (data) {
+        setConversation(
+          data.map((msg) => ({
+            sender: msg.sender === 'user' ? 'user' : 'ia',
+            message: msg.message,
+          }))
+        );
+      }
       if (schedules) {
         const foundSchedule = schedules.data.find(
           (schedule) => schedule.id === id
@@ -90,7 +92,7 @@ export const Modal = ({
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="header">
           <p>{schedule.title}</p>
-          <div onClick={onClick} className='close-button'>
+          <div onClick={onClick} className="close-button">
             <Icon icon="x" size={24} weight="bold" />
           </div>
         </div>

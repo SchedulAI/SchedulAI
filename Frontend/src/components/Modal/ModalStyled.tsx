@@ -9,6 +9,7 @@ export const ModalStyled = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #0a0a1580;
 
   .modal {
     background: #f8f8fc;
@@ -74,6 +75,7 @@ export const ModalStyled = styled.div`
           display: flex;
           gap: 0.5rem;
           height: 100%;
+          align-items: center;
 
           p {
             font-size: 1rem;
@@ -85,18 +87,16 @@ export const ModalStyled = styled.div`
             display: flex;
             gap: 4px;
             flex-direction: column;
-            width: 100%;
-            overflow-y: scroll;
+            align-items: center;
+            width: 80%;
+            overflow-y: auto;
             height: 100%;
             max-height: 10rem;
 
             .guest-item {
               display: flex;
+              justify-content: space-between;
               width: 100%;
-
-              p {
-                width: 100%;
-              }
 
               .status {
                 display: flex;

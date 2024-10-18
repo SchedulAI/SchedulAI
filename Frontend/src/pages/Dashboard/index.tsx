@@ -11,6 +11,7 @@ import { StyledDashboard, Dot } from './StyleDashboard';
 import { formatDate } from '../../Utils/FormatDate';
 import { formatMessage } from '../../Utils/FormatMessage';
 import { compareStatus } from '../../Utils/sortSchedules';
+import { deleteCookie, getCookie } from '../../Utils/Cookies';
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
@@ -155,6 +156,48 @@ export const Dashboard = () => {
     }
   };
 
+  const getInviteConversation = async (): Promise<void> => {
+    const id = getCookie('schedule_id');
+    deleteCookie('schedule_id');
+    if (id) {
+      try {
+        const result = await fetch(apiUrl(`/dialog/messages/${id}`), {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        if (!result.ok) {
+          setConversation([]);
+        }
+        const data: ConversationMessage[] = await result.json();
+        if (data) {
+          setConversation(
+            data.map((msg) => ({
+              sender: msg.sender === 'user' ? 'user' : 'ia',
+              message: msg.message,
+            }))
+          );
+        }
+        if (schedules) {
+          const foundSchedule = schedules.data.find(
+            (schedule) => schedule.id === id
+          );
+          if (foundSchedule) {
+            setCurrentSchedule({
+              data: foundSchedule,
+              message: 'Operação realizada com sucesso',
+              success: true,
+            });
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -165,8 +208,42 @@ export const Dashboard = () => {
     getSchedules();
   }, []);
 
+  useEffect(() => {
+    const isFirstLogin = getCookie('isFirstLogin');
+    deleteCookie('isFirstLogin');
+
+    if (isFirstLogin) {
+      setSlideMenuOpen(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    getInviteConversation();
+  });
+
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
+      <div className="logo">
+        <div
+          className={'slide-bar-div-button'}
+          onClick={() => setSlideMenuOpen(!slideMenuOpen)}
+        >
+          {schedules && (
+            <div className="schedules-counter">
+              <p>{schedules.data.length}</p>
+            </div>
+          )}
+          <Icon
+            icon="sidebarSimple"
+            size={32}
+            weight="regular"
+            color="#0A0A15"
+          />
+        </div>
+        <Button onClick={() => logout()}>
+          <p>Sair</p>
+        </Button>
+      </div>
       <div
         className={slideMenuOpen ? 'div-cover-open' : 'div-cover-closed'}
         onClick={() => setSlideMenuOpen(!slideMenuOpen)}
@@ -181,6 +258,11 @@ export const Dashboard = () => {
             className={'slide-bar-div-button'}
             onClick={() => setSlideMenuOpen(!slideMenuOpen)}
           >
+            {schedules && (
+              <div className="schedules-counter">
+                <p>{schedules.data.length}</p>
+              </div>
+            )}
             <Icon
               icon="sidebarSimple"
               size={32}
@@ -262,7 +344,20 @@ export const Dashboard = () => {
                                   : formatDate(schedule.proposed_date)
                                 : 'A definir'
                             }
+                            onClick={() => openModal(schedule.id)}
                           />
+                          {activeModalId === schedule.id && (
+                            <Modal
+                              onClick={closeModal}
+                              schedule={schedule}
+                              setSchedules={setSchedules}
+                              schedules={schedules}
+                              setCurrentSchedule={setCurrentSchedule}
+                              setConversation={setConversation}
+                              setActiveModalId={setActiveModalId}
+                              setSlideMenuOpen={setSlideMenuOpen}
+                            />
+                          )}
                         </div>
                       )
                   )}
@@ -272,25 +367,19 @@ export const Dashboard = () => {
         </div>
       </div>
       <div className="chat-content">
-        <div className="logo">
-          <Button onClick={() => logout()}>
-            <p>Sair</p>
-          </Button>
-        </div>
         <div className="chat">
           {conversation.length === 0 ? (
             <>
               <h2>O que gostaria de agendar hoje?</h2>
               <div className="chat-input">
-                <input
-                  type="text"
+                <textarea
                   placeholder="O que posso agendar para você hoje?"
                   value={message ? message : ''}
                   onChange={(e) => {
                     setMessage(e.target.value);
                     setSendingMessage(e.target.value);
                   }}
-                  onKeyDown={handleKeyPress}
+                  onKeyDown={() => handleKeyPress}
                 />
                 <button
                   onClick={() => {
@@ -311,18 +400,20 @@ export const Dashboard = () => {
             <>
               <div className="chat-conversation">
                 {conversation.map((msg, index) => (
-                  <div key={index} className={`message ${msg.sender}`}>
-                    {msg.sender === 'ia' && (
-                      <div className="icon-ia">
-                        <Icon
-                          size={32}
-                          icon="robot"
-                          weight="fill"
-                          color="#0a0a15"
-                        />
-                      </div>
-                    )}
-                    <pre>{formatMessage(msg.message)}</pre>
+                  <div className="div-global-chat">
+                    <div key={index} className={`message ${msg.sender}`}>
+                      {msg.sender === 'ia' && (
+                        <div className="icon-ia">
+                          <Icon
+                            size={32}
+                            icon="robot"
+                            weight="fill"
+                            color="#0a0a15"
+                          />
+                        </div>
+                      )}
+                      <pre>{formatMessage(msg.message)}</pre>
+                    </div>
                   </div>
                 ))}
                 {loadingMessage && (
@@ -335,20 +426,20 @@ export const Dashboard = () => {
                 <div ref={chatEndRef} />
               </div>
               <div className="chat-input">
-                <input
-                  type="text"
+                <textarea
                   placeholder="Mensagem SchedulAI"
                   value={message ? message : ''}
                   onChange={(e) => {
                     setMessage(e.target.value);
                     setSendingMessage(e.target.value);
                   }}
-                  onKeyDown={handleKeyPress}
+                  onKeyDown={() => handleKeyPress}
                 />
                 <button
                   onClick={() => {
                     handleSendMessage();
                   }}
+                  disabled={!message}
                 >
                   <Icon
                     icon="circleArrowUp"
