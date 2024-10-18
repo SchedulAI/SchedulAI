@@ -221,8 +221,8 @@ export const StyledDashboard = styled.div<{
       display: flex;
       flex-direction: column;
       align-items: center;
-      max-height: 75vh;
-      min-height: 75vh;
+      max-height: 65vh;
+      min-height: 65vh;
       width: 100%;
       overflow-y: auto;
       border-radius: 8px;
