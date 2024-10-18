@@ -124,7 +124,6 @@ export const availabilityController = {
 
     try {
       const availability = await availabilityServices.getAvailability(
-        user.id,
         scheduleId,
         availabilityId
       );

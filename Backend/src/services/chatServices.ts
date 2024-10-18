@@ -8,6 +8,7 @@ import {
   HumanMessage,
   SystemMessage,
 } from '@langchain/core/messages';
+import { dialogServices } from './dialogServices';
 
 export const chatServices = {
   chat: async (
@@ -20,19 +21,8 @@ export const chatServices = {
 
       let dialog = await dialogRepository.getDialog(userId, scheduleId);
 
-      const isUserHost = userId === schedule.user_id ? true : false;
-
       if (!dialog) {
-        dialog = await dialogRepository.createDialog(userId, scheduleId);
-        await dialogRepository.saveMessage(
-          dialog.id,
-          `O id do usuário é ${userId}, O id do agendamento é ${scheduleId}, ${
-            isUserHost ? 'O usuário é o host' : 'O usuário é um convidado'
-          }`,
-          'system'
-        );
-
-        await dialogRepository.saveMessage(dialog.id, llm.prompt, 'system');
+        dialog = await dialogServices.createDialog(scheduleId, userId, null);
       }
 
       const previousMessages = await dialogRepository.getMessagesByDialogId(
@@ -92,9 +82,7 @@ export const chatServices = {
       return aiResponse;
     } catch (error) {
       console.error('Erro ao se comunicar com a IA:', error);
-      throw new Error(
-        'Desculpe, ocorreu um erro ao processar sua solicitação.'
-      );
+      throw error;
     }
   },
 };

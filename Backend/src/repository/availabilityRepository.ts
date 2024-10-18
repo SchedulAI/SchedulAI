@@ -21,6 +21,25 @@ export const availabilityRepository = {
     }
   },
 
+  getAvailabilitiesByUserAndSchedule: async (
+    userId: string,
+    scheduleId: string
+  ): Promise<Availability[]> => {
+    const client = await pool.connect();
+    const query = `
+      SELECT * FROM availability
+      WHERE user_id = $1 AND schedule_id = $2;
+    `;
+    try {
+      const { rows } = await client.query(query, [userId, scheduleId]);
+      return rows;
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao encontrar dispolibilidade');
+    } finally {
+      client.release();
+    }
+  },
+
   getAllAvailabilities: async (
     scheduleId: string
   ): Promise<Availability[] | null> => {
