@@ -6,6 +6,8 @@ import { scheduleRepository } from '../repository/scheduleRepository';
 import { dialogRepository } from '../repository/dialogRepository';
 import { availabilityRepository } from '../repository/availabilityRepository';
 import { llm } from '../utils/llm';
+import formatAvailability from '../utils/formatAvailability';
+import { dialogServices } from '../services/dialogServices';
 
 const createInvitesSchema = z
   .object({
@@ -19,8 +21,13 @@ const createInvitesSchema = z
 const createInvites = tool(
   async ({ scheduleId, emails }) => {
     try {
-      const invites = await invitesServices.createInvites(scheduleId, emails);
+      const invites = await invitesServices.createInvitesByListOfEmails(
+        scheduleId,
+        emails
+      );
+
       const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
       const hostAvailabilities =
         await availabilityRepository.getAvailabilitiesByUserAndSchedule(
           schedule.user_id,
@@ -28,38 +35,17 @@ const createInvites = tool(
         );
 
       const formatedAvailabilities = hostAvailabilities
-        .map((availability) => {
-          const weekDay = new Date(availability.week_day);
-
-          const day = String(weekDay.getDate()).padStart(2, '0');
-          const month = String(weekDay.getMonth() + 1).padStart(2, '0');
-          const year = weekDay.getFullYear();
-
-          const startTime = availability.start_time.slice(0, 5); // hh:mm
-          const endTime = availability.end_time.slice(0, 5); // hh:mm
-
-          return `**${day}/${month}/${year}** das **${startTime}** até **${endTime}**`;
-        })
+        .map((availability) => formatAvailability(availability))
         .join('\n');
 
       invites.forEach(async (invite) => {
-        const dialog = await dialogRepository.createDialog(
+        const dialog = await dialogServices.createDialog(
+          scheduleId,
           invite.user_id,
-          scheduleId
+          invite.id
         );
 
-        await dialogRepository.saveMessage(
-          dialog.id,
-          `O id do usuário é ${invite.user_id}, O id do agendamento é ${scheduleId},  O usuário é um convidado, o id do convite é ${invite.id}
-          `,
-          'system'
-        );
-
-        await dialogRepository.saveMessage(dialog.id, llm.prompt, 'system');
-
-        const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe em se tem disponibilide em uma ou mais das seguintes disponibilidades:
-        
-        ${formatedAvailabilities}
+        const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe em se tem disponibilide em uma ou mais das seguintes disponibilidades:\n\n${formatedAvailabilities}
         `;
 
         await dialogRepository.saveMessage(dialog.id, message, 'IA');
