@@ -1,28 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { SnackbarContainer } from './SnackbarContainer';
 
-const Snackbar: React.FC<SnackbarProps> = ({
-  anchororigin,
-  variant,
-  message,
-}) => {
+
+
+const Snackbar: React.FC<SnackbarProps> = ({ variant, message, onClose }) => {
   const [visible, setVisible] = useState(true);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
+      onClose();
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [onClose]);
+
+  if (!visible) return null;
 
   return (
-    <SnackbarContainer
-      anchororigin={anchororigin}
-      variant={variant}
-      visible={visible}
+    <div
+      className={`snackbar snackbar-${variant}`}
+      style={{ position: 'relative', marginBottom: '10px' }}
     >
-      {message}
-    </SnackbarContainer>
+      <p>{message}</p>
+    </div>
   );
 };
 

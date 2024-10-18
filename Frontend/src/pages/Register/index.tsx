@@ -6,7 +6,7 @@ import { Input } from '../../components/Input';
 import { RegisterStyled } from './RegisterStyled';
 import apiUrl from '../../config/api';
 import { useContext, useState } from 'react';
-import Snackbar from '../../components/Snackbar';
+import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { ScheduleContext } from '../../providers/ScheduleProvider';
 import { setCookie } from '../../Utils/Cookies';
 
@@ -14,12 +14,8 @@ export const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarType, setSnackbarType] = useState<'success' | 'error'>(
-    'success'
-  );
   const [loading, setLoading] = useState(false);
+  const [containerVisible, setContainerVisible] = useState(true);
   const scheduleContext = useContext(ScheduleContext);
   const schedule_id = scheduleContext?.schedule_id;
 
@@ -27,7 +23,7 @@ export const Register = () => {
 
   const createInvite = async (id: string) => {
     try {
-      await fetch(apiUrl('/invite/create'), {
+      const result = await fetch(apiUrl('/invite/create'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,9 +33,26 @@ export const Register = () => {
           user_id: id,
         }),
       });
+      return result.json();
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const addSnackbar = (
+    message: string,
+    variant: 'success' | 'error' | 'info' | 'warning'
+  ) => {
+    const event = new CustomEvent('addSnackbar', {
+      detail: {
+        id: Date.now(),
+        message,
+        variant,
+        anchororigin: { vertical: 'top', horizontal: 'right' },
+      },
+    });
+    window.dispatchEvent(event);
+    setContainerVisible(true);
   };
 
   const registerFetch = async () => {
@@ -61,27 +74,25 @@ export const Register = () => {
 
       if (schedule_id) {
         setCookie('schedule_id', schedule_id, 864000);
-        await createInvite(data.id);
+        const invite = await createInvite(data.id);
+        if (!invite.success) {
+          addSnackbar(invite.message, 'error');
+        }
       }
       if (response.ok) {
-        setSnackbarMessage(message);
-        setSnackbarType('success');
-        setSnackbarVisible(true);
+        addSnackbar(message, 'success');
         setTimeout(() => {
           navigate('/login');
           setLoading(false);
         }, 5000);
       } else {
-        setSnackbarMessage(message);
-        setSnackbarType('error');
-        setSnackbarVisible(true);
+        addSnackbar(message, 'error');
         setLoading(false);
       }
     } catch (error) {
-      setSnackbarMessage((error as Error).message);
-      setSnackbarType('error');
-      setSnackbarVisible(true);
+      addSnackbar((error as Error).message, 'error');
       setLoading(false);
+      return;
     }
   };
 
@@ -156,13 +167,10 @@ export const Register = () => {
           </a>
         </div>
       </div>
-      {snackbarVisible && (
-        <Snackbar
-          anchororigin={{ vertical: 'top', horizontal: 'right' }}
-          variant={snackbarType}
-          message={snackbarMessage}
-        />
-      )}
+      <SnackbarContainer
+        anchororigin={{ vertical: 'top', horizontal: 'right' }}
+        visible={containerVisible}
+      />
     </RegisterStyled>
   );
 };

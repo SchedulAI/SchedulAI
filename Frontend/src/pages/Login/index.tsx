@@ -5,7 +5,7 @@ import { Icon } from '../../components/Icon';
 import { Input } from '../../components/Input';
 import { useUser } from '../../hooks/userHooks';
 import { useNavigate } from 'react-router-dom';
-import Snackbar from '../../components/Snackbar';
+import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { LoginStyled } from './LoginStyled';
 import apiUrl from '../../config/api';
 
@@ -14,13 +14,28 @@ export const Login = () => {
   const [password, setPassword] = useState<string>('');
   const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [containerVisible, setContainerVisible] = useState(true);
   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
   const handleRememberMeChange = () => {
     setRememberMe(!rememberMe);
+  };
+
+  const addSnackbar = (
+    message: string,
+    variant: 'success' | 'error' | 'info' | 'warning'
+  ) => {
+    const event = new CustomEvent('addSnackbar', {
+      detail: {
+        id: Date.now(),
+        message,
+        variant,
+        anchororigin: { vertical: 'top', horizontal: 'right' },
+      },
+    });
+    window.dispatchEvent(event);
+    setContainerVisible(true);
   };
 
   const loginFetch = async () => {
@@ -50,12 +65,10 @@ export const Login = () => {
         }
         navigate('/dashboard');
       } else {
-        setSnackbarMessage(data.error);
-        setSnackbarVisible(true);
+        addSnackbar(data.error, 'error');
       }
     } catch (error) {
-      setSnackbarMessage((error as Error).message);
-      setSnackbarVisible(true);
+      addSnackbar((error as Error).message, 'error');
       setLoading(false);
       return;
     }
@@ -143,13 +156,10 @@ export const Login = () => {
           </a>
         </div>
       </div>
-      {snackbarVisible && (
-        <Snackbar
-          anchororigin={{ vertical: 'top', horizontal: 'right' }}
-          variant="error"
-          message={snackbarMessage}
-        />
-      )}
+      <SnackbarContainer
+        anchororigin={{ vertical: 'top', horizontal: 'right' }}
+        visible={containerVisible}
+      />
     </LoginStyled>
   );
 };
