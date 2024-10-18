@@ -56,14 +56,15 @@ export const Register = () => {
           password: password,
         }),
       });
-      const data: RegisterResponse = await response.json();
+      const { data, message }: RegisterResponse = await response.json();
       setCookie('isFirstLogin', 'true', 8640000);
+
       if (schedule_id) {
         setCookie('schedule_id', schedule_id, 864000);
         await createInvite(data.id);
       }
       if (response.ok) {
-        setSnackbarMessage(data.message);
+        setSnackbarMessage(message);
         setSnackbarType('success');
         setSnackbarVisible(true);
         setTimeout(() => {
@@ -71,7 +72,7 @@ export const Register = () => {
           setLoading(false);
         }, 5000);
       } else {
-        setSnackbarMessage(data.message);
+        setSnackbarMessage(message);
         setSnackbarType('error');
         setSnackbarVisible(true);
         setLoading(false);
