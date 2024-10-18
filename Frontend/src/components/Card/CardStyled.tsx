@@ -5,7 +5,7 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  height: 78px;
+  height: fit-content;
   width: 100%;
   padding: 0.5rem;
   gap: 8px;
@@ -19,6 +19,7 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
 
   .div-subject {
     font-weight: 500;
+    font-size: 1.04rem;
     height: 19px;
     width: 100%;
     white-space: nowrap;
@@ -35,18 +36,16 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
 
   .div-data-status {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    height: 19px;
     font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
     p {
-      color: #2a2a42;
+      color: #0a0a1575;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -59,7 +58,7 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
     gap: 8px;
 
     p {
-      color: #2a2a42;
+      color: #0a0a1575;
     }
   }
 

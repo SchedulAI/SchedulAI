@@ -1,8 +1,8 @@
 const statusOrder = [
   'scheduled',
   'reviewing',
-  'planning',
   'pending',
+  'planning',
   'cancelled',
 ];
 

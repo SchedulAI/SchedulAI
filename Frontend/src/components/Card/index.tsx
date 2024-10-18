@@ -22,9 +22,11 @@ export const Card = ({
         <p>{title}</p>
       </div>
       <div className="div-data-status">
-        <p>{renderDateInfo(status, proposed_date)?.toString()}</p>
+        {proposed_date && status !== 'cancelled' && (
+          <p>Data: {renderDateInfo(status, proposed_date)?.toString()}</p>
+        )}
         <div className="div-status">
-          <p>{handleRenderStatus(status)}</p>
+          <p>Status: {handleRenderStatus(status)}</p>
           <div className={`status-circle ${handleStatusColor(status)}`} />
         </div>
       </div>
