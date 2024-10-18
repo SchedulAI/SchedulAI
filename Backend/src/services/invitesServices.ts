@@ -68,12 +68,6 @@ export const invitesServices = {
     // Filtra a lista removendo os undefined
     const filteredList = inviteList.filter((item) => item !== undefined);
 
-    if (filteredList.length === 0) {
-      throw new ConflictException(
-        'Todos os Convites da Lista já foram enviados'
-      );
-    }
-
     return filteredList;
   },
 
