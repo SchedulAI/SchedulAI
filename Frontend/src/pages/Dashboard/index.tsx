@@ -110,8 +110,9 @@ export const Dashboard = () => {
     }
   };
 
-  function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter') {
+  function handleKeyPress(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
       handleSendMessage();
     }
   }
@@ -224,22 +225,6 @@ export const Dashboard = () => {
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
       <div className="logo">
-        <div
-          className={'slide-bar-div-button'}
-          onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-        >
-          {schedules && (
-            <div className="schedules-counter">
-              <p>{schedules.data.length}</p>
-            </div>
-          )}
-          <Icon
-            icon="sidebarSimple"
-            size={32}
-            weight="regular"
-            color="#0A0A15"
-          />
-        </div>
         <Button onClick={() => logout()}>
           <p>Sair</p>
         </Button>
@@ -379,7 +364,7 @@ export const Dashboard = () => {
                     setMessage(e.target.value);
                     setSendingMessage(e.target.value);
                   }}
-                  onKeyDown={() => handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
                 <button
                   onClick={() => {
@@ -399,8 +384,8 @@ export const Dashboard = () => {
           ) : (
             <>
               <div className="chat-conversation">
-                {conversation.map((msg, index) => (
-                  <div className="div-global-chat">
+                <div className="div-global-chat">
+                  {conversation.map((msg, index) => (
                     <div key={index} className={`message ${msg.sender}`}>
                       {msg.sender === 'ia' && (
                         <div className="icon-ia">
@@ -414,15 +399,15 @@ export const Dashboard = () => {
                       )}
                       <pre>{formatMessage(msg.message)}</pre>
                     </div>
-                  </div>
-                ))}
-                {loadingMessage && (
-                  <div className="typing">
-                    Digitando algo <Dot>.</Dot>
-                    <Dot>.</Dot>
-                    <Dot>.</Dot>
-                  </div>
-                )}
+                  ))}
+                  {loadingMessage && (
+                    <div className="typing">
+                      Digitando algo <Dot>.</Dot>
+                      <Dot>.</Dot>
+                      <Dot>.</Dot>
+                    </div>
+                  )}
+                </div>
                 <div ref={chatEndRef} />
               </div>
               <div className="chat-input">
@@ -433,7 +418,7 @@ export const Dashboard = () => {
                     setMessage(e.target.value);
                     setSendingMessage(e.target.value);
                   }}
-                  onKeyDown={() => handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
                 <button
                   onClick={() => {
