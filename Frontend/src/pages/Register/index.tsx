@@ -20,13 +20,12 @@ export const Register = () => {
     'success'
   );
   const [loading, setLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
   const scheduleContext = useContext(ScheduleContext);
   const schedule_id = scheduleContext?.schedule_id;
 
   const navigate = useNavigate();
 
-  const createInvite = async () => {
+  const createInvite = async (id: string) => {
     try {
       await fetch(apiUrl('/invite/create'), {
         method: 'POST',
@@ -35,7 +34,7 @@ export const Register = () => {
         },
         body: JSON.stringify({
           schedule_id: schedule_id,
-          user_id: userId,
+          user_id: id,
         }),
       });
     } catch (error) {
@@ -59,10 +58,9 @@ export const Register = () => {
       });
       const data: RegisterResponse = await response.json();
       setCookie('isFirstLogin', 'true', 8640000);
-      setUserId(data.id);
       if (schedule_id) {
         setCookie('schedule_id', schedule_id, 864000);
-        await createInvite();
+        await createInvite(data.id);
       }
       if (response.ok) {
         setSnackbarMessage(data.message);
