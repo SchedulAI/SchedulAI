@@ -8,6 +8,7 @@ import apiUrl from '../../config/api';
 import { useContext, useState } from 'react';
 import Snackbar from '../../components/Snackbar';
 import { ScheduleContext } from '../../providers/ScheduleProvider';
+import { setCookie } from '../../Utils/Cookies';
 
 export const Register = () => {
   const [email, setEmail] = useState('');
@@ -57,8 +58,10 @@ export const Register = () => {
         }),
       });
       const data: RegisterResponse = await response.json();
+      setCookie('isFirstLogin', 'true', 8640000);
       setUserId(data.id);
       if (schedule_id) {
+        setCookie('schedule_id', schedule_id, 864000);
         await createInvite();
       }
       if (response.ok) {

@@ -46,9 +46,8 @@ export const StyledDashboard = styled.div<{
   }
 
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   height: 100%;
   width: 100%;
 
@@ -63,27 +62,6 @@ export const StyledDashboard = styled.div<{
     width: 100%;
     justify-content: center;
     align-items: center;
-    padding: 21px;
-  }
-
-  .div-cover-open {
-    width: 100%;
-    height: 100vh;
-    background-color: #0a0a1575;
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    left: 0;
-  }
-
-  .div-cover-open {
-    width: 100vw;
-    height: 100vh;
-    background-color: #0a0a1575;
-    position: absolute;
-    z-index: 0;
-    top: 0;
-    left: 0;
   }
 
   .div-cover-closed {
@@ -132,27 +110,34 @@ export const StyledDashboard = styled.div<{
 
   .slide-bar-menu-closed {
     width: 4%;
-    height: 100%;
+    height: 100vh;
     animation: ${shrinkWidth} 2s forwards;
     padding: 21px;
     display: flex;
     justify-content: flex-start;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    justify-self: flex-start;
+    align-self: flex-start;
   }
 
   .slide-bar-menu-open {
     max-width: 25rem;
     width: 100%;
-    height: 100%;
+    height: 100vh;
     animation: ${expandWidth} 2s forwards;
     background-color: #d4d3f3;
     padding: 21px;
     display: flex;
     gap: 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
     flex-direction: column;
     justify-content: flex-start;
+    justify-self: flex-start;
     align-items: flex-start;
-    position: relative;
   }
 
   .slide-bar-div-button {
@@ -161,6 +146,7 @@ export const StyledDashboard = styled.div<{
     width: 40px;
     padding: 4px;
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -189,12 +175,32 @@ export const StyledDashboard = styled.div<{
 
   .logo {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     color: #0a0a15;
     gap: 0.5rem;
     user-select: none;
+    padding: 21px;
     width: 100%;
-    justify-content: flex-end;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  .schedules-counter {
+    position: absolute;
+    background-color: #0a0a15;
+    color: white;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    width: 20px;
+    top: 0;
+    right: 0;
+
+    p {
+      font-size: 12px;
+    }
   }
 
   .chat {
@@ -203,8 +209,8 @@ export const StyledDashboard = styled.div<{
     justify-content: center;
     align-items: center;
     height: 100%;
-    width: 40%;
-    gap: 2rem;
+    width: 100%;
+    gap: 1rem;
 
     h2 {
       font-size: 3rem;
@@ -214,27 +220,36 @@ export const StyledDashboard = styled.div<{
     .chat-conversation {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      max-height: 70vh;
-      min-height: 70vh;
+      align-items: center;
+      gap: 2rem;
+      max-height: 75vh;
+      min-height: 75vh;
       width: 100%;
       overflow-y: auto;
-      padding: 1rem;
       border-radius: 8px;
-      border: 1px solid #e0e0e0;
 
       &::-webkit-scrollbar {
-        width: 10px;
+        width: 12px;
       }
 
       &::-webkit-scrollbar-thumb {
         background-color: #8380e5;
-        border-radius: 10px;
+        border-radius: 12px;
+        border-top-right-radius: 0px;
+        border-top-left-radius: 0px;
       }
 
       &::-webkit-scrollbar-track {
         background-color: #4c4c4c;
-        border-radius: 10px;
+        border-radius: 12px;
+        border-top-right-radius: 0px;
+        border-top-left-radius: 0px;
+      }
+
+      .div-global-chat {
+        width: 52%;
+        display: flex;
+        flex-direction: column;
       }
     }
 
@@ -242,6 +257,7 @@ export const StyledDashboard = styled.div<{
       display: flex;
       align-items: flex-end;
       max-width: 80%;
+      width: fit-content;
       padding: 0.5rem 1rem;
       border-radius: 20px;
       font-size: 1rem;
@@ -251,13 +267,15 @@ export const StyledDashboard = styled.div<{
     .message.user {
       align-self: flex-end;
       background-color: #d4d3f3;
+      width: fit-content;
       color: #0a0a15;
     }
 
     .message.ia {
       align-self: flex-start;
       align-items: flex-start;
-      background-color: #cdccee;
+      padding: 0.5rem;
+      width: fit-content;
       gap: 0.5rem;
       background-color: #e0e0e0;
       color: #0a0a15;
@@ -267,18 +285,26 @@ export const StyledDashboard = styled.div<{
       display: flex;
       background-color: #d4d3f3;
       border: 1px solid #d4d3f3;
-      border-radius: 4px;
+      border-radius: 8px;
+      justify-content: center;
+      align-items: center;
       padding: 0.5rem 1rem;
-      width: 100%;
+      width: 50%;
       transition: all ease-in-out 0.3s;
 
-      input {
+      textarea {
         border: none;
         border-radius: 4px;
         color: #0a0a15;
         font-size: 1rem;
         background-color: transparent;
         width: 100%;
+        max-height: 200px;
+        height: 70px;
+        resize: none;
+        overflow-y: auto;
+        word-wrap: break-word;
+        white-space: pre-wrap;
 
         &::placeholder {
           color: #0a0a1579;
@@ -286,6 +312,20 @@ export const StyledDashboard = styled.div<{
 
         &:focus {
           outline: none;
+        }
+
+        &::-webkit-scrollbar {
+          width: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background-color: #8380e5;
+          border-radius: 12px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background-color: #4c4c4c;
+          border-radius: 10px;
         }
       }
 
