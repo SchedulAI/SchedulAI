@@ -2,5 +2,7 @@ export interface Invites {
   id: string;
   schedule_id: string;
   user_id: string;
-  status: 'answered' | 'pending';
+  status: 'pending' | 'accepted' | 'rejected';
+
+  guest_name: string[];
 }

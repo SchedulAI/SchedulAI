@@ -9,6 +9,7 @@ export const ModalStyled = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: #0a0a1580;
 
   .modal {
     background: #f8f8fc;
@@ -19,12 +20,20 @@ export const ModalStyled = styled.div`
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    position: relative;
+
+    .close-button {
+      position: absolute;
+      padding: 1rem;
+      right: 0;
+      top: 0;
+    }
 
     .header {
       padding: 0.5rem 0rem;
       display: flex;
       justify-content: space-between;
-      width: 100%;
+      width: 80%;
 
       div {
         cursor: pointer;
@@ -66,6 +75,7 @@ export const ModalStyled = styled.div`
           display: flex;
           gap: 0.5rem;
           height: 100%;
+          align-items: center;
 
           p {
             font-size: 1rem;
@@ -77,18 +87,16 @@ export const ModalStyled = styled.div`
             display: flex;
             gap: 4px;
             flex-direction: column;
-            width: 100%;
-            overflow-y: scroll;
+            align-items: center;
+            width: 80%;
+            overflow-y: auto;
             height: 100%;
             max-height: 10rem;
 
             .guest-item {
               display: flex;
+              justify-content: space-between;
               width: 100%;
-
-              p {
-                width: 100%;
-              }
 
               .status {
                 display: flex;
@@ -140,11 +148,11 @@ export const ModalStyled = styled.div`
     .red {
       background-color: #dc2828;
     }
-    .div-status{
+    .div-status {
       display: flex;
       flex-direction: row;
       gap: 0.5rem;
       align-items: center;
     }
- }
+  }
 `;

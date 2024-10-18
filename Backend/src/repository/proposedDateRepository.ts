@@ -10,12 +10,12 @@ export const proposedDateRepository = {
     status: string
   ): Promise<ProposedDate> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
         INSERT INTO proposed_date (schedule_id, proposed_date, status)
         VALUES ($1, $2, $3)
         RETURNING *;
       `;
+    try {
       const { rows } = await client.query(query, [
         scheduleId,
         proposedDate,
@@ -32,11 +32,11 @@ export const proposedDateRepository = {
   // Listar data proposta por ID do agendamento
   listProposedDate: async (scheduleId: string): Promise<ProposedDate> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
         SELECT * FROM proposed_date
         WHERE schedule_id = $1;
       `;
+    try {
       const { rows } = await client.query(query, [scheduleId]);
       return rows[0];
     } catch (error: any) {
@@ -53,13 +53,13 @@ export const proposedDateRepository = {
     status: string
   ): Promise<ProposedDate> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
         UPDATE proposed_date
         SET proposed_date = $2, status = $3
         WHERE schedule_id = $1
         RETURNING *;
       `;
+    try {
       const { rows } = await client.query(query, [
         scheduleId,
         proposedDate,
@@ -76,12 +76,12 @@ export const proposedDateRepository = {
   // Deletar data proposta
   deleteProposedDate: async (id: number): Promise<ProposedDate> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
         DELETE FROM proposed_date
         WHERE id = $1
         RETURNING *;
       `;
+    try {
       const { rows } = await client.query(query, [id]);
       return rows[0];
     } catch (error: any) {

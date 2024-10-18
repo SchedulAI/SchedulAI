@@ -17,6 +17,6 @@ export interface Schedule {
   is_host?: boolean;
   proposed_date?: ProposedDate;
 
-  invites?: Invites[];
-  availability?: Availability[];
+  invites?: Invites[] | null;
+  availability?: Availability[] | null;
 }

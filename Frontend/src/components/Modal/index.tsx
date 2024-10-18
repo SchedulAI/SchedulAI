@@ -6,6 +6,8 @@ import { formatDate } from '../../Utils/FormatDate';
 import {
   handleRenderStatus,
   handleStatusColor,
+  handleInviteStatus,
+  handleRenderInviteStatus,
 } from '../../Utils/HandleStatus';
 
 export const Modal = ({
@@ -54,13 +56,19 @@ export const Modal = ({
         },
         credentials: 'include',
       });
+      if (!result.ok) {
+        setConversation([]);
+        setActiveModalId(null);
+      }
       const data: ConversationMessage[] = await result.json();
-      setConversation(
-        data.map((msg) => ({
-          sender: msg.sender === 'user' ? 'user' : 'ia',
-          message: msg.message,
-        }))
-      );
+      if (data) {
+        setConversation(
+          data.map((msg) => ({
+            sender: msg.sender === 'user' ? 'user' : 'ia',
+            message: msg.message,
+          }))
+        );
+      }
       if (schedules) {
         const foundSchedule = schedules.data.find(
           (schedule) => schedule.id === id
@@ -84,7 +92,7 @@ export const Modal = ({
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="header">
           <p>{schedule.title}</p>
-          <div onClick={onClick}>
+          <div onClick={onClick} className="close-button">
             <Icon icon="x" size={24} weight="bold" />
           </div>
         </div>
@@ -133,9 +141,9 @@ export const Modal = ({
                       <div className="guest-item" key={index}>
                         <p>{invite.guest_name}</p>
                         <div className="status">
-                          <p>{handleRenderStatus(invite.status)}</p>
+                          <p>{handleInviteStatus(invite.status)}</p>
                           <div
-                            className={`status-circle ${handleStatusColor(
+                            className={`status-circle ${handleRenderInviteStatus(
                               invite.status
                             )}`}
                           ></div>

@@ -18,20 +18,17 @@ export const availabilityServices = {
     endTime: string,
     notes: string
   ): Promise<Availability> => {
-    // Verifica se o usuário existe
     const user = await userRepository.findById(userId);
     if (!user) {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    // Verifica se o agendamento existe
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
     if (!schedule) {
       throw new NotFoundException('Agendamento não encontrado');
     }
 
     try {
-      // Cria uma nova disponibilidade
       const availability = await availabilityRepository.createAvailability(
         userId,
         scheduleId,
@@ -57,13 +54,11 @@ export const availabilityServices = {
     endTime: string,
     notes: string
   ): Promise<Availability> => {
-    // Verifica se o agendamento existe
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
     if (!schedule) {
       throw new NotFoundException('Agendamento não encontrado');
     }
 
-    // Verifica se a disponibilidade existe
     const availability = await availabilityRepository.getAvailability(
       availabilityId
     );
@@ -78,21 +73,15 @@ export const availabilityServices = {
       );
     }
 
-    try {
-      // Atualiza a disponibilidade
-      const updatedAvailability =
-        await availabilityRepository.updateAvailability(
-          availabilityId,
-          weekDay,
-          startTime,
-          endTime,
-          notes
-        );
+    const updatedAvailability = await availabilityRepository.updateAvailability(
+      availabilityId,
+      weekDay,
+      startTime,
+      endTime,
+      notes
+    );
 
-      return updatedAvailability;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao atualizar disponibilidade');
-    }
+    return updatedAvailability;
   },
 
   // Deletar uma disponibilidade
@@ -101,13 +90,11 @@ export const availabilityServices = {
     scheduleId: string,
     availabilityId: string
   ): Promise<void> => {
-    // Verifica se o agendamento existe
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
     if (!schedule) {
       throw new NotFoundException('Agendamento não encontrado');
     }
 
-    // Verifica se a disponibilidade existe
     const availability = await availabilityRepository.getAvailability(
       availabilityId
     );
@@ -122,21 +109,14 @@ export const availabilityServices = {
       );
     }
 
-    try {
-      // Deleta a disponibilidade
-      await availabilityRepository.deleteAvailability(availabilityId);
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao deletar disponibilidade');
-    }
+    await availabilityRepository.deleteAvailability(availabilityId);
   },
 
   // Obter uma disponibilidade
   getAvailability: async (
-    userId: string,
     scheduleId: string,
     availabilityId: string
   ): Promise<Availability> => {
-    // Verifica se o agendamento existe
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
     if (!schedule) {
       throw new NotFoundException('Agendamento não encontrado');
@@ -154,7 +134,6 @@ export const availabilityServices = {
 
   // Listar todas as disponibilidades de um agendamento
   getAllAvailabilities: async (scheduleId: string): Promise<Availability[]> => {
-    // Verifica se o agendamento existe
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
     if (!schedule) {
       throw new NotFoundException('Agendamento não encontrado');
@@ -164,7 +143,7 @@ export const availabilityServices = {
       scheduleId
     );
 
-    if (availabilities.length < 1) {
+    if (!availabilities) {
       throw new NotFoundException(
         'Nenhuma disponibilidade encontrada para este agendamento'
       );

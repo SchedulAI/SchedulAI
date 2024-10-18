@@ -42,17 +42,19 @@ export const scheduleRepository = {
     }
   },
 
-  getScheduleByUserId: async (scheduleId: string): Promise<Schedule[]> => {
+  getScheduleByUserId: async (userId: string): Promise<Schedule[]> => {
     const client = await pool.connect();
     const query = `
-          SELECT * 
-          FROM schedule
-          WHERE user_id = $1
+          SELECT s.*, u.name AS host_name
+          FROM schedule s
+          JOIN users u ON s.user_id = u.id
+          WHERE s.user_id = $1
         `;
     try {
-      const { rows } = await client.query(query, [scheduleId]);
+      const { rows } = await client.query(query, [userId]);
       return rows;
     } catch (error: any) {
+      console.error(error);
       throw new InternalServerException('Erro ao buscar agendamentos');
     } finally {
       client.release();
@@ -68,8 +70,8 @@ export const scheduleRepository = {
           RETURNING *;
         `;
     try {
-      const updateResult = await client.query(queryUpdate, [scheduleId]);
-      return updateResult.rows[0];
+      const { rows } = await client.query(queryUpdate, [scheduleId]);
+      return rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao cancelar o agendamento');
     } finally {
