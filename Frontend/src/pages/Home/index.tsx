@@ -3,6 +3,7 @@ import { Button } from '../../components/Button';
 import { Icon } from '../../components/Icon';
 import { Navbar } from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
+import { Footer } from '../../components/Footer';
 
 export const Home = () => {
   const handleScrollToSection = (sectionId: string) => {
@@ -108,6 +109,7 @@ export const Home = () => {
           </p>
         </div>
       </section>
+      <Footer />
     </HomeStyled>
   );
 };
