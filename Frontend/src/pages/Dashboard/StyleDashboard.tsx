@@ -132,6 +132,7 @@ export const StyledDashboard = styled.div<{
     display: flex;
     gap: 2rem;
     position: fixed;
+    z-index: 99;
     top: 0;
     left: 0;
     flex-direction: column;
@@ -175,13 +176,12 @@ export const StyledDashboard = styled.div<{
 
   .logo {
     display: flex;
-    align-items: flex-start;
     color: #0a0a15;
     gap: 0.5rem;
     user-select: none;
     padding: 21px;
     width: 100%;
-    justify-content: space-between;
+    justify-content: flex-end;
     position: relative;
   }
 
@@ -221,12 +221,12 @@ export const StyledDashboard = styled.div<{
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2rem;
-      max-height: 75vh;
-      min-height: 75vh;
+      max-height: 65vh;
+      min-height: 65vh;
       width: 100%;
       overflow-y: auto;
       border-radius: 8px;
+      position: relative;
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -250,6 +250,7 @@ export const StyledDashboard = styled.div<{
         width: 52%;
         display: flex;
         flex-direction: column;
+        gap:2rem;
       }
     }
 
@@ -289,6 +290,8 @@ export const StyledDashboard = styled.div<{
       justify-content: center;
       align-items: center;
       padding: 0.5rem 1rem;
+      position: sticky;
+      bottom: 0;
       width: 50%;
       transition: all ease-in-out 0.3s;
 
@@ -357,6 +360,8 @@ export const StyledDashboard = styled.div<{
       align-items: center;
       align-self: flex-start;
       margin-top: auto;
+      position: sticky;
+      bottom: 0;
       font-size: 1rem;
       color: #0a0a15;
     }

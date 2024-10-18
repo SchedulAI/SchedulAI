@@ -6,7 +6,7 @@ import { useUser } from '../../hooks/userHooks';
 import { Card } from '../../components/Card';
 import apiUrl from '../../config/api';
 import { Modal } from '../../components/Modal';
-import Snackbar from '../../components/Snackbar';
+import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { StyledDashboard, Dot } from './StyleDashboard';
 import { formatDate } from '../../Utils/FormatDate';
 import { formatMessage } from '../../Utils/FormatMessage';
@@ -20,12 +20,11 @@ export const Dashboard = () => {
   const [currentSchedule, setCurrentSchedule] =
     useState<ScheduleCreateResponse | null>(null);
   const [schedules, setSchedules] = useState<ScheduleResponse | null>(null);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
   const [slideMenuOpen, setSlideMenuOpen] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [activeModalId, setActiveModalId] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
+  const [containerVisible, setContainerVisible] = useState(true);
 
   const navigate = useNavigate();
   const { setUser } = useUser();
@@ -37,6 +36,22 @@ export const Dashboard = () => {
   function closeModal() {
     setActiveModalId(null);
   }
+
+  const addSnackbar = (
+    message: string,
+    variant: 'success' | 'error' | 'info' | 'warning'
+  ) => {
+    const event = new CustomEvent('addSnackbar', {
+      detail: {
+        id: Date.now(),
+        message,
+        variant,
+        anchororigin: { vertical: 'bottom', horizontal: 'right' },
+      },
+    });
+    window.dispatchEvent(event);
+    setContainerVisible(true);
+  };
 
   async function handleSendMessage() {
     if (!message) return;
@@ -78,8 +93,7 @@ export const Dashboard = () => {
       ]);
       setLoadingMessage(false);
     } catch (error) {
-      setSnackbarMessage('Erro ao enviar mensagem');
-      setSnackbarVisible(true);
+      addSnackbar('Erro ao enviar mensagem', 'error');
       setLoadingMessage(false);
       console.error(error);
     }
@@ -104,14 +118,14 @@ export const Dashboard = () => {
       await getSchedules();
       return res;
     } catch (error) {
-      setSnackbarMessage('Erro ao criar novo chat');
-      setSnackbarVisible(true);
+      addSnackbar('Erro ao criar novo chat', 'error');
       console.error(error);
     }
   };
 
-  function handleKeyPress(event: React.KeyboardEvent<HTMLInputElement>) {
-    if (event.key === 'Enter') {
+  function handleKeyPress(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
       handleSendMessage();
     }
   }
@@ -150,8 +164,7 @@ export const Dashboard = () => {
         return;
       }
     } catch (error) {
-      setSnackbarMessage('Erro ao buscar chats');
-      setSnackbarVisible(true);
+      addSnackbar('Erro ao buscar chats', 'error');
       console.error(error);
     }
   };
@@ -224,22 +237,6 @@ export const Dashboard = () => {
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
       <div className="logo">
-        <div
-          className={'slide-bar-div-button'}
-          onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-        >
-          {schedules && (
-            <div className="schedules-counter">
-              <p>{schedules.data.length}</p>
-            </div>
-          )}
-          <Icon
-            icon="sidebarSimple"
-            size={32}
-            weight="regular"
-            color="#0A0A15"
-          />
-        </div>
         <Button onClick={() => logout()}>
           <p>Sair</p>
         </Button>
@@ -379,7 +376,7 @@ export const Dashboard = () => {
                     setMessage(e.target.value);
                     setSendingMessage(e.target.value);
                   }}
-                  onKeyDown={() => handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
                 <button
                   onClick={() => {
@@ -399,8 +396,8 @@ export const Dashboard = () => {
           ) : (
             <>
               <div className="chat-conversation">
-                {conversation.map((msg, index) => (
-                  <div className="div-global-chat">
+                <div className="div-global-chat">
+                  {conversation.map((msg, index) => (
                     <div key={index} className={`message ${msg.sender}`}>
                       {msg.sender === 'ia' && (
                         <div className="icon-ia">
@@ -414,15 +411,15 @@ export const Dashboard = () => {
                       )}
                       <pre>{formatMessage(msg.message)}</pre>
                     </div>
-                  </div>
-                ))}
-                {loadingMessage && (
-                  <div className="typing">
-                    Digitando algo <Dot>.</Dot>
-                    <Dot>.</Dot>
-                    <Dot>.</Dot>
-                  </div>
-                )}
+                  ))}
+                  {loadingMessage && (
+                    <div className="typing">
+                      Digitando algo <Dot>.</Dot>
+                      <Dot>.</Dot>
+                      <Dot>.</Dot>
+                    </div>
+                  )}
+                </div>
                 <div ref={chatEndRef} />
               </div>
               <div className="chat-input">
@@ -433,7 +430,7 @@ export const Dashboard = () => {
                     setMessage(e.target.value);
                     setSendingMessage(e.target.value);
                   }}
-                  onKeyDown={() => handleKeyPress}
+                  onKeyDown={handleKeyPress}
                 />
                 <button
                   onClick={() => {
@@ -453,13 +450,10 @@ export const Dashboard = () => {
           )}
         </div>
       </div>
-      {snackbarVisible && (
-        <Snackbar
-          anchororigin={{ vertical: 'bottom', horizontal: 'right' }}
-          variant="error"
-          message={snackbarMessage}
-        />
-      )}
+      <SnackbarContainer
+        anchororigin={{ vertical: 'bottom', horizontal: 'right' }}
+        visible={containerVisible}
+      />
     </StyledDashboard>
   );
 };
