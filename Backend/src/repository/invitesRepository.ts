@@ -46,13 +46,14 @@ export const invitesRepository = {
   listInvite: async (scheduleId: string, userId: string): Promise<Invites> => {
     const client = await pool.connect();
     const queryList = `
-          SELECT *
-          FROM invites
-          WHERE user_id = $1 AND schedule_id = $2;
+          SELECT i.*, u.name AS guest_name
+          FROM invites i
+          JOIN users u ON i.user_id = u.id
+          WHERE i.user_id = $1 AND i.schedule_id = $2;
         `;
     try {
       const { rows } = await client.query(queryList, [userId, scheduleId]);
-      return rows[0]; // Retorna todos os convites encontrados
+      return rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao listar os convites');
     } finally {
@@ -63,13 +64,14 @@ export const invitesRepository = {
   listInvitesByUserId: async (userId: string): Promise<Invites[]> => {
     const client = await pool.connect();
     const queryList = `
-          SELECT *
-          FROM invites
-          WHERE user_id = $1;
+          SELECT i.*, u.name AS guest_name
+          FROM invites i
+          JOIN users u ON i.user_id = u.id
+          WHERE i.user_id = $1;
         `;
     try {
       const { rows } = await client.query(queryList, [userId]);
-      return rows; // Retorna todos os convites encontrados
+      return rows; // Retorna todos os convites encontrados com guest_name
     } catch (error: any) {
       throw new InternalServerException('Erro ao listar os convites');
     } finally {
@@ -80,13 +82,14 @@ export const invitesRepository = {
   listAllInvites: async (scheduleId: string): Promise<Invites[]> => {
     const client = await pool.connect();
     const queryList = `
-          SELECT *
-          FROM invites
-          WHERE schedule_id = $1;
+          SELECT i.*, u.name AS guest_name
+          FROM invites i
+          JOIN users u ON i.user_id = u.id
+          WHERE i.schedule_id = $1;
         `;
     try {
       const { rows } = await client.query(queryList, [scheduleId]);
-      return rows; // Retorna todos os convites encontrados
+      return rows; // Retorna todos os convites encontrados com guest_name
     } catch (error: any) {
       throw new InternalServerException('Erro ao listar os convites');
     } finally {

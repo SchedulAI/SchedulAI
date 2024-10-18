@@ -1,11 +1,7 @@
 import { ProposedDate } from '../entities/proposedDateEntity';
 import { proposedDateRepository } from '../repository/proposedDateRepository';
 import { scheduleRepository } from '../repository/scheduleRepository';
-import {
-  ConflictException,
-  InternalServerException,
-  NotFoundException,
-} from '../utils/exceptions';
+import { ConflictException, NotFoundException } from '../utils/exceptions';
 
 export const proposedDateServices = {
   // Criar uma nova data proposta
@@ -30,16 +26,12 @@ export const proposedDateServices = {
       );
     }
 
-    try {
-      const newProposedDate = await proposedDateRepository.createProposedDate(
-        scheduleId,
-        proposedDate,
-        status
-      );
-      return newProposedDate;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao criar a data proposta');
-    }
+    const newProposedDate = await proposedDateRepository.createProposedDate(
+      scheduleId,
+      proposedDate,
+      status
+    );
+    return newProposedDate;
   },
 
   // Listar datas propostas para um agendamento
@@ -82,17 +74,13 @@ export const proposedDateServices = {
     if (!existentProposedDate) {
       throw new NotFoundException('Data proposta não encontrada');
     }
-    try {
-      const updatedProposedDate =
-        await proposedDateRepository.updateProposedDate(
-          scheduleId,
-          proposedDate,
-          status
-        );
 
-      return updatedProposedDate;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao atualizar a data proposta');
-    }
+    const updatedProposedDate = await proposedDateRepository.updateProposedDate(
+      scheduleId,
+      proposedDate,
+      status
+    );
+
+    return updatedProposedDate;
   },
 };

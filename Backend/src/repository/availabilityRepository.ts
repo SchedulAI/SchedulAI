@@ -3,13 +3,15 @@ import { Availability } from '../entities/availabilityEntity';
 import { InternalServerException } from '../utils/exceptions';
 
 export const availabilityRepository = {
-  getAvailability: async (availabilityId: string): Promise<Availability> => {
+  getAvailability: async (
+    availabilityId: string
+  ): Promise<Availability | null> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
         SELECT * FROM availability
         WHERE id = $1
       `;
+    try {
       const { rows } = await client.query(query, [availabilityId]);
       return rows[0];
     } catch (error: any) {
@@ -19,13 +21,15 @@ export const availabilityRepository = {
     }
   },
 
-  getAllAvailabilities: async (scheduleId: string): Promise<Availability[]> => {
+  getAllAvailabilities: async (
+    scheduleId: string
+  ): Promise<Availability[] | null> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
         SELECT * FROM availability
         WHERE schedule_id = $1;
       `;
+    try {
       const { rows } = await client.query(query, [scheduleId]);
       return rows;
     } catch (error: any) {
@@ -44,14 +48,14 @@ export const availabilityRepository = {
     notes: string
   ): Promise<Availability> => {
     const client = await pool.connect();
-    try {
-      const createQuery = `
+    const createQuery = `
         INSERT INTO availability 
         (user_id, schedule_id, week_day, 
         start_time, end_time, notes)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;
       `;
+    try {
       const { rows } = await client.query(createQuery, [
         userId,
         scheduleId,
@@ -76,13 +80,13 @@ export const availabilityRepository = {
     notes: string
   ): Promise<Availability> => {
     const client = await pool.connect();
-    try {
-      const updateQuery = `
+    const updateQuery = `
         UPDATE availability
         SET week_day = $2, start_time = $3, end_time = $4, notes = $5
         WHERE id = $1
         RETURNING *;
       `;
+    try {
       const { rows } = await client.query(updateQuery, [
         availabilityId,
         weekDay,
@@ -100,11 +104,11 @@ export const availabilityRepository = {
 
   deleteAvailability: async (availabilityId: string): Promise<void> => {
     const client = await pool.connect();
-    try {
-      const deleteQuery = `
+    const deleteQuery = `
         DELETE FROM availability
         WHERE id = $1
       `;
+    try {
       await client.query(deleteQuery, [availabilityId]);
     } catch (error: any) {
       throw new InternalServerException('Erro ao deletar disponibilidade');

@@ -2,11 +2,7 @@ import { Invites } from '../entities/invitesEntity';
 import { invitesRepository } from '../repository/invitesRepository';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import { userRepository } from '../repository/userRepository';
-import {
-  NotFoundException,
-  BadRequestException,
-  InternalServerException,
-} from '../utils/exceptions';
+import { ConflictException, NotFoundException } from '../utils/exceptions';
 
 export const invitesServices = {
   createInvites: async (
@@ -44,23 +40,32 @@ export const invitesServices = {
       .filter((user) => user.error !== false)
       .map((user) => user.user); // Mapeia para obter apenas os emails inválidos
 
-    // Aqui, `validEmails` contém os emails dos usuários válidos e `invalidEmails` contém os emails inválidos.
-    console.log('Emails válidos:', validUsers);
-    console.log('Emails inválidos:', invalidUsers);
-
     // Agora são lançados no banco os Invites para os usuários válidos
-    try {
-      const inviteList = await Promise.all(
-        validUsers.map(async (user) => {
-          const invite = await invitesRepository.createInvite(scheduleId, user);
-          return invite;
-        })
-      );
+    const inviteList = await Promise.all(
+      validUsers.map(async (user) => {
+        // Verifica se um convite já foi enviado, caso sim, o descarta
+        const alreadySent = await invitesRepository.listInvite(
+          scheduleId,
+          user
+        );
+        if (alreadySent) {
+          return;
+        }
+        const invite = await invitesRepository.createInvite(scheduleId, user);
+        return invite;
+      })
+    );
 
-      return inviteList;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao processar os Convites');
+    // Filtra a lista removendo os undefined
+    const filteredList = inviteList.filter((item) => item !== undefined);
+
+    if (filteredList.length === 0) {
+      throw new ConflictException(
+        'Todos os Convites da Lista já foram enviados'
+      );
     }
+
+    return filteredList;
   },
 
   updateInvite: async (
@@ -86,11 +91,8 @@ export const invitesServices = {
     if (!foundInvite) {
       throw new NotFoundException('Convite não encontrado');
     }
-    try {
-      const updatedInvite = await invitesRepository.updateStatus(foundUser.id);
-      return updatedInvite;
-    } catch (error) {
-      throw new InternalServerException('Não foi possivel atualizar convite');
-    }
+
+    const updatedInvite = await invitesRepository.updateStatus(foundUser.id);
+    return updatedInvite;
   },
 };

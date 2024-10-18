@@ -5,8 +5,8 @@ import { InternalServerException } from '../utils/exceptions';
 export const loginRepository = {
   getUserByEmail: async (email: string): Promise<User> => {
     const client = await pool.connect();
+    const query = `SELECT * FROM users WHERE email = $1`;
     try {
-      const query = `SELECT * FROM users WHERE email = $1`;
       const { rows } = await client.query(query, [email]);
       return rows[0];
     } catch (error: any) {

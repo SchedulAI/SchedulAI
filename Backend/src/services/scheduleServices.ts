@@ -7,7 +7,6 @@ import { userRepository } from '../repository/userRepository';
 import {
   BadRequestException,
   ForbiddenException,
-  InternalServerException,
   NotFoundException,
 } from '../utils/exceptions';
 
@@ -17,17 +16,13 @@ export const scheduleServices = {
     title: string,
     description: string
   ): Promise<Schedule> => {
-    try {
-      const schedule = await scheduleRepository.createSchedule(
-        title,
-        description,
-        userId
-      );
+    const schedule = await scheduleRepository.createSchedule(
+      title,
+      description,
+      userId
+    );
 
-      return schedule;
-    } catch (error: any) {
-      throw new InternalServerException('Não foi possível Criar o Agendamento');
-    }
+    return schedule;
   },
 
   getScheduleById: async (
@@ -42,41 +37,21 @@ export const scheduleServices = {
 
     const is_host = userId === schedule.user_id;
 
-    try {
-      // Buscar o nome do host (criador do agendamento)
-      const host = await userRepository.findById(schedule.user_id);
+    // Buscar as informações complementares
+    const [proposedDate, invites, availability] = await Promise.all([
+      proposedDateRepository.listProposedDate(scheduleId),
+      invitesRepository.listAllInvites(scheduleId),
+      availabilityRepository.getAllAvailabilities(scheduleId),
+    ]);
 
-      // Buscar as informações complementares
-      const [proposedDate, invites, availability] = await Promise.all([
-        proposedDateRepository.listProposedDate(scheduleId),
-        invitesRepository.listAllInvites(scheduleId),
-        availabilityRepository.getAllAvailabilities(scheduleId),
-      ]);
-
-      const invitesWithNames = await Promise.all(
-        invites.map(async (invite) => {
-          const user = await userRepository.findById(invite.user_id);
-          return {
-            ...invite,
-            guest_name: user!.name,
-          };
-        })
-      );
-
-      // Retornar o agendamento com todos os dados complementares, incluindo o nome do host e convidados
-      return {
-        ...schedule,
-        is_host,
-        host_name: host!.name, // Adiciona o nome do host
-        proposed_date: proposedDate || null,
-        invites: invitesWithNames,
-        availability,
-      };
-    } catch (error) {
-      throw new InternalServerException(
-        'Erro ao carregar os dados complementares do agendamento.'
-      );
-    }
+    // Retornar o agendamento com todos os dados complementares, incluindo o nome do host e convidados
+    return {
+      ...schedule,
+      is_host,
+      proposed_date: proposedDate || null,
+      invites,
+      availability,
+    };
   },
 
   getAllSchedules: async (userId: string): Promise<Schedule[]> => {
@@ -114,24 +89,13 @@ export const scheduleServices = {
           availabilityRepository.getAllAvailabilities(schedule.id),
         ]);
 
-        // Incluir o nome dos convidados
-        const invitesWithNames = await Promise.all(
-          invites.map(async (invite) => {
-            const user = await userRepository.findById(invite.user_id);
-            return {
-              ...invite,
-              guest_name: user!.name,
-            };
-          })
-        );
-
         // Retornar o schedule com as informações complementares e nome do host
         return {
           ...schedule,
           is_host,
           host_name: host!.name,
           proposed_date: proposedDate || null,
-          invites: invitesWithNames,
+          invites,
           availability,
         };
       })
@@ -158,44 +122,34 @@ export const scheduleServices = {
       throw new BadRequestException('O agendamento já está cancelado.');
     }
 
-    try {
-      const cancelledSchedule = await scheduleRepository.cancelSchedule(
-        scheduleId
-      );
+    const cancelledSchedule = await scheduleRepository.cancelSchedule(
+      scheduleId
+    );
 
-      return cancelledSchedule;
-    } catch (error: any) {
-      throw new InternalServerException(
-        'Não foi possível Cancelar o Agendamento'
-      );
-    }
+    return cancelledSchedule;
   },
   updateScheduleInfo: async (
     userId: string,
     scheduleId: string,
     title?: string,
-    description?: string,
+    description?: string
   ): Promise<Schedule> => {
-    try {
-      const schedule = await scheduleRepository.getScheduleById(scheduleId);
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
 
-      if (!schedule) {
-        throw new BadRequestException('Agendamento não encontrado.');
-      }
-
-      if (schedule.user_id !== userId) {
-        throw new ForbiddenException('Você não é o dono desse agendamento.');
-      }
-
-      const updatedSchedule = await scheduleRepository.updateScheduleInfo(
-        scheduleId,
-        title || schedule.title,
-        description || schedule.description,
-      );
-
-      return updatedSchedule;
-    } catch (error: any) {
-      throw error;
+    if (!schedule) {
+      throw new BadRequestException('Agendamento não encontrado.');
     }
+
+    if (schedule.user_id !== userId) {
+      throw new ForbiddenException('Você não é o dono desse agendamento.');
+    }
+
+    const updatedSchedule = await scheduleRepository.updateScheduleInfo(
+      scheduleId,
+      title || schedule.title,
+      description || schedule.description
+    );
+
+    return updatedSchedule;
   },
 };

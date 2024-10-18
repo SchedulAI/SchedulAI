@@ -13,15 +13,11 @@ const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const loginServices = {
   getUser: async (email: string): Promise<User> => {
-    try {
-      if (!emailRegex.test(email)) {
-        throw new BadRequestException('Email inválido');
-      }
-      const user = await loginRepository.getUserByEmail(email);
-      return user;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao Buscar Usuário');
+    if (!emailRegex.test(email)) {
+      throw new BadRequestException('Email inválido');
     }
+    const user = await loginRepository.getUserByEmail(email);
+    return user;
   },
 
   authenticateUser: async (email: string, password: string) => {

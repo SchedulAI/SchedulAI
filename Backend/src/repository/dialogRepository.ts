@@ -6,12 +6,13 @@ import { InternalServerException } from '../utils/exceptions';
 export const dialogRepository = {
   getDialog: async (userId: string, scheduleId: string): Promise<Dialog> => {
     const client = await pool.connect();
-    try {
-      const query = `
+
+    const query = `
             SELECT * FROM dialogs
             WHERE user_id = $1 AND schedule_id = $2
             LIMIT 1;
         `;
+    try {
       const { rows } = await client.query(query, [userId, scheduleId]);
       return rows[0];
     } catch (error: any) {
@@ -25,12 +26,12 @@ export const dialogRepository = {
 
   createDialog: async (userId: string, scheduleId: string): Promise<Dialog> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
             INSERT INTO dialogs (user_id, schedule_id)
             VALUES ($1, $2)
             RETURNING *;
         `;
+    try {
       const { rows } = await client.query(query, [userId, scheduleId]);
       return rows[0]; // Retorna o diálogo criado
     } catch (error: any) {
@@ -46,12 +47,12 @@ export const dialogRepository = {
     sender: 'user' | 'IA' | 'system' | 'tool'
   ): Promise<Message> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
             INSERT INTO messages (dialog_id, message, sender)
             VALUES ($1, $2, $3)
             RETURNING *;
         `;
+    try {
       const { rows } = await client.query(query, [dialogId, message, sender]);
       return rows[0]; // Retorna a mensagem salva
     } catch (error: any) {
@@ -64,13 +65,13 @@ export const dialogRepository = {
 
   getDialogsByUserId: async (userId: string): Promise<Dialog[]> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
             SELECT *
             FROM dialogs
             WHERE user_id = $1
             ORDER BY created_at ASC;
         `;
+    try {
       const { rows } = await client.query(query, [userId]);
       return rows;
     } catch (error) {
@@ -82,13 +83,13 @@ export const dialogRepository = {
 
   getMessagesByDialogId: async (dialogId: string): Promise<Message[]> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
             SELECT * 
             FROM messages
             WHERE dialog_id = $1
             ORDER BY created_at ASC;
         `;
+    try {
       const { rows } = await client.query(query, [dialogId]);
       return rows;
     } catch (error: any) {
@@ -101,14 +102,14 @@ export const dialogRepository = {
 
   getConversationByDialogId: async (dialogId: string): Promise<Message[]> => {
     const client = await pool.connect();
-    try {
-      const query = `
+    const query = `
             SELECT sender, message 
             FROM messages
             WHERE dialog_id = $1
             AND sender IN ('IA', 'user')
             ORDER BY created_at ASC;
         `;
+    try {
       const { rows } = await client.query(query, [dialogId]);
       return rows;
     } catch (error: any) {
