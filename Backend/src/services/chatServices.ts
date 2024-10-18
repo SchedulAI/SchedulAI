@@ -25,11 +25,10 @@ export const chatServices = {
 
       if (!dialog) {
         dialog = await dialogRepository.createDialog(userId, scheduleId);
+
         await dialogRepository.saveMessage(
           dialog.id,
-          `O id do usuário é ${userId}, O id do agendamento é ${scheduleId}, ${
-            isUserHost ? 'O usuário é o host' : 'O usuário é um convidado'
-          }`,
+          `O id do usuário é ${userId}, O id do agendamento é ${scheduleId}, O usuário é o host`,
           'system'
         );
 

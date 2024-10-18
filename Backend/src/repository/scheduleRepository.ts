@@ -27,9 +27,10 @@ export const scheduleRepository = {
   getScheduleById: async (scheduleId: string): Promise<Schedule> => {
     const client = await pool.connect();
     const query = `
-          SELECT * 
-          FROM schedule
-          WHERE id = $1
+          SELECT s.*, u.name AS host_name
+          FROM schedule s
+          JOIN users u ON s.user_id = u.id
+          WHERE s.id = $1
         `;
     try {
       const userResult = await client.query(query, [scheduleId]);
@@ -75,11 +76,34 @@ export const scheduleRepository = {
       client.release();
     }
   },
+  updateScheduleStatus: async (
+    scheduleId: string,
+    status: string
+  ): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+          UPDATE schedule
+          SET status = $1
+          WHERE id = $2
+          RETURNING *;
+        `;
+    try {
+      const updateResult = await client.query(queryUpdate, [
+        status,
+        scheduleId,
+      ]);
+      return updateResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao cancelar o agendamento');
+    } finally {
+      client.release();
+    }
+  },
 
   updateScheduleInfo: async (
     scheduleId: string,
     title: string,
-    description: string,
+    description: string
   ): Promise<Schedule> => {
     const client = await pool.connect();
     const queryUpdate = `
@@ -96,7 +120,9 @@ export const scheduleRepository = {
       ]);
       return updateResult.rows[0];
     } catch (error: any) {
-      throw new InternalServerException('Erro ao atualizar informações do agendamento');
+      throw new InternalServerException(
+        'Erro ao atualizar informações do agendamento'
+      );
     } finally {
       client.release();
     }
