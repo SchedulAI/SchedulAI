@@ -70,35 +70,6 @@ export const invitesServices = {
 
     return filteredList;
   },
-
-  updateInvite: async (
-    scheduleId: string,
-    userEmail: string
-  ): Promise<Invites> => {
-    const schedule = await scheduleRepository.getScheduleById(scheduleId);
-
-    if (!schedule) {
-      throw new NotFoundException('Agendamento não encontrado');
-    }
-
-    const foundUser = await userRepository.findByEmail(userEmail);
-    if (!foundUser) {
-      throw new NotFoundException('Email não encontrado');
-    }
-
-    const foundInvite = await invitesRepository.listInvite(
-      scheduleId,
-      foundUser.id
-    );
-
-    if (!foundInvite) {
-      throw new NotFoundException('Convite não encontrado');
-    }
-
-    const updatedInvite = await invitesRepository.updateStatus(foundUser.id);
-    return updatedInvite;
-  },
-
   createInvite: async (
     userId: string,
     scheduleId: string
@@ -125,7 +96,7 @@ export const invitesServices = {
         'O usuário não está convidado para o agendamento.'
       );
     }
-    
+
     const createdInvite = await invitesRepository.createInvite(
       scheduleId,
       user.id
@@ -151,7 +122,7 @@ export const invitesServices = {
       `;
 
     await dialogRepository.saveMessage(dialog.id, message, 'IA');
-    
+
     return createdInvite;
   },
 };

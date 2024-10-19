@@ -25,16 +25,16 @@ export const invitesRepository = {
     }
   },
 
-  updateStatus: async (userId: string): Promise<Invites> => {
+  updateStatus: async (inviteId: string, status: string): Promise<Invites> => {
     const client = await pool.connect();
     const queryUpdate = `
           UPDATE invites
-          SET status = 'answered'
-          WHERE user_id = $1
+          SET status = $1
+          WHERE id = $2
           RETURNING *;
         `;
     try {
-      const updateResult = await client.query(queryUpdate, [userId]);
+      const updateResult = await client.query(queryUpdate, [status, inviteId]);
       return updateResult.rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao atualizar o convite');

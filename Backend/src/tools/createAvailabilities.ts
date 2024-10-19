@@ -7,7 +7,7 @@ const availabilitySchema = z
     z.object({
       schedule_id: z.string().uuid().describe('O id do agendamento atual.'),
       user_id: z.string().uuid().describe('O id do usuário atual.'),
-      week_day: z.string().describe('O dia da semana disponível. (Data)'),
+      week_day: z.string().describe('A data que o usuário está disponivel.'),
       start_time: z
         .string()
         .describe('O horário de início da disponibilidade no formato HH:mm.'),
@@ -46,7 +46,7 @@ const createAvailabilities = tool(
   {
     name: 'createAvailabilities',
     description:
-      'Cria a lista de disponibilidades do usuário para aquele agendamento após o usuário fornecer seus horarios disponiveis.',
+      'Cria a lista de disponibilidades do usuário para aquele agendamento após o usuário fornecer seus horarios disponiveis, ele deve conter a "range" de horas obrigatoriamente para a data, além disso antes de executar esse tool confirme com o usuário se a data e hora estão corretas, em caso de erro peça novamente a disponibilidade.',
     schema: z.object({
       availabilities: availabilitySchema,
     }),
