@@ -9,6 +9,7 @@ import {
   handleInviteStatus,
   handleRenderInviteStatus,
 } from '../../Utils/HandleStatus';
+import { useRef, useState, useEffect } from 'react';
 
 export const Modal = ({
   onClick,
@@ -20,6 +21,20 @@ export const Modal = ({
   setSlideMenuOpen,
   schedules,
 }: Props) => {
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const detailsElement = detailsRef.current;
+    if (detailsElement) {
+      const handleToggle = () => setIsOpen(detailsElement.open);
+      detailsElement.addEventListener('toggle', handleToggle);
+      return () => {
+        detailsElement.removeEventListener('toggle', handleToggle);
+      };
+    }
+  }, []);
+
   const cancelSchedule = async (id: string) => {
     try {
       const response = await fetch(apiUrl(`/schedule/${id}/cancel/`), {
@@ -104,18 +119,13 @@ export const Modal = ({
                 <span>{schedule.description}</span>
               </p>
             )}
-            <div className="div-status">
-              <p className="status">
-                <span>Status:</span>
-                {handleRenderStatus(schedule.status)}
+            {schedule.host_name && schedule.status !== 'cancelled' && (
+              <p className="host-name">
+                <span>Criado por:</span>
+                <span>{schedule.host_name}</span>
               </p>
-              <div
-                className={`status-circle ${handleStatusColor(
-                  schedule.status
-                )}`}
-              />
-            </div>
-            {schedule.proposed_date && schedule.status !== 'cancelled' && (
+            )}
+            {schedule.proposed_date && schedule.status !== 'cancelled' ? (
               <p className="proposed-date">
                 <span>Data Proposta:</span>
                 <span>
@@ -124,34 +134,50 @@ export const Modal = ({
                     : formatDate(schedule.proposed_date.proposed_date)}
                 </span>
               </p>
-            )}
-            {schedule.expiry_time && schedule.status !== 'cancelled' && (
-              <p className="limit-date">
-                <span>Data Limite:</span>
-                {formatDate(new Date(schedule.expiry_time))}
+            ) : (
+              <p className="proposed-date">
+                <span>Data:</span>
+                <span>A definir</span>
               </p>
             )}
+
             {schedule.invites &&
               schedule.invites.length > 0 &&
               schedule.status !== 'cancelled' && (
-                <div className="guests">
-                  <p>Convidados:</p>
-                  <div className="guests-list">
-                    {schedule.invites.map((invite, index) => (
-                      <div className="guest-item" key={index}>
-                        <p>{invite.guest_name}</p>
-                        <div className="status">
-                          <p>{handleInviteStatus(invite.status)}</p>
-                          <div
-                            className={`status-circle ${handleRenderInviteStatus(
-                              invite.status
-                            )}`}
-                          ></div>
+                <details ref={detailsRef} className="guests">
+                  <summary className="summary">
+                    <p className="status">
+                      <span>Status:</span>
+                      {handleRenderStatus(schedule.status)}
+                    </p>
+                    <div
+                      className={`status-circle ${handleStatusColor(
+                        schedule.status
+                      )}`}
+                    />
+                    <div className="icon-summary">
+                      <Icon icon={isOpen ? 'arrowUp' : 'arrowDown'}></Icon>
+                    </div>
+                  </summary>
+                  <div className="guest-section">
+                    <p>Convidados:</p>
+                    <div className="guests-list">
+                      {schedule.invites.map((invite, index) => (
+                        <div className="guest-item" key={index}>
+                          <p>{invite.guest_name}</p>
+                          <div className="status-guest">
+                            <p>{handleInviteStatus(invite.status)}</p>
+                            <div
+                              className={`status-circle ${handleRenderInviteStatus(
+                                invite.status
+                              )}`}
+                            ></div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
-                </div>
+                </details>
               )}
           </div>
 
@@ -166,9 +192,16 @@ export const Modal = ({
               >
                 <p>Ver conversa no chat</p>
               </Button>
-              <Button onClick={() => cancelSchedule(schedule.id)} width="full">
-                <p>Cancelar reunião</p>
-              </Button>
+              {schedule && schedule.is_host && (
+                <div className='cancel-button'>
+                  <Button
+                    onClick={() => cancelSchedule(schedule.id)}
+                    width="full"
+                  >
+                    <p>Cancelar reunião</p>
+                  </Button>
+                </div>
+              )}
             </div>
           )}
 

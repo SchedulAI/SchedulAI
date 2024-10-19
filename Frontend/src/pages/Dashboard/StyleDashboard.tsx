@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import backgroundImage from '../../assets/background/4861091.png';
 
 const shrinkWidth = keyframes`
   from {
@@ -50,6 +51,9 @@ export const StyledDashboard = styled.div<{
   align-items: flex-start;
   height: 100%;
   width: 100%;
+  background-image: url(${backgroundImage});
+  background-size: cover;
+  background-repeat: no-repeat;
 
   pre {
     white-space: break-spaces;
@@ -67,7 +71,6 @@ export const StyledDashboard = styled.div<{
   .div-cover-closed {
     width: 0;
     height: 100vh;
-    background-color: #0a0a1575;
     position: absolute;
     z-index: 0;
     top: 0;
@@ -104,7 +107,7 @@ export const StyledDashboard = styled.div<{
     .host-cards {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 1rem;
     }
   }
 
@@ -139,6 +142,13 @@ export const StyledDashboard = styled.div<{
     justify-content: flex-start;
     justify-self: flex-start;
     align-items: flex-start;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+      rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+
+    button {
+      box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+        rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    }
   }
 
   .slide-bar-div-button {
@@ -183,6 +193,9 @@ export const StyledDashboard = styled.div<{
     width: 100%;
     justify-content: flex-end;
     position: relative;
+    background-color: #f8f8fc;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   }
 
   .schedules-counter {
@@ -211,6 +224,7 @@ export const StyledDashboard = styled.div<{
     height: 100%;
     width: 100%;
     gap: 1rem;
+    position: relative;
 
     h2 {
       font-size: 3rem;
@@ -226,7 +240,8 @@ export const StyledDashboard = styled.div<{
       width: 100%;
       overflow-y: auto;
       border-radius: 8px;
-      position: relative;
+      position: sticky;
+      padding-bottom: 0.5rem;
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -250,7 +265,8 @@ export const StyledDashboard = styled.div<{
         width: 52%;
         display: flex;
         flex-direction: column;
-        gap:2rem;
+        gap: 2rem;
+        padding: 1rem;
       }
     }
 
@@ -263,6 +279,8 @@ export const StyledDashboard = styled.div<{
       border-radius: 20px;
       font-size: 1rem;
       line-height: 1.4;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+        rgba(0, 0, 0, 0.23) 0px 3px 6px;
     }
 
     .message.user {
@@ -270,12 +288,14 @@ export const StyledDashboard = styled.div<{
       background-color: #d4d3f3;
       width: fit-content;
       color: #0a0a15;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+        rgba(0, 0, 0, 0.23) 0px 3px 6px;
     }
 
     .message.ia {
       align-self: flex-start;
       align-items: flex-start;
-      padding: 0.5rem;
+      padding: 2rem 0.5rem;
       width: fit-content;
       gap: 0.5rem;
       background-color: #e0e0e0;
@@ -294,6 +314,8 @@ export const StyledDashboard = styled.div<{
       bottom: 0;
       width: 50%;
       transition: all ease-in-out 0.3s;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
+        rgba(0, 0, 0, 0.23) 0px 3px 6px;
 
       textarea {
         border: none;

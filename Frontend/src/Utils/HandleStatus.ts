@@ -35,7 +35,7 @@ export const handleRenderStatus = (status: string) => {
 export const handleInviteStatus = (status: string) => {
   switch (status) {
     case 'pending':
-      return 'Aguardando convidados';
+      return 'Aguardando resposta';
     case 'rejected':
       return 'Convite rejeitado';
     case 'accepted':
