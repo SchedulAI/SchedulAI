@@ -78,7 +78,7 @@ export const StyledDashboard = styled.div<{
 
   .guest-div,
   .host-div {
-    display: flex;
+    display: ${(props) => (props.slidemenuopen ? 'flex' : 'none')};
     flex-direction: column;
     gap: 1rem;
     max-height: 40vh;

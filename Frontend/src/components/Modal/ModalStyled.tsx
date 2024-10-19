@@ -15,7 +15,7 @@ export const ModalStyled = styled.div`
     background: #f8f8fc;
     border-radius: 4px;
     width: 40rem;
-    height: 30rem;
+    height: 35rem;
     opacity: 1;
     padding: 1rem;
     display: flex;
@@ -107,12 +107,35 @@ export const ModalStyled = styled.div`
             width: 80%;
             overflow-y: auto;
             height: 100%;
-            max-height: 10rem;
+            max-height: 5rem;
+            width: 100%;
+            padding-right: 1rem;
 
             .guest-item {
               display: flex;
-              justify-content: space-between;
+              flex-direction: column;
               width: 100%;
+            }
+
+            .guest-status-item {
+              display: flex;
+              flex-direction: row;
+              width: 100%;
+              justify-content: space-between;
+            }
+
+            &::-webkit-scrollbar {
+              width: 10px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+              background-color: #8380e5;
+              border-radius: 10px;
+            }
+
+            &::-webkit-scrollbar-track {
+              background-color: #4c4c4c;
+              border-radius: 10px;
             }
           }
         }
@@ -179,5 +202,53 @@ export const ModalStyled = styled.div`
       right: 0;
       cursor: pointer;
     }
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .button-sides {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+
+    .button-sides-1 {
+      width: 50%;
+
+      button {
+        background-color: #75b0ee;
+        border-color: #6998d1;
+
+        &:hover {
+          background-color: #4581ca;
+        }
+      }
+    }
+
+    .button-sides-2 {
+      width: 50%;
+
+      button {
+        background-color: #f7f7f7;
+        border-color: #4c4c4c;
+
+        &:hover {
+          background-color: #ebe9e9;
+        }
+      }
+    }
+  }
+
+  .not-created-accounts-div {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    max-height: 6rem;
   }
 `;

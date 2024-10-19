@@ -38,6 +38,7 @@ interface Schedule {
   host_name: string;
   invites?: Invite[] | null;
   availability?: Availability[] | null;
+  peding_account?: string[] | null;
 }
 
 interface ScheduleResponse {
@@ -49,5 +50,5 @@ interface ScheduleResponse {
 interface ScheduleCreateResponse {
   data: Schedule;
   message: string;
-  success: boolean
+  success: boolean;
 }

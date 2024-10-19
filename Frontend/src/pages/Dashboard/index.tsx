@@ -234,7 +234,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     getInviteConversation();
-  });
+  }, []);
 
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
@@ -281,7 +281,7 @@ export const Dashboard = () => {
               <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
             </Button>
             <div className="host-div">
-              {schedules && <p className="bold-card">Host</p>}
+              {schedules && <p className="bold-card">Anfitrião</p>}
               <div className="host-cards">
                 {schedules &&
                   schedules.data.map(
@@ -411,7 +411,11 @@ export const Dashboard = () => {
                           />
                         </div>
                       )}
-                      <div dangerouslySetInnerHTML={{ __html: handleMarkdown.makeHtml(msg.message) }}></div>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: handleMarkdown.makeHtml(msg.message),
+                        }}
+                      ></div>
                     </div>
                   ))}
                   {loadingMessage && (
