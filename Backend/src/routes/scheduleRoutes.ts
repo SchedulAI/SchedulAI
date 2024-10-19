@@ -37,12 +37,6 @@ scheduleRouter.post(
   invitesController.createInvite
 );
 
-scheduleRouter.patch(
-  '/:scheduleId/invites',
-  permissionVerify,
-  invitesController.updateInviteStatus
-);
-
 // Parte da gestão das Availabilities
 scheduleRouter.get(
   '/:scheduleId/availabilities',
