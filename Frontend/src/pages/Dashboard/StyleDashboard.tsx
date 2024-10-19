@@ -388,4 +388,11 @@ export const StyledDashboard = styled.div<{
       color: #0a0a15;
     }
   }
+
+  ul,
+  ol {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
 `;
