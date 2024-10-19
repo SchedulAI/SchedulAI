@@ -18,6 +18,7 @@ import {
   XLogo,
   FacebookLogo,
   At,
+  CaretUp,
 } from '@phosphor-icons/react';
 
 const IconList: IconTypes = {
@@ -26,6 +27,7 @@ const IconList: IconTypes = {
   view: Eye,
   hide: EyeClosed,
   back: ArrowSquareLeft,
+  arrowUp: CaretUp,
   arrowDown: CaretDown,
   circleArrowUp: ArrowCircleUp,
   user: User,
