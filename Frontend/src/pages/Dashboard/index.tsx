@@ -9,9 +9,9 @@ import { Modal } from '../../components/Modal';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { StyledDashboard, Dot } from './StyleDashboard';
 import { formatDate } from '../../Utils/FormatDate';
-import { formatMessage } from '../../Utils/FormatMessage';
 import { compareStatus } from '../../Utils/sortSchedules';
 import { deleteCookie, getCookie } from '../../Utils/Cookies';
+import showdown from 'showdown';
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
@@ -52,6 +52,8 @@ export const Dashboard = () => {
     window.dispatchEvent(event);
     setContainerVisible(true);
   };
+
+  const handleMarkdown = new showdown.Converter();
 
   async function handleSendMessage() {
     if (!message) return;
@@ -409,7 +411,7 @@ export const Dashboard = () => {
                           />
                         </div>
                       )}
-                      <pre>{formatMessage(msg.message)}</pre>
+                      <div dangerouslySetInnerHTML={{ __html: handleMarkdown.makeHtml(msg.message) }}></div>
                     </div>
                   ))}
                   {loadingMessage && (
