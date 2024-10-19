@@ -309,7 +309,7 @@ export const Modal = ({
                     <p>Ver conversa no chat</p>
                   </Button>
                   <div className="button-sides">
-                    {schedule.status !== 'reviewing' && (
+                    {schedule.status !== 'reviewing' && schedule.is_host && (
                       <div className="button-sides-1">
                         <Button
                           width="full"
