@@ -9,41 +9,6 @@ import {
 } from '../utils/exceptions';
 
 export const availabilityServices = {
-  // Criar uma nova disponibilidade
-  createAvailability: async (
-    userId: string,
-    scheduleId: string,
-    weekDay: Date,
-    startTime: string,
-    endTime: string,
-    notes: string
-  ): Promise<Availability> => {
-    const user = await userRepository.findById(userId);
-    if (!user) {
-      throw new NotFoundException('Usuário não encontrado');
-    }
-
-    const schedule = await scheduleRepository.getScheduleById(scheduleId);
-    if (!schedule) {
-      throw new NotFoundException('Agendamento não encontrado');
-    }
-
-    try {
-      const availability = await availabilityRepository.createAvailability(
-        userId,
-        scheduleId,
-        weekDay,
-        startTime,
-        endTime,
-        notes
-      );
-
-      return availability;
-    } catch (error: any) {
-      throw new InternalServerException('Erro ao criar disponibilidade');
-    }
-  },
-
   // Atualizar uma disponibilidade existente
   updateAvailability: async (
     userId: string,

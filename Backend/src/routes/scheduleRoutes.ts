@@ -50,12 +50,6 @@ scheduleRouter.get(
   availabilityController.getAvailability
 );
 
-scheduleRouter.post(
-  '/:scheduleId/availability',
-  permissionVerify,
-  availabilityController.createAvailability
-);
-
 scheduleRouter.patch(
   '/:scheduleId/availability/:availabilityId',
   permissionVerify,

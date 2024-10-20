@@ -3,42 +3,6 @@ import { availabilityServices } from '../services/availabilityServices';
 import errorResponse from '../utils/errorResponse';
 
 export const availabilityController = {
-  // Criar disponibilidade
-  createAvailability: async (req: Request, res: Response): Promise<void> => {
-    const { weekDay, startTime, endTime, notes } = req.body;
-    const scheduleId = req.params.scheduleId;
-    const user = req.user!;
-
-    if (!weekDay || !startTime || !endTime || !notes) {
-      errorResponse(res, {
-        error: 'BAD_REQUEST',
-        message:
-          'Por favor, forneça todos os dados necessários para a disponibilidade.',
-        statusCode: 400,
-      });
-      return;
-    }
-
-    try {
-      const availability = await availabilityServices.createAvailability(
-        user.id,
-        scheduleId,
-        new Date(weekDay),
-        startTime,
-        endTime,
-        notes
-      );
-
-      res.status(200).json({
-        success: true,
-        message: 'Disponibilidade criada com sucesso',
-        data: availability,
-      });
-    } catch (error: any) {
-      errorResponse(res, error);
-    }
-  },
-
   // Atualizar disponibilidade
   updateAvailability: async (req: Request, res: Response): Promise<void> => {
     const { weekDay, startTime, endTime, notes } = req.body;

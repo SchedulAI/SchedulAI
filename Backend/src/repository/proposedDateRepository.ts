@@ -1,3 +1,4 @@
+import { PoolClient } from 'pg';
 import pool from '../db';
 import { ProposedDate } from '../entities/proposedDateEntity';
 import { InternalServerException } from '../utils/exceptions';
@@ -5,11 +6,11 @@ import { InternalServerException } from '../utils/exceptions';
 export const proposedDateRepository = {
   // Criar uma nova data proposta
   createProposedDate: async (
+    client: PoolClient,
     scheduleId: string,
     proposedDate: string,
     status: string
   ): Promise<ProposedDate> => {
-    const client = await pool.connect();
     const query = `
         INSERT INTO proposed_date (schedule_id, proposed_date, status)
         VALUES ($1, $2, $3)
@@ -24,8 +25,6 @@ export const proposedDateRepository = {
       return rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao criar a data proposta');
-    } finally {
-      client.release(); // Certifique-se de liberar a conexão
     }
   },
 

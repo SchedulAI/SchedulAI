@@ -105,19 +105,21 @@ export const scheduleRepository = {
   updateScheduleInfo: async (
     scheduleId: string,
     title: string,
-    description: string
+    description: string,
+    duration: number
   ): Promise<Schedule> => {
     const client = await pool.connect();
     const queryUpdate = `
       UPDATE schedule
-      SET title = $1, description = $2
-      WHERE id = $3
+      SET title = $1, description = $2, duration = $3
+      WHERE id = $4
       RETURNING *;
     `;
     try {
       const updateResult = await client.query(queryUpdate, [
         title,
         description,
+        duration,
         scheduleId,
       ]);
       return updateResult.rows[0];
