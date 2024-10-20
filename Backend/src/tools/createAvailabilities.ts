@@ -80,12 +80,26 @@ const createAvailabilities = tool(
 
         const currentDate = new Date(startTimeString);
         while (currentDate < endTimeDate) {
-          // Criar string ISO para o horário atual com timezone Brasil
-          const proposedDateStr = currentDate
-            .toISOString()
-            .slice(0, 19)
-            .replace('T', ' ');
+          const year = currentDate.getFullYear();
+          const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+          const day = String(currentDate.getDate()).padStart(2, '0');
+          const hours = String(currentDate.getHours()).padStart(2, '0');
+          const minutes = String(currentDate.getMinutes()).padStart(2, '0');
+          const seconds = String(currentDate.getSeconds()).padStart(2, '0');
 
+          // Obtenha o offset do fuso horário em horas e minutos
+          const timezoneOffset = -currentDate.getTimezoneOffset();
+          const offsetHours = String(
+            Math.floor(Math.abs(timezoneOffset) / 60)
+          ).padStart(2, '0');
+          const offsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(
+            2,
+            '0'
+          );
+          const offsetSign = timezoneOffset >= 0 ? '+' : '-';
+
+          // Formate a string de data e hora no formato desejado
+          const proposedDateStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMinutes}`;
           // Criar proposed date
           const createdProposedData =
             await proposedDateRepository.createProposedDate(
@@ -94,8 +108,8 @@ const createAvailabilities = tool(
               proposedDateStr,
               'pending'
             );
-
           // Avançar para o próximo intervalo
+
           currentDate.setMinutes(currentDate.getMinutes() + duration);
 
           // Se o próximo intervalo ultrapassar o horário final, parar
@@ -128,4 +142,3 @@ const createAvailabilities = tool(
 );
 
 export default createAvailabilities;
-
