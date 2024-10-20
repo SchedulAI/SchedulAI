@@ -66,6 +66,10 @@ export const StyledDashboard = styled.div<{
     width: 100%;
     justify-content: center;
     align-items: center;
+
+    a{
+      color: #5353df;
+    }
   }
 
   .div-cover-closed {

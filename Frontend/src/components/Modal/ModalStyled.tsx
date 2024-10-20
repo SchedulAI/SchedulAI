@@ -216,7 +216,7 @@ export const ModalStyled = styled.div`
     gap: 1rem;
 
     .button-sides-1 {
-      width: 50%;
+      width: 100%;
 
       button {
         background-color: #75b0ee;
@@ -229,7 +229,7 @@ export const ModalStyled = styled.div`
     }
 
     .button-sides-2 {
-      width: 50%;
+      width: 100%;
 
       button {
         background-color: #f7f7f7;

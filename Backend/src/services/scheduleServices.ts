@@ -113,7 +113,53 @@ export const scheduleServices = {
     return completeSchedules; // Retorna todos os schedules processados
   },
 
-  deleteSchedule: async (userId: string, scheduleId: string): Promise<Schedule> => {
+  reviewSchedule: async (
+    userId: string,
+    scheduleId: string
+  ): Promise<Schedule> => {
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+    if (!schedule) {
+      throw new NotFoundException('Agendamento não encontrado.');
+    }
+
+    if (schedule.user_id !== userId) {
+      throw new ForbiddenException('Você não é o dono desse agendamento.');
+    }
+
+    if (schedule.status === 'reviewing') {
+      throw new BadRequestException('O agendamento já está sendo revisado.');
+    }
+
+    if (schedule.status === 'cancelled') {
+      throw new BadRequestException('O agendamento está cancelado.');
+    }
+
+    if (schedule.status === 'deleted') {
+      throw new BadRequestException('O agendamento está deletado.');
+    }
+
+    if (schedule.status === 'scheduled') {
+      throw new BadRequestException('O agendamento já foi completado.');
+    }
+
+    if (schedule.status === 'planning') {
+      throw new BadRequestException(
+        'O agendamento ainda está em planejamento.'
+      );
+    }
+
+    const reviewingSchedule = await scheduleRepository.reviewSchedule(
+      scheduleId
+    );
+
+    return reviewingSchedule;
+  },
+
+  deleteSchedule: async (
+    userId: string,
+    scheduleId: string
+  ): Promise<Schedule> => {
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
 
     if (schedule.user_id !== userId) {
@@ -154,7 +200,7 @@ export const scheduleServices = {
     scheduleId: string,
     title?: string,
     description?: string,
-    duration?: number,
+    duration?: number
   ): Promise<Schedule> => {
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
 

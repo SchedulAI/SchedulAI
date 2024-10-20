@@ -327,7 +327,8 @@ export const Modal = ({
                       </Button>
                       <div className="button-sides">
                         {schedule.status !== 'reviewing' &&
-                          schedule.is_host && (
+                          schedule.is_host &&
+                          schedule.status !== 'scheduled' && (
                             <div className="button-sides-1">
                               <Button
                                 width="full"
@@ -346,18 +347,20 @@ export const Modal = ({
                               </Button>
                             </div>
                           )}
-
-                        <div className="button-sides-2">
-                          <Button
-                            width="full"
-                            onClick={() => {
-                              copyLinkToClipboard(schedule.id);
-                              handleCopyLinkText();
-                            }}
-                          >
-                            <p>{buttonText}</p>
-                          </Button>
-                        </div>
+                        {schedule?.is_host &&
+                          schedule?.status !== 'planning' && (
+                            <div className="button-sides-2">
+                              <Button
+                                width="full"
+                                onClick={() => {
+                                  copyLinkToClipboard(schedule.id);
+                                  handleCopyLinkText();
+                                }}
+                              >
+                                <p>{buttonText}</p>
+                              </Button>
+                            </div>
+                          )}
                       </div>
                     </>
                   )}

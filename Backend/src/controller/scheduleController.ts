@@ -119,6 +119,35 @@ export const scheduleController = {
     }
   },
 
+  reviewSchedule: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+    const scheduleId = req.params.scheduleId;
+
+    try {
+      if (!scheduleId) {
+        errorResponse(res, {
+          error: 'BAD_REQUEST',
+          message: 'Por favor, informe o ID do agendamento.',
+          statusCode: 400,
+        });
+        return;
+      }
+
+      const review = await scheduleServices.reviewSchedule(
+        user.id,
+        scheduleId,
+      );
+
+      res.status(200).json({
+        success: true,
+        message: 'Agendamento em revisão',
+        data: review,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+
   updateScheduleInfo: async (req: Request, res: Response): Promise<void> => {
     const { scheduleId } = req.params;
     const { title, description } = req.body;
