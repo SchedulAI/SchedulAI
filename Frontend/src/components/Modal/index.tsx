@@ -285,7 +285,7 @@ export const Modal = ({
                           </div>
                         </div>
                       </details>
-                      {schedule && schedule.peding_account && (
+                      {schedule && (schedule.pending_account?.length ?? 0) > 0 &&  (
                         <details className="guests" ref={detailsNotCreatedRef}>
                           <summary className="summary">
                             <p className="status">
@@ -302,7 +302,7 @@ export const Modal = ({
                             </div>
                           </summary>
                           <div className="not-created-accounts-div">
-                            {schedule.peding_account.map((info) => (
+                            {(schedule.pending_account ?? []).map((info) => (
                               <p>{info}</p>
                             ))}
                           </div>
