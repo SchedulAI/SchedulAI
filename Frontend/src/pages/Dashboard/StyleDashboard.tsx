@@ -20,13 +20,13 @@ const expandWidth = keyframes`
 `;
 
 const bounce = keyframes`
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-  `;
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+`;
 
 export const Dot = styled.span`
   display: inline-block;
@@ -121,8 +121,6 @@ export const StyledDashboard = styled.div<{
     position: fixed;
     top: 0;
     left: 0;
-    justify-self: flex-start;
-    align-self: flex-start;
   }
 
   .slide-bar-menu-open {
@@ -140,7 +138,6 @@ export const StyledDashboard = styled.div<{
     left: 0;
     flex-direction: column;
     justify-content: flex-start;
-    justify-self: flex-start;
     align-items: flex-start;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
       rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
@@ -286,17 +283,13 @@ export const StyledDashboard = styled.div<{
     .message.user {
       align-self: flex-end;
       background-color: #d4d3f3;
-      width: fit-content;
       color: #0a0a15;
-      box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
-        rgba(0, 0, 0, 0.23) 0px 3px 6px;
     }
 
     .message.ia {
       align-self: flex-start;
       align-items: flex-start;
       padding: 2rem 0.5rem;
-      width: fit-content;
       gap: 0.5rem;
       background-color: #e0e0e0;
       color: #0a0a15;

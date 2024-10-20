@@ -1,17 +1,15 @@
-import { Icon } from '../../components/Icon';
 import { useState, useRef, useEffect } from 'react';
-import { Button } from '../../components/Button';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../hooks/userHooks';
-import { Card } from '../../components/Card';
 import apiUrl from '../../config/api';
-import { Modal } from '../../components/Modal';
-import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
-import { StyledDashboard, Dot } from './StyleDashboard';
-import { formatDate } from '../../Utils/FormatDate';
-import { compareStatus } from '../../Utils/sortSchedules';
 import { deleteCookie, getCookie } from '../../Utils/Cookies';
+import { compareStatus } from '../../Utils/sortSchedules';
 import showdown from 'showdown';
+import { StyledDashboard } from './StyleDashboard';
+import { Button } from '../../components/Button';
+import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
+import { SideMenu } from './SlideMenu/';
+import { Chat } from './Chat';
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
@@ -20,7 +18,9 @@ export const Dashboard = () => {
   const [currentSchedule, setCurrentSchedule] =
     useState<ScheduleCreateResponse | null>(null);
   const [schedules, setSchedules] = useState<ScheduleResponse | null>(null);
-  const [slideMenuOpen, setSlideMenuOpen] = useState(false);
+  const [slideMenuOpen, setSlideMenuOpen] = useState(() => {
+    return localStorage.getItem('preferenced') === 'true';
+  });
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [activeModalId, setActiveModalId] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
@@ -29,13 +29,7 @@ export const Dashboard = () => {
   const navigate = useNavigate();
   const { setUser } = useUser();
 
-  function openModal(schedule_id: string) {
-    setActiveModalId(schedule_id);
-  }
-
-  function closeModal() {
-    setActiveModalId(null);
-  }
+  const handleMarkdown = new showdown.Converter();
 
   const addSnackbar = (
     message: string,
@@ -53,9 +47,15 @@ export const Dashboard = () => {
     setContainerVisible(true);
   };
 
-  const handleMarkdown = new showdown.Converter();
+  const openModal = (schedule_id: string) => {
+    setActiveModalId(schedule_id);
+  };
 
-  async function handleSendMessage() {
+  const closeModal = () => {
+    setActiveModalId(null);
+  };
+
+  const handleSendMessage = async () => {
     if (!message) return;
 
     const schedule = currentSchedule || (await createSchedule());
@@ -68,7 +68,7 @@ export const Dashboard = () => {
     if (schedule) {
       await sendMessageToAi(sendingMessage, schedule.data.id);
     }
-  }
+  };
 
   const sendMessageToAi = async (message: string, schedule_id: string) => {
     setMessage('');
@@ -95,9 +95,8 @@ export const Dashboard = () => {
       ]);
       setLoadingMessage(false);
     } catch (error) {
-      addSnackbar('Erro ao enviar mensagem', 'error');
+      addSnackbar((error as Error).message, 'error');
       setLoadingMessage(false);
-      console.error(error);
     }
   };
 
@@ -120,17 +119,11 @@ export const Dashboard = () => {
       await getSchedules();
       return res;
     } catch (error) {
-      addSnackbar('Erro ao criar novo chat', 'error');
-      console.error(error);
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
-  function handleKeyPress(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      handleSendMessage();
-    }
-  }
+
 
   const logout = async () => {
     try {
@@ -144,7 +137,7 @@ export const Dashboard = () => {
       setUser('');
       navigate('/');
     } catch (error) {
-      console.error(error);
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
@@ -166,8 +159,7 @@ export const Dashboard = () => {
         return;
       }
     } catch (error) {
-      addSnackbar('Erro ao buscar chats', 'error');
-      console.error(error);
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
@@ -236,6 +228,14 @@ export const Dashboard = () => {
     getInviteConversation();
   }, []);
 
+  useEffect(() => {
+    if (slideMenuOpen) {
+      localStorage.setItem('preferenced', 'true');
+    } else {
+      localStorage.setItem('preferenced', 'false');
+    }
+  }, [slideMenuOpen]);
+
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
       <div className="logo">
@@ -243,219 +243,29 @@ export const Dashboard = () => {
           <p>Sair</p>
         </Button>
       </div>
-      <div
-        className={slideMenuOpen ? 'div-cover-open' : 'div-cover-closed'}
-        onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-      >
-        <div
-          className={
-            slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
-          }
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div
-            className={'slide-bar-div-button'}
-            onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-          >
-            {schedules && (
-              <div className="schedules-counter">
-                <p>{schedules.data.length}</p>
-              </div>
-            )}
-            <Icon
-              icon="sidebarSimple"
-              size={32}
-              weight="regular"
-              color="#0A0A15"
-            />
-          </div>
-          <div className="sideBar-content">
-            <Button
-              width="full"
-              onClick={() => {
-                setSlideMenuOpen(false);
-                setConversation([]);
-                setCurrentSchedule(null);
-              }}
-            >
-              <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
-            </Button>
-            <div className="host-div">
-              {schedules && <p className="bold-card">Anfitrião</p>}
-              <div className="host-cards">
-                {schedules &&
-                  schedules.data.map(
-                    (schedule) =>
-                      schedule.is_host && (
-                        <div key={schedule.id}>
-                          <Card
-                            Display={slideMenuOpen ? 'Flex' : 'none'}
-                            key={String(schedule.id)}
-                            status={schedule.status}
-                            title={schedule.title}
-                            proposed_date={
-                              schedule.proposed_date
-                                ? typeof schedule.proposed_date === 'object'
-                                  ? formatDate(
-                                      schedule.proposed_date.proposed_date
-                                    )
-                                  : formatDate(schedule.proposed_date)
-                                : 'A definir'
-                            }
-                            onClick={() => openModal(schedule.id)}
-                          />
-                          {activeModalId === schedule.id && (
-                            <Modal
-                              onClick={closeModal}
-                              schedule={schedule}
-                              setSchedules={setSchedules}
-                              schedules={schedules}
-                              setCurrentSchedule={setCurrentSchedule}
-                              setConversation={setConversation}
-                              setActiveModalId={setActiveModalId}
-                              setSlideMenuOpen={setSlideMenuOpen}
-                            />
-                          )}
-                        </div>
-                      )
-                  )}
-              </div>
-            </div>
-            <div className="guest-div">
-              {schedules && <p className="bold-card">Convidado</p>}
-              <div className="guest-cards">
-                {schedules &&
-                  schedules.data.map(
-                    (schedule) =>
-                      !schedule.is_host && (
-                        <div key={schedule.id}>
-                          <Card
-                            Display={slideMenuOpen ? 'Flex' : 'none'}
-                            key={String(schedule.id)}
-                            status={schedule.status}
-                            title={schedule.title}
-                            proposed_date={
-                              schedule.proposed_date
-                                ? typeof schedule.proposed_date === 'object'
-                                  ? formatDate(
-                                      schedule.proposed_date.proposed_date
-                                    )
-                                  : formatDate(schedule.proposed_date)
-                                : 'A definir'
-                            }
-                            onClick={() => openModal(schedule.id)}
-                          />
-                          {activeModalId === schedule.id && (
-                            <Modal
-                              onClick={closeModal}
-                              schedule={schedule}
-                              setSchedules={setSchedules}
-                              schedules={schedules}
-                              setCurrentSchedule={setCurrentSchedule}
-                              setConversation={setConversation}
-                              setActiveModalId={setActiveModalId}
-                              setSlideMenuOpen={setSlideMenuOpen}
-                            />
-                          )}
-                        </div>
-                      )
-                  )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="chat-content">
-        <div className="chat">
-          {conversation.length === 0 ? (
-            <>
-              <h2>O que gostaria de agendar hoje?</h2>
-              <div className="chat-input">
-                <textarea
-                  placeholder="O que posso agendar para você hoje?"
-                  value={message ? message : ''}
-                  onChange={(e) => {
-                    setMessage(e.target.value);
-                    setSendingMessage(e.target.value);
-                  }}
-                  onKeyDown={handleKeyPress}
-                />
-                <button
-                  onClick={() => {
-                    handleSendMessage();
-                  }}
-                  disabled={!message}
-                >
-                  <Icon
-                    icon="circleArrowUp"
-                    size={32}
-                    weight="fill"
-                    color={message ? '#0a0a15' : '#0a0a1580'}
-                  />
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="chat-conversation">
-                <div className="div-global-chat">
-                  {conversation.map((msg, index) => (
-                    <div key={index} className={`message ${msg.sender}`}>
-                      {msg.sender === 'ia' && (
-                        <div className="icon-ia">
-                          <Icon
-                            size={32}
-                            icon="robot"
-                            weight="fill"
-                            color="#0a0a15"
-                          />
-                        </div>
-                      )}
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: handleMarkdown.makeHtml(msg.message),
-                        }}
-                      ></div>
-                    </div>
-                  ))}
-                  {loadingMessage && (
-                    <div className="typing">
-                      Digitando algo <Dot>.</Dot>
-                      <Dot>.</Dot>
-                      <Dot>.</Dot>
-                    </div>
-                  )}
-                </div>
-                <div ref={chatEndRef} />
-              </div>
-              <div className="chat-input">
-                <textarea
-                  placeholder="Mensagem SchedulAI"
-                  value={message ? message : ''}
-                  onChange={(e) => {
-                    setMessage(e.target.value);
-                    setSendingMessage(e.target.value);
-                  }}
-                  onKeyDown={handleKeyPress}
-                />
-                <button
-                  onClick={() => {
-                    handleSendMessage();
-                  }}
-                  disabled={!message}
-                >
-                  <Icon
-                    icon="circleArrowUp"
-                    size={32}
-                    weight="fill"
-                    color={message ? '#0a0a15' : '#0a0a1580'}
-                  />
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+      <SideMenu
+        slideMenuOpen={slideMenuOpen}
+        setSlideMenuOpen={setSlideMenuOpen}
+        schedules={schedules}
+        openModal={openModal}
+        closeModal={closeModal}
+        activeModalId={activeModalId}
+        setSchedules={setSchedules}
+        setCurrentSchedule={setCurrentSchedule}
+        setConversation={setConversation}
+        setActiveModalId={setActiveModalId}
+        addSnackbar={addSnackbar}
+      />
+      <Chat
+        conversation={conversation}
+        message={message}
+        setMessage={setMessage}
+        setSendingMessage={setSendingMessage}
+        handleSendMessage={handleSendMessage}
+        loadingMessage={loadingMessage}
+        chatEndRef={chatEndRef}
+        handleMarkdown={handleMarkdown}
+      />
       <SnackbarContainer
         anchororigin={{ vertical: 'bottom', horizontal: 'right' }}
         visible={containerVisible}
