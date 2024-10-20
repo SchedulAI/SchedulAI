@@ -9,6 +9,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '../utils/exceptions';
+import { invitedEmailsRepository } from '../repository/invitedEmailsRepository';
 
 export const scheduleServices = {
   createSchedule: async (
@@ -87,6 +88,26 @@ export const scheduleServices = {
         // Buscar o nome do host (criador do agendamento)
         const host = await userRepository.findById(schedule.user_id);
 
+        // Buscar os emails convidados
+        const invitedEmails =
+          await invitedEmailsRepository.getInvitedEmailsByScheduleId(
+            schedule.id
+          );
+
+        // Verificar quais emails têm cadastro
+        const pending_account = await Promise.all(
+          invitedEmails.map(async (e) => {
+            const user = await userRepository.findByEmail(e.email);
+            return user ? null : e.email;
+          })
+        ).then((results) => {
+          // Filtrar nulos e remover duplicatas
+          const uniqueEmails = new Set(
+            results.filter((email) => email !== null)
+          );
+          return Array.from(uniqueEmails);
+        });
+
         // Buscar as informações complementares para cada schedule
         const [proposedDate, invites, availability] = await Promise.all([
           proposedDateRepository.listProposedDate(schedule.id),
@@ -102,6 +123,7 @@ export const scheduleServices = {
           proposed_date: proposedDate || null,
           invites,
           availability,
+          pending_account,
         };
       })
     );

@@ -44,7 +44,7 @@ interface Schedule {
   host_name: string;
   invites?: Invite[] | null;
   availability?: Availability[] | null;
-  peding_account?: string[] | null;
+  pending_account?: string[] | null;
 }
 
 interface ScheduleResponse {
