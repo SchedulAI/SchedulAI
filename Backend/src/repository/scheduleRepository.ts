@@ -61,6 +61,24 @@ export const scheduleRepository = {
     }
   },
 
+  deleteSchedule: async (scheduleId: string): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+          UPDATE schedule
+          SET status = 'deleted'
+          WHERE id = $1
+          RETURNING *;
+          `;
+    try {
+      const { rows } = await client.query(queryUpdate, [scheduleId]);
+      return rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao deletar o agendamento');
+    } finally {
+      client.release();
+    }
+  },
+
   cancelSchedule: async (scheduleId: string): Promise<Schedule> => {
     const client = await pool.connect();
     const queryUpdate = `

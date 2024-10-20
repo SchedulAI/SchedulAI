@@ -64,8 +64,8 @@ export const Register = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: name,
-          email: email,
+          name: name.toLowerCase(),
+          email: email.toLowerCase(),
           password: password,
         }),
       });
@@ -75,7 +75,10 @@ export const Register = () => {
       if (schedule_id) {
         setCookie('schedule_id', schedule_id, 864000);
         const invite = await createInvite(data.id);
-        if (!invite.success) {
+        console.log(invite);
+        if (invite.sucess) {
+          addSnackbar(invite.message, 'success');
+        } else {
           addSnackbar(invite.message, 'error');
         }
       }

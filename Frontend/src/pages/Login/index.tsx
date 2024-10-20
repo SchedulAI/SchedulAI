@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { Checkbox } from '../../components/Checkbox';
 import { Icon } from '../../components/Icon';
 import { Input } from '../../components/Input';
-import { useUser } from '../../hooks/userHooks';
-import { useNavigate } from 'react-router-dom';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
+import { useUser } from '../../hooks/userHooks';
 import { LoginStyled } from './LoginStyled';
 import apiUrl from '../../config/api';
 
@@ -13,14 +13,12 @@ export const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [loading, setLoading] = useState(false);
-  const [containerVisible, setContainerVisible] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [containerVisible, setContainerVisible] = useState<boolean>(true);
   const { user, setUser } = useUser();
   const navigate = useNavigate();
 
-  const handleRememberMeChange = () => {
-    setRememberMe(!rememberMe);
-  };
+  const handleRememberMeChange = () => setRememberMe(!rememberMe);
 
   const addSnackbar = (
     message: string,
@@ -43,17 +41,12 @@ export const Login = () => {
     try {
       const response = await fetch(apiUrl('/login'), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.toLowerCase(), password }),
         credentials: 'include',
       });
-      setLoading(false);
       const data = await response.json();
+      setLoading(false);
       if (data.auth) {
         setUser(email);
         if (rememberMe) {
@@ -70,7 +63,6 @@ export const Login = () => {
     } catch (error) {
       addSnackbar((error as Error).message, 'error');
       setLoading(false);
-      return;
     }
   };
 
@@ -146,7 +138,7 @@ export const Login = () => {
         <div className="login-enter-register-div">
           <Button
             width="full"
-            onClick={async () => await loginFetch()}
+            onClick={loginFetch}
             disabled={!email || !password || loading}
           >
             Entrar

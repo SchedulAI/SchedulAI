@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const HomeStyled = styled.div`
   position: relative;
+
   .main-section {
     height: 100vh;
     display: flex;
@@ -28,6 +29,7 @@ export const HomeStyled = styled.div`
 
       a {
         color: #0a0a15;
+        cursor: pointer;
       }
     }
 
@@ -43,10 +45,10 @@ export const HomeStyled = styled.div`
       width: 50px;
       box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
       transition: all ease-in-out 0.4s;
-    }
 
-    .div-arrow-down:hover {
-      background-color: #7d79e6;
+      &:hover {
+        background-color: #7d79e6;
+      }
     }
   }
 
@@ -74,6 +76,7 @@ export const HomeStyled = styled.div`
         color: #0a0a15;
       }
     }
+
     p {
       color: #0a0a15;
       max-width: 35%;
@@ -103,26 +106,23 @@ export const HomeStyled = styled.div`
       h2 {
         font-size: 3.16rem;
         color: #0a0a15;
+        display: flex;
+        flex-direction: row;
+
+        > span {
+          display: flex;
+          align-items: center;
+        }
       }
 
       h4 {
         font-size: 2.37rem;
         color: #0a0a15;
       }
-    }
 
-    .div-about-title h2 {
-      display: flex;
-      flex-direction: row;
-    }
-
-    .div-about-title h2 > span {
-      display: flex;
-      align-items: center;
-    }
-
-    .div-about-title p > span {
-      font-weight: 700;
+      p > span {
+        font-weight: 700;
+      }
     }
 
     .div-about-list {
@@ -135,16 +135,16 @@ export const HomeStyled = styled.div`
       text-align: left;
       gap: 10px;
       padding: 2px;
-    }
 
-    .div-about-list p {
-      font-size: 1.2rem;
-      font-weight: 700;
-    }
+      p {
+        font-size: 1.2rem;
+        font-weight: 700;
+      }
 
-    .div-about-list ul {
-      list-style-type: circle;
-      padding: 0;
+      ul {
+        list-style-type: circle;
+        padding: 0;
+      }
     }
 
     .div-about-end {

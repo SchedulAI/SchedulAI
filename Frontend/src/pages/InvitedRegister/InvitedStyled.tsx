@@ -1,5 +1,14 @@
 import styled, { keyframes } from 'styled-components';
 
+const bounce = keyframes`
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+`;
+
 export const InvitedStyled = styled.div`
   .main-section {
     height: 100vh;
@@ -45,15 +54,6 @@ export const InvitedStyled = styled.div`
     color: #0a0a15;
   }
 `;
-
-const bounce = keyframes`
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
-  `;
 
 export const Dot = styled.span`
   display: inline-block;

@@ -9,4 +9,8 @@ interface Props {
   >;
   setSlideMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
   schedules: ScheduleResponse | null;
+  addSnackbar: (
+    message: string,
+    variant: 'success' | 'error' | 'info' | 'warning'
+  ) => void;
 }

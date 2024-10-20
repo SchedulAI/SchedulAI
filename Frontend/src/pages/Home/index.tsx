@@ -6,14 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { Footer } from '../../components/Footer';
 
 export const Home = () => {
+  const navigate = useNavigate();
+
   const handleScrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
-  const navigate = useNavigate();
 
   return (
     <HomeStyled className="home-div">
@@ -77,7 +77,7 @@ export const Home = () => {
             </span>
           </h2>
           <p>
-            O schedulAI é uma solução inteligente para agendamento de
+            O SchedulAI é uma solução inteligente para agendamento de
             compromissos, desenvolvida para facilitar a coordenação de horários
             de forma simples e eficiente. Utilizando a mais recente tecnologia
             de IA, o <span>SchedulAI</span> permite que você crie e organize

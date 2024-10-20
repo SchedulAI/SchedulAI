@@ -14,6 +14,7 @@ const config = {
   DB_PASSWORD: process.env.DB_PASSWORD,
   DB_PORT: process.env.DB_PORT,
   OPENAIKEY: process.env.OPENAIKEY,
+  ORIGIN_CORS: process.env.ORIGIN_CORS || 'http://localhost:3000', 
 };
 
 export default config;

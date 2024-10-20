@@ -66,6 +66,31 @@ export const scheduleController = {
     }
   },
 
+  deleteSchedule: async (req: Request, res: Response): Promise<void> => {
+    const user = req.user!;
+    const scheduleId = req.params.scheduleId;
+
+    try {
+      if (!scheduleId) {
+        errorResponse(res, {
+          error: 'BAD_REQUEST',
+          message: 'Por favor, informe o ID do agendamento.',
+          statusCode: 400,
+        });
+        return;
+      }
+
+      const schedule = await scheduleServices.deleteSchedule(user.id, scheduleId);
+      res.status(200).json({
+        success: true,
+        message: 'Agendamento deletado com sucesso',
+        data: schedule,
+      });
+    } catch (error: any) {
+      errorResponse(res, error);
+    }
+  },
+
   cancelSchedule: async (req: Request, res: Response): Promise<void> => {
     const user = req.user!;
     const scheduleId = req.params.scheduleId;
@@ -113,7 +138,7 @@ export const scheduleController = {
         user.id,
         scheduleId,
         title,
-        description,
+        description
       );
 
       res.status(200).json({
