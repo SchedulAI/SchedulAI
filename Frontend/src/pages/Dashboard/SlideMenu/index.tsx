@@ -33,19 +33,19 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           onClick={() => setSlideMenuOpen(!slideMenuOpen)}
         >
           {schedules &&
-            schedules.data
-              .filter((schedule) => schedule.status !== 'deleted')
-              .map((schedule) => (
-                <div className="schedules-counter" key={schedule.id}>
-                  <p>
-                    {
-                      schedules.data.filter(
-                        (schedule) => schedule.status !== 'deleted'
-                      ).length
-                    }
-                  </p>
-                </div>
-              ))}
+            schedules.data.some(
+              (schedule) => schedule.status !== 'deleted'
+            ) && (
+              <div className="schedules-counter">
+                <p>
+                  {
+                    schedules.data.filter(
+                      (schedule) => schedule.status !== 'deleted'
+                    ).length
+                  }
+                </p>
+              </div>
+            )}
           <Icon
             icon="sidebarSimple"
             size={32}
@@ -66,13 +66,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           </Button>
           <div className="host-div">
             {schedules &&
-              schedules.data
-                .filter((schedule) => schedule.status !== 'deleted')
-                .map((schedule) => (
-                  <p key={schedule.id} className="bold-card">
-                    Anfitrião
-                  </p>
-                ))}
+              schedules.data.some(
+                (schedule) => schedule.status !== 'deleted'
+              ) && <p className="bold-card">Anfitrião</p>}
             <div className="host-cards">
               {schedules &&
                 schedules.data.map(
@@ -115,13 +111,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           </div>
           <div className="guest-div">
             {schedules &&
-              schedules.data
-                .filter((schedule) => schedule.status !== 'deleted')
-                .map((schedule) => (
-                  <p key={schedule.id} className="bold-card">
-                    Convidado
-                  </p>
-                ))}
+              schedules.data.some(
+                (schedule) => schedule.status !== 'deleted'
+              ) && <p className="bold-card">Convidado</p>}
             <div className="guest-cards">
               {schedules &&
                 schedules.data.map(
