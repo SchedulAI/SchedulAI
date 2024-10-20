@@ -28,7 +28,13 @@ interface Schedule {
   user_id: string;
   title: string;
   description?: string | null;
-  status: 'planning' | 'pending' | 'reviewing' | 'scheduled' | 'cancelled';
+  status:
+    | 'planning'
+    | 'pending'
+    | 'reviewing'
+    | 'scheduled'
+    | 'cancelled'
+    | 'deleted';
   access_code?: string | null;
   expiry_time?: string | null;
   invite_link?: string | null;
