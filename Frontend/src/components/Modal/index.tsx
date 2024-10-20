@@ -21,6 +21,7 @@ export const Modal = ({
   setCurrentSchedule,
   setSlideMenuOpen,
   schedules,
+  addSnackbar,
 }: Props) => {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const detailsNotCreatedRef = useRef<HTMLDetailsElement>(null);
@@ -66,7 +67,7 @@ export const Modal = ({
 
       await getOldConversation(id);
     } catch (error) {
-      console.error(error);
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
@@ -93,7 +94,7 @@ export const Modal = ({
         });
       }
     } catch (error) {
-      console.error(error);
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
@@ -133,7 +134,7 @@ export const Modal = ({
       }
       setActiveModalId(null);
     } catch (error) {
-      console.error(error);
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
