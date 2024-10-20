@@ -5,7 +5,6 @@ import { tool } from '@langchain/core/tools';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import { dialogRepository } from '../repository/dialogRepository';
 import { availabilityRepository } from '../repository/availabilityRepository';
-import { llm } from '../utils/llm';
 import formatAvailability from '../utils/formatAvailability';
 import { dialogServices } from '../services/dialogServices';
 

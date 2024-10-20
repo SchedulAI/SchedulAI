@@ -1,3 +1,4 @@
+import { PoolClient } from 'pg';
 import pool from '../db';
 import { Availability } from '../entities/availabilityEntity';
 import { InternalServerException } from '../utils/exceptions';
@@ -59,14 +60,14 @@ export const availabilityRepository = {
   },
 
   createAvailability: async (
+    client: PoolClient,
     userId: string,
     scheduleId: string,
-    weekDay: Date,
+    weekDay: string,
     startTime: string,
     endTime: string,
     notes: string
   ): Promise<Availability> => {
-    const client = await pool.connect();
     const createQuery = `
         INSERT INTO availability 
         (user_id, schedule_id, week_day, 
@@ -86,8 +87,6 @@ export const availabilityRepository = {
       return rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao criar disponibilidade');
-    } finally {
-      client.release();
     }
   },
 
