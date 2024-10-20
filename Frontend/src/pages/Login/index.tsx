@@ -84,7 +84,7 @@ export const Login = () => {
     <LoginStyled className="login-main-div">
       <div className="btn-back-div">
         <Button onClick={() => navigate('/')}>
-          <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
+          <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
           <span>Voltar</span>
         </Button>
       </div>

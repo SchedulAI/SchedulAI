@@ -103,7 +103,7 @@ export const Register = () => {
     <RegisterStyled className="register-main-div">
       <div className="btn-back-div">
         <Button onClick={() => navigate('/')}>
-          <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
+          <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
           <span>Voltar</span>
         </Button>
       </div>
@@ -163,7 +163,7 @@ export const Register = () => {
             onClick={() => registerFetch()}
             disabled={!name || !email || !password || loading}
           >
-            Registrar
+            <p>Registrar</p>
           </Button>
           <a id="register-a-create-account" onClick={() => navigate('/login')}>
             Já possui uma conta? <span>Acesse agora</span>

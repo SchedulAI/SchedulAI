@@ -13,7 +13,7 @@ export const RecoverPassword = () => {
     <RecoverPasswordStyled>
       <div className="btn-back-div">
         <Button onClick={() => navigate('/login')}>
-          <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
+          <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
           <span>Voltar</span>
         </Button>
       </div>
