@@ -61,6 +61,24 @@ export const scheduleRepository = {
     }
   },
 
+  deleteSchedule: async (scheduleId: string): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+          UPDATE schedule
+          SET status = 'deleted'
+          WHERE id = $1
+          RETURNING *;
+          `;
+    try {
+      const { rows } = await client.query(queryUpdate, [scheduleId]);
+      return rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao deletar o agendamento');
+    } finally {
+      client.release();
+    }
+  },
+
   cancelSchedule: async (scheduleId: string): Promise<Schedule> => {
     const client = await pool.connect();
     const queryUpdate = `
@@ -78,6 +96,7 @@ export const scheduleRepository = {
       client.release();
     }
   },
+
   updateScheduleStatus: async (
     scheduleId: string,
     status: string
@@ -97,6 +116,29 @@ export const scheduleRepository = {
       return updateResult.rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao cancelar o agendamento');
+    } finally {
+      client.release();
+    }
+  },
+
+  reviewSchedule: async (
+    scheduleId: string,
+  ): Promise<Schedule> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+    UPDATE schedule
+    SET status = 'reviewing'
+    WHERE id = $1
+    RETURNING *;
+    `;
+
+    try {
+      const reviewResult = await client.query(queryUpdate, [
+        scheduleId,
+      ]);
+      return reviewResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao mudar status do agendamento');
     } finally {
       client.release();
     }

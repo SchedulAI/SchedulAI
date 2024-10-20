@@ -32,12 +32,26 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           className={'slide-bar-div-button'}
           onClick={() => setSlideMenuOpen(!slideMenuOpen)}
         >
-          {schedules && (
-            <div className="schedules-counter">
-              <p>{schedules.data.length}</p>
-            </div>
-          )}
-          <Icon icon="sidebarSimple" size={32} weight="regular" color="#0A0A15" />
+          {schedules &&
+            schedules.data.some(
+              (schedule) => schedule.status !== 'deleted'
+            ) && (
+              <div className="schedules-counter">
+                <p>
+                  {
+                    schedules.data.filter(
+                      (schedule) => schedule.status !== 'deleted'
+                    ).length
+                  }
+                </p>
+              </div>
+            )}
+          <Icon
+            icon="sidebarSimple"
+            size={32}
+            weight="regular"
+            color="#0A0A15"
+          />
         </div>
         <div className="sideBar-content">
           <Button
@@ -51,7 +65,10 @@ export const SideMenu: React.FC<SideMenuProps> = ({
             <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
           </Button>
           <div className="host-div">
-            {schedules && <p className="bold-card">Anfitrião</p>}
+            {schedules &&
+              schedules.data.some(
+                (schedule) => schedule.status !== 'deleted'
+              ) && <p className="bold-card">Anfitrião</p>}
             <div className="host-cards">
               {schedules &&
                 schedules.data.map(
@@ -66,7 +83,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                           proposed_date={
                             schedule.proposed_date
                               ? typeof schedule.proposed_date === 'object'
-                                ? formatDate(schedule.proposed_date.proposed_date)
+                                ? formatDate(
+                                    schedule.proposed_date.proposed_date
+                                  )
                                 : formatDate(schedule.proposed_date)
                               : 'A definir'
                           }
@@ -91,7 +110,10 @@ export const SideMenu: React.FC<SideMenuProps> = ({
             </div>
           </div>
           <div className="guest-div">
-            {schedules && <p className="bold-card">Convidado</p>}
+            {schedules &&
+              schedules.data.some(
+                (schedule) => schedule.status !== 'deleted'
+              ) && <p className="bold-card">Convidado</p>}
             <div className="guest-cards">
               {schedules &&
                 schedules.data.map(
@@ -106,7 +128,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                           proposed_date={
                             schedule.proposed_date
                               ? typeof schedule.proposed_date === 'object'
-                                ? formatDate(schedule.proposed_date.proposed_date)
+                                ? formatDate(
+                                    schedule.proposed_date.proposed_date
+                                  )
                                 : formatDate(schedule.proposed_date)
                               : 'A definir'
                           }

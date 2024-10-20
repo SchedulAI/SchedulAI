@@ -9,6 +9,7 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '../utils/exceptions';
+import { invitedEmailsRepository } from '../repository/invitedEmailsRepository';
 
 export const scheduleServices = {
   createSchedule: async (
@@ -74,13 +75,38 @@ export const scheduleServices = {
         index === self.findIndex((s) => s.id === schedule.id)
     );
 
+    // Filtrar agendamentos com status 'deleted'
+    const filteredSchedules = uniqueSchedules.filter(
+      (schedule) => schedule.status !== 'deleted'
+    );
+
     // Processar cada agendamento para incluir informações adicionais
     const completeSchedules = await Promise.all(
-      uniqueSchedules.map(async (schedule) => {
+      filteredSchedules.map(async (schedule) => {
         const is_host = userId === schedule.user_id;
 
         // Buscar o nome do host (criador do agendamento)
         const host = await userRepository.findById(schedule.user_id);
+
+        // Buscar os emails convidados
+        const invitedEmails =
+          await invitedEmailsRepository.getInvitedEmailsByScheduleId(
+            schedule.id
+          );
+
+        // Verificar quais emails têm cadastro
+        const pending_account = await Promise.all(
+          invitedEmails.map(async (e) => {
+            const user = await userRepository.findByEmail(e.email);
+            return user ? null : e.email;
+          })
+        ).then((results) => {
+          // Filtrar nulos e remover duplicatas
+          const uniqueEmails = new Set(
+            results.filter((email) => email !== null)
+          );
+          return Array.from(uniqueEmails);
+        });
 
         // Buscar as informações complementares para cada schedule
         const [proposedDate, invites, availability] = await Promise.all([
@@ -97,6 +123,7 @@ export const scheduleServices = {
           proposed_date: proposedDate || null,
           invites,
           availability,
+          pending_account,
         };
       })
     );
@@ -106,6 +133,68 @@ export const scheduleServices = {
     }
 
     return completeSchedules; // Retorna todos os schedules processados
+  },
+
+  reviewSchedule: async (
+    userId: string,
+    scheduleId: string
+  ): Promise<Schedule> => {
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+    if (!schedule) {
+      throw new NotFoundException('Agendamento não encontrado.');
+    }
+
+    if (schedule.user_id !== userId) {
+      throw new ForbiddenException('Você não é o dono desse agendamento.');
+    }
+
+    if (schedule.status === 'reviewing') {
+      throw new BadRequestException('O agendamento já está sendo revisado.');
+    }
+
+    if (schedule.status === 'cancelled') {
+      throw new BadRequestException('O agendamento está cancelado.');
+    }
+
+    if (schedule.status === 'deleted') {
+      throw new BadRequestException('O agendamento está deletado.');
+    }
+
+    if (schedule.status === 'scheduled') {
+      throw new BadRequestException('O agendamento já foi completado.');
+    }
+
+    if (schedule.status === 'planning') {
+      throw new BadRequestException(
+        'O agendamento ainda está em planejamento.'
+      );
+    }
+
+    const reviewingSchedule = await scheduleRepository.reviewSchedule(
+      scheduleId
+    );
+
+    return reviewingSchedule;
+  },
+
+  deleteSchedule: async (
+    userId: string,
+    scheduleId: string
+  ): Promise<Schedule> => {
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+    if (schedule.user_id !== userId) {
+      throw new ForbiddenException('Você não é o dono desse agendamento.');
+    }
+
+    if (schedule.status === 'deleted') {
+      throw new BadRequestException('O agendamento já está deletado.');
+    }
+
+    const deletedSchedule = await scheduleRepository.deleteSchedule(scheduleId);
+
+    return deletedSchedule;
   },
 
   cancelSchedule: async (
@@ -132,7 +221,8 @@ export const scheduleServices = {
     userId: string,
     scheduleId: string,
     title?: string,
-    description?: string
+    description?: string,
+    duration?: number
   ): Promise<Schedule> => {
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
 
@@ -147,7 +237,8 @@ export const scheduleServices = {
     const updatedSchedule = await scheduleRepository.updateScheduleInfo(
       scheduleId,
       title || schedule.title,
-      description || schedule.description
+      description || schedule.description,
+      duration || schedule.duration
     );
 
     return updatedSchedule;

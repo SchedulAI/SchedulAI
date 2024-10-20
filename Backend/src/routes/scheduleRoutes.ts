@@ -25,6 +25,18 @@ scheduleRouter.patch(
 );
 
 scheduleRouter.patch(
+  '/:scheduleId/delete',
+  permissionVerify,
+  scheduleController.deleteSchedule
+)
+
+scheduleRouter.patch(
+  '/:scheduleId/review',
+  permissionVerify,
+  scheduleController.reviewSchedule
+)
+
+scheduleRouter.patch(
   '/:scheduleId',
   permissionVerify,
   scheduleController.updateScheduleInfo
