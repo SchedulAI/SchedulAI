@@ -74,9 +74,14 @@ export const scheduleServices = {
         index === self.findIndex((s) => s.id === schedule.id)
     );
 
+    // Filtrar agendamentos com status 'deleted'
+    const filteredSchedules = uniqueSchedules.filter(
+      (schedule) => schedule.status !== 'deleted'
+    );
+
     // Processar cada agendamento para incluir informações adicionais
     const completeSchedules = await Promise.all(
-      uniqueSchedules.map(async (schedule) => {
+      filteredSchedules.map(async (schedule) => {
         const is_host = userId === schedule.user_id;
 
         // Buscar o nome do host (criador do agendamento)
@@ -108,6 +113,22 @@ export const scheduleServices = {
     return completeSchedules; // Retorna todos os schedules processados
   },
 
+  deleteSchedule: async (userId: string, scheduleId: string): Promise<Schedule> => {
+    const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
+    if (schedule.user_id !== userId) {
+      throw new ForbiddenException('Você não é o dono desse agendamento.');
+    }
+
+    if (schedule.status === 'deleted') {
+      throw new BadRequestException('O agendamento já está deletado.');
+    }
+
+    const deletedSchedule = await scheduleRepository.deleteSchedule(scheduleId);
+
+    return deletedSchedule;
+  },
+
   cancelSchedule: async (
     userId: string,
     scheduleId: string
@@ -132,7 +153,8 @@ export const scheduleServices = {
     userId: string,
     scheduleId: string,
     title?: string,
-    description?: string
+    description?: string,
+    duration?: number,
   ): Promise<Schedule> => {
     const schedule = await scheduleRepository.getScheduleById(scheduleId);
 
@@ -147,7 +169,8 @@ export const scheduleServices = {
     const updatedSchedule = await scheduleRepository.updateScheduleInfo(
       scheduleId,
       title || schedule.title,
-      description || schedule.description
+      description || schedule.description,
+      duration || schedule.duration
     );
 
     return updatedSchedule;
