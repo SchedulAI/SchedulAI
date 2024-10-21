@@ -7,9 +7,12 @@ export const StyledButton = styled.button<{
   background: ${(props) => props.theme.colors.buttonPrimaryBackground};
   gap: 4px;
   padding: 0.75rem 1rem;
+  border: none;
   transition: background-color 0.1s ease-in-out;
   display: flex;
   align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
   justify-content: center;
 
   > * {
@@ -21,8 +24,8 @@ export const StyledButton = styled.button<{
   span,
   a {
     font-size: 1rem;
-    line-height: 1.125rem;
-    color: ${(props) => props.theme.colors.background};
+    line-height: 1.5rem;
+    color: ${(props) => props.theme.colors.backgroundPrimary};
     font-weight: 400;
   }
 

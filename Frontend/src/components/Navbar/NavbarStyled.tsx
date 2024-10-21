@@ -6,10 +6,9 @@ export const NavbarStyled = styled.div`
   align-items: center;
   padding: 1rem 2rem;
   position: fixed;
-  background: #f8f8fc;
+  background: ${(props) => props.theme.colors.backgroundPrimary};
+  border: 1px solid ${(props) => props.theme.colors.backgroundDark};
   width: 100%;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
   z-index: 100;
 
   .logo {

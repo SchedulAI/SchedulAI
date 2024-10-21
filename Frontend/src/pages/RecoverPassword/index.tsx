@@ -11,12 +11,10 @@ export const RecoverPassword = () => {
   const [email, setEmail] = useState('');
   return (
     <RecoverPasswordStyled>
-      <div className="btn-back-div">
-        <Button onClick={() => navigate('/login')}>
-          <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
-          <span>Voltar</span>
-        </Button>
-      </div>
+      <Button onClick={() => navigate('/login')}>
+        <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
+        <span>Voltar</span>
+      </Button>
       <div className="recover-div-section">
         <div className="recover-div-title">
           <h1>Esqueceu A Senha? 👍</h1>

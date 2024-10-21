@@ -101,12 +101,10 @@ export const Register = () => {
 
   return (
     <RegisterStyled className="register-main-div">
-      <div className="btn-back-div">
-        <Button onClick={() => navigate('/')}>
-          <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
-          <span>Voltar</span>
-        </Button>
-      </div>
+      <Button onClick={() => navigate('/')}>
+        <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
+        <span>Voltar</span>
+      </Button>
       <div className="register-div-section">
         <div className="register-title-div">
           <h1>Pronto para começar? 👋</h1>
