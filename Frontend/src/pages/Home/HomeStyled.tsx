@@ -4,6 +4,7 @@ export const HomeStyled = styled.div`
   position: relative;
 
   .main-section {
+    padding: 0rem 2rem;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -28,7 +29,6 @@ export const HomeStyled = styled.div`
       justify-content: center;
 
       a {
-        color: #0a0a15;
         cursor: pointer;
       }
     }
@@ -47,39 +47,42 @@ export const HomeStyled = styled.div`
       transition: all ease-in-out 0.4s;
 
       &:hover {
-        background-color: #7d79e6;
+        background-color: ${(props) =>
+          props.theme.colors.buttonPrimaryBackground};
       }
     }
   }
 
   .news-section {
+    padding: 0rem 2rem;
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
     justify-content: center;
 
-    .div-title {
+    h2 {
+      font-size: 3.16rem;
+      color: #0a0a15;
+    }
+
+    .div-content {
       display: flex;
       align-items: center;
       flex-direction: column;
       gap: 1rem;
 
-      h2 {
-        font-size: 3.16rem;
-        color: #0a0a15;
-      }
-
-      h4 {
+      h3 {
+        font-weight: 500;
         font-size: 2.37rem;
-        color: #0a0a15;
       }
-    }
 
-    p {
-      color: #0a0a15;
-      max-width: 35%;
+      p {
+        text-align: center;
+        color: #0a0a15;
+        max-width: 40rem;
+      }
     }
   }
 
@@ -92,36 +95,26 @@ export const HomeStyled = styled.div`
     justify-content: center;
     gap: 10px;
 
-    .div-title {
+    h2 {
+      font-size: 3.16rem;
+      color: #0a0a15;
+    }
+
+    .div-content {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      align-self: center;
-      width: 35%;
-      text-align: left;
+      flex-direction: column;
       gap: 1rem;
-      padding: 2px;
 
-      h2 {
-        font-size: 3.16rem;
-        color: #0a0a15;
-        display: flex;
-        flex-direction: row;
-
-        > span {
-          display: flex;
-          align-items: center;
-        }
-      }
-
-      h4 {
+      h3 {
+        font-weight: 500;
         font-size: 2.37rem;
-        color: #0a0a15;
       }
 
-      p > span {
-        font-weight: 700;
+      p {
+        text-align: center;
+        color: #0a0a15;
+        max-width: 40rem;
       }
     }
 
@@ -131,32 +124,26 @@ export const HomeStyled = styled.div`
       justify-content: center;
       align-items: center;
       align-self: center;
-      width: 35%;
-      text-align: left;
-      gap: 10px;
-      padding: 2px;
-
-      p {
-        font-size: 1.2rem;
-        font-weight: 700;
-      }
 
       ul {
         list-style-type: circle;
-        padding: 0;
-      }
-    }
+        padding: 1rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 8px;
 
-    .div-about-end {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      align-self: center;
-      width: 30%;
-      text-align: left;
-      gap: 10px;
-      padding: 2px;
+        p {
+          font-weight: 400;
+        }
+
+        li {
+          flex: 1;
+          text-align: center;
+          width: fit-content;
+        }
+      }
     }
   }
 `;

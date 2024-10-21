@@ -8,16 +8,12 @@ export const RegisterStyled = styled.div`
   width: 100%;
   height: 100%;
   position: relative;
-  color: #0a0a15;
+  color: ${(props) => props.theme.colors.text};
 
-  .btn-back-div {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 8px;
-    top: 0;
-    left: 0;
-    padding: 32px;
+  > Button {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
   }
 
   .register-div-section {
@@ -42,7 +38,7 @@ export const RegisterStyled = styled.div`
     span {
       font-size: 1rem;
       font-weight: 400;
-      color: #0a0a15;
+      color: ${(props) => props.theme.colors.text};
       opacity: 50%;
     }
   }

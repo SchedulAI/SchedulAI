@@ -82,12 +82,10 @@ export const Login = () => {
 
   return (
     <LoginStyled className="login-main-div">
-      <div className="btn-back-div">
-        <Button onClick={() => navigate('/')}>
-          <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
-          <span>Voltar</span>
-        </Button>
-      </div>
+      <Button onClick={() => navigate('/')}>
+        <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
+        <span>Voltar</span>
+      </Button>
       <div className="login-div-section">
         <div className="login-title-div">
           <h1>Bem-Vindo De volta 👋</h1>
@@ -141,7 +139,7 @@ export const Login = () => {
             onClick={loginFetch}
             disabled={!email || !password || loading}
           >
-            Entrar
+            <p>Entrar</p>
           </Button>
           <a id="login-a-create-account" onClick={() => navigate('/register')}>
             Não tem uma conta? <span>Registre-se</span>

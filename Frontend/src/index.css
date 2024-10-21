@@ -3,6 +3,7 @@ body {
   --sb-track-color: #4c4c4c;
   --sb-thumb-color: #8380e5;
   --sb-size: 10px;
+  background: #f8f8fc;
 }
 
 body::-webkit-scrollbar {

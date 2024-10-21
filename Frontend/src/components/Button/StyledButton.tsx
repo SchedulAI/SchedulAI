@@ -3,37 +3,37 @@ import styled from 'styled-components';
 export const StyledButton = styled.button<{
   width: 'full' | 'fit';
 }>`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
-  border: 1px solid #7d79e6;
-  border-radius: 4px;
-  background-color: #8380e5;
-  color: #0a0a15;
-  transition: all ease-in-out 0.3s;
   width: ${({ width }) => (width === 'full' ? '100%' : 'fit-content')};
+  background: ${(props) => props.theme.colors.buttonPrimaryBackground};
+  gap: 4px;
+  padding: 0.75rem 1rem;
+  border: none;
+  transition: background-color 0.1s ease-in-out;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  justify-content: center;
 
   > * {
     white-space: nowrap;
     margin: 0px;
   }
 
+  > p,
+  span,
+  a {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: ${(props) => props.theme.colors.backgroundPrimary};
+    font-weight: 400;
+  }
+
   &:hover {
-    background-color: #7a77da;
-    border: 1px solid #716ed2;
+    background: ${(props) => props.theme.colors.buttonPrimaryHoverBackground};
   }
 
-  &:focus {
-    background-color: #6e6bd0;
-    border: 1px solid #6663c8;
-  }
-
-  &:disabled {
-    background-color: #7a77da;
-    border: 1px solid #7a77da;
-    opacity: 50%;
-    cursor: not-allowed;
+  &:active {
+    background: ${(props) => props.theme.colors.buttonPrimaryActiveBackground};
   }
 `;
