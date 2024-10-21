@@ -1,3 +1,4 @@
+import { AIMessage } from '@langchain/core/messages';
 import { Invites } from '../entities/invitesEntity';
 import { availabilityRepository } from '../repository/availabilityRepository';
 import { dialogRepository } from '../repository/dialogRepository';
@@ -118,10 +119,15 @@ export const invitesServices = {
       createdInvite.id
     );
 
-    const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe em se tem disponibilide em uma ou mais das seguintes disponibilidades:\n\n${formatedAvailabilities}
-      `;
+    const message =
+      new AIMessage(`Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe em se tem disponibilide em uma ou mais das seguintes disponibilidades:\n\n${formatedAvailabilities}
+      `);
 
-    await dialogRepository.saveMessage(dialog.id, message, 'IA');
+    await dialogRepository.saveMessage(
+      dialog.id,
+      JSON.stringify(message.toDict(), null, 2),
+      'IA'
+    );
 
     return createdInvite;
   },

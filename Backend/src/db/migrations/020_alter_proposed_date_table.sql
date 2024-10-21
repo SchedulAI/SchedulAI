@@ -14,4 +14,4 @@ ALTER TABLE proposed_date RENAME COLUMN new_id TO id;
 ALTER TABLE proposed_date ADD PRIMARY KEY (id);
 
 ALTER TABLE proposed_date
-ALTER COLUMN proposed_date TYPE TIMESTAMPTZ USING proposed_date::TIMESTAMPTZ;
+ALTER COLUMN proposed_date TYPE timestamp without time zone;

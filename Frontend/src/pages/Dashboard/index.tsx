@@ -183,7 +183,7 @@ export const Dashboard = () => {
           setConversation(
             data.map((msg) => ({
               sender: msg.sender === 'user' ? 'user' : 'ia',
-              message: msg.message,
+              message: msg.message.data.content,
             }))
           );
         }
