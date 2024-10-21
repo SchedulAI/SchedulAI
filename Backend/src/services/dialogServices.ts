@@ -1,6 +1,7 @@
 import { Dialog } from '../entities/dialogEntity';
 import { Message } from '../entities/messageEntity';
 import { dialogRepository } from '../repository/dialogRepository';
+import { scheduleRepository } from '../repository/scheduleRepository';
 import { NotFoundException } from '../utils/exceptions';
 import { llm } from '../utils/llm';
 
@@ -40,9 +41,11 @@ export const dialogServices = {
         'system'
       );
     } else {
+      const schedule = await scheduleRepository.getScheduleById(scheduleId);
+
       await dialogRepository.saveMessage(
         dialog.id,
-        `O id do usuário é ${userId}, O id do agendamento é ${scheduleId},  O usuário é um convidado, o id do convite é ${inviteId}
+        `O id do usuário é ${userId}, O id do agendamento é ${scheduleId},  O usuário é um convidado, o id do convite é ${inviteId}, a duração do agendamento será de ${schedule.duration} minutos.
         `,
         'system'
       );

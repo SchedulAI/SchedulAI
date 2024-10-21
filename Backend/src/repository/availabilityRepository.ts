@@ -2,6 +2,7 @@ import { PoolClient } from 'pg';
 import pool from '../db';
 import { Availability } from '../entities/availabilityEntity';
 import { InternalServerException } from '../utils/exceptions';
+import { AvailabilityWithUser } from '../utils/findPossibleScheduleDates';
 
 export const availabilityRepository = {
   getAvailability: async (
@@ -43,11 +44,16 @@ export const availabilityRepository = {
 
   getAllAvailabilities: async (
     scheduleId: string
-  ): Promise<Availability[] | null> => {
+  ): Promise<AvailabilityWithUser[] | null> => {
     const client = await pool.connect();
     const query = `
-        SELECT * FROM availability
-        WHERE schedule_id = $1;
+        SELECT 
+          availability.*, 
+          users.name as user_name, 
+          users.email as user_email 
+        FROM availability
+        JOIN users ON availability.user_id = users.id
+        WHERE availability.schedule_id = $1;
       `;
     try {
       const { rows } = await client.query(query, [scheduleId]);
