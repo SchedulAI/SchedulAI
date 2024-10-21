@@ -25,7 +25,7 @@ export const StyledButton = styled.button<{
   a {
     font-size: 1rem;
     line-height: 1.5rem;
-    color: ${(props) => props.theme.colors.backgroundPrimary};
+    color: ${(props) => props.theme.colors.textPrimary};
     font-weight: 400;
   }
 

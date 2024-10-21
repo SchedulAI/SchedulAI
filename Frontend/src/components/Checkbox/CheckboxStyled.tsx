@@ -13,7 +13,7 @@ export const CheckboxStyled = styled.div`
   outline: none;
 
   .label {
-    color: #0a0a15;
+    color: ${(props) => props.theme.colors.backgroundPrimary};
     width: fit-content;
     cursor: pointer;
     user-select: none;
@@ -29,7 +29,7 @@ export const CheckboxStyled = styled.div`
   &.checked {
     width: 12px;
     height: 12px;
-    border: 1px solid #0a0a15;
+    border: 1px solid ${(props) => props.theme.colors.textPrimary};
     cursor: pointer;
     outline: none;
   }

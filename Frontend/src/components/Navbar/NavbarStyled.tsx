@@ -14,7 +14,7 @@ export const NavbarStyled = styled.div`
   .logo {
     display: flex;
     align-items: center;
-    color: #0a0a15;
+    color: ${(props) => props.theme.colors.textPrimary};
     gap: 0.5rem;
     user-select: none;
     cursor: pointer;
