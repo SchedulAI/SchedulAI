@@ -8,6 +8,7 @@ import pool from '../db';
 import { proposedDateRepository } from '../repository/proposedDateRepository';
 import formatProposedDate from '../utils/formatProposedDate';
 import { dialogRepository } from '../repository/dialogRepository';
+import { AIMessage } from '@langchain/core/messages';
 
 const updateInviteStatusSchema = z.object({
   inviteId: z.string().describe('O id do convite.'),
@@ -79,9 +80,15 @@ const updateInviteStatus = tool(
           scheduleId
         );
 
-        const message = `Olá, após obter e analisar todas as disponibilidades, obtivemos as seguintes possiveis datas para o agendamento:<br><br>${formatedProposedDate}<br><br>Escolha alguma das datas para confirmar a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`;
+        const message = new AIMessage(
+          `Olá, após obter e analisar todas as disponibilidades, obtivemos as seguintes possiveis datas para o agendamento:<br><br>${formatedProposedDate}<br><br>Escolha alguma das datas para confirmar a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
+        );
 
-        await dialogRepository.saveMessage(dialog.id, message, 'IA');
+        await dialogRepository.saveMessage(
+          dialog.id,
+          JSON.stringify(message.toDict(), null, 2),
+          'IA'
+        );
 
         await scheduleRepository.updateScheduleStatus(scheduleId, 'reviewing');
       }
