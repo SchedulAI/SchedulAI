@@ -126,7 +126,7 @@ export const Modal = ({
         setConversation(
           data.map((msg) => ({
             sender: msg.sender === 'user' ? 'user' : 'ia',
-            message: msg.message,
+            message: msg.message.data.content,
           }))
         );
       }
@@ -285,29 +285,33 @@ export const Modal = ({
                           </div>
                         </div>
                       </details>
-                      {schedule && (schedule.pending_account?.length ?? 0) > 0 &&  (
-                        <details className="guests" ref={detailsNotCreatedRef}>
-                          <summary className="summary">
-                            <p className="status">
-                              Aguardando criação de conta
-                            </p>
-                            <div className="icon-summary">
-                              <Icon
-                                icon={
-                                  openDetails === 'notCreated'
-                                    ? 'arrowUp'
-                                    : 'arrowDown'
-                                }
-                              ></Icon>
+                      {schedule &&
+                        (schedule.pending_account?.length ?? 0) > 0 && (
+                          <details
+                            className="guests"
+                            ref={detailsNotCreatedRef}
+                          >
+                            <summary className="summary">
+                              <p className="status">
+                                Aguardando criação de conta
+                              </p>
+                              <div className="icon-summary">
+                                <Icon
+                                  icon={
+                                    openDetails === 'notCreated'
+                                      ? 'arrowUp'
+                                      : 'arrowDown'
+                                  }
+                                ></Icon>
+                              </div>
+                            </summary>
+                            <div className="not-created-accounts-div">
+                              {(schedule.pending_account ?? []).map((info) => (
+                                <p>{info}</p>
+                              ))}
                             </div>
-                          </summary>
-                          <div className="not-created-accounts-div">
-                            {(schedule.pending_account ?? []).map((info) => (
-                              <p>{info}</p>
-                            ))}
-                          </div>
-                        </details>
-                      )}
+                          </details>
+                        )}
                     </div>
                   )}
               </div>
