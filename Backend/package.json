@@ -21,6 +21,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.7.5",
     "@types/pg": "^8.11.10",
+    "@types/ws": "^8.5.12",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.6.3"
@@ -37,6 +38,7 @@
     "langchain": "^0.3.2",
     "openai": "^4.67.3",
     "pg": "^8.13.0",
+    "ws": "^8.18.0",
     "zod": "^3.23.8"
   }
 }

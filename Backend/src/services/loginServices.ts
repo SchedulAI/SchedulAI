@@ -35,7 +35,11 @@ export const loginServices = {
       const token = jwt.sign({ id: user.id }, config.SECRET_KEY, {
         expiresIn: 864000,
       });
-      return { auth: true, token: token };
+      return {
+        auth: true,
+        token: token,
+        user: { id: user.id, email: user.email },
+      };
     } catch (error: any) {
       throw new InternalServerException('Erro ao Autenticar Usuário');
     }

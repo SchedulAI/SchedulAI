@@ -27,7 +27,7 @@ export const Dashboard = () => {
   const [containerVisible, setContainerVisible] = useState(true);
 
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { setUser, user } = useUser();
 
   const handleMarkdown = new showdown.Converter();
 
@@ -57,46 +57,22 @@ export const Dashboard = () => {
 
   const handleSendMessage = async () => {
     if (!message) return;
-
+    setLoadingMessage(true);
+    setMessage('');
     const schedule = currentSchedule || (await createSchedule());
-
     setConversation((prevConversation) => [
       ...prevConversation,
-      { sender: 'user', message: message! },
+      { sender: 'user', message: sendingMessage! },
     ]);
-
     if (schedule) {
-      await sendMessageToAi(sendingMessage, schedule.data.id);
+      sendMessageToWebSocket(sendingMessage, schedule.data.id);
+      setSendingMessage('');
     }
   };
 
-  const sendMessageToAi = async (message: string, schedule_id: string) => {
-    setMessage('');
-    try {
-      setLoadingMessage(true);
-      const data = await fetch(apiUrl('/chat/'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          message: message,
-          schedule_id: schedule_id,
-        }),
-      });
-
-      const res = await data.json();
-      const iaResponse = res.data;
-      setSendingMessage('');
-      setConversation((prevConversation) => [
-        ...prevConversation,
-        { sender: 'ia', message: iaResponse },
-      ]);
-      setLoadingMessage(false);
-    } catch (error) {
-      addSnackbar((error as Error).message, 'error');
-      setLoadingMessage(false);
+  const sendMessageToWebSocket = (message: string, schedule_id: string) => {
+    if (socket.current?.readyState === WebSocket.OPEN) {
+      socket.current.send(JSON.stringify({ message, schedule_id }));
     }
   };
 
@@ -123,8 +99,6 @@ export const Dashboard = () => {
     }
   };
 
-
-
   const logout = async () => {
     try {
       await fetch(apiUrl('/logout'), {
@@ -134,7 +108,8 @@ export const Dashboard = () => {
         },
         credentials: 'include',
       });
-      setUser('');
+      setUser(null);
+      deleteCookie('logged_in');
       navigate('/');
     } catch (error) {
       addSnackbar((error as Error).message, 'error');
@@ -236,6 +211,27 @@ export const Dashboard = () => {
     }
   }, [slideMenuOpen]);
 
+  const socket = useRef<WebSocket | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      socket.current = new WebSocket(`ws://localhost:3000?userId=${user.id}`);
+
+      socket.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setConversation((prevConversation) => [
+          ...prevConversation,
+          { sender: 'ia', message: data.message },
+        ]);
+        setLoadingMessage(false);
+      };
+
+      return () => {
+        socket.current?.close();
+      };
+    }
+  }, []);
+
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
       <div className="logo">
@@ -265,6 +261,7 @@ export const Dashboard = () => {
         loadingMessage={loadingMessage}
         chatEndRef={chatEndRef}
         handleMarkdown={handleMarkdown}
+        schedule={currentSchedule}
       />
       <SnackbarContainer
         anchororigin={{ vertical: 'bottom', horizontal: 'right' }}

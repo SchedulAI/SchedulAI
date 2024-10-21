@@ -3,6 +3,7 @@ import { Button } from '../Button';
 import { useNavigate } from 'react-router-dom';
 import { useCheckAuth } from '../../Utils/ValidateAuth';
 import { NavbarStyled } from './NavbarStyled';
+import { getCookie } from '../../Utils/Cookies';
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export const Navbar = () => {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const isLogged = getCookie('logged_in');
 
   return (
     <NavbarStyled>
@@ -59,20 +61,32 @@ export const Navbar = () => {
         </ul>
       </nav>
       <div className="buttons">
-        <a
-          onClick={() => {
-            checkAuth.checkAuth();
-          }}
-        >
-          Entrar
-        </a>
-        <Button
-          onClick={() => {
-            navigate('/register');
-          }}
-        >
-          <p>Registrar</p>
-        </Button>
+        {isLogged ? (
+          <Button
+            onClick={() => {
+              navigate('/dashboard');
+            }}
+          >
+            <p>Dashboard</p>
+          </Button>
+        ) : (
+          <>
+            <a
+              onClick={() => {
+                checkAuth.checkAuth();
+              }}
+            >
+              Entrar
+            </a>
+            <Button
+              onClick={() => {
+                navigate('/register');
+              }}
+            >
+              <p>Registrar</p>
+            </Button>
+          </>
+        )}
       </div>
     </NavbarStyled>
   );

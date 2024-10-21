@@ -8,6 +8,7 @@ import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { useUser } from '../../hooks/userHooks';
 import { LoginStyled } from './LoginStyled';
 import apiUrl from '../../config/api';
+import { setCookie } from '../../Utils/Cookies';
 
 export const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -36,7 +37,7 @@ export const Login = () => {
     setContainerVisible(true);
   };
 
-  const loginFetch = async () => {
+  const loginFetch = async (): Promise<void> => {
     setLoading(true);
     try {
       const response = await fetch(apiUrl('/login'), {
@@ -46,9 +47,12 @@ export const Login = () => {
         credentials: 'include',
       });
       const data = await response.json();
+      console.log(data);
       setLoading(false);
       if (data.auth) {
-        setUser(email);
+        console.log(data);
+        setUser(data.user);
+        setCookie('logged_in', JSON.stringify(data.user), 864000);
         if (rememberMe) {
           localStorage.setItem('email', email);
           localStorage.setItem('password', password);

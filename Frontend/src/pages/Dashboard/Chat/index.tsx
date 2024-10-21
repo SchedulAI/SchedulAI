@@ -1,6 +1,7 @@
 import { Icon } from '../../../components/Icon';
 import { Dot } from '../StyleDashboard';
 import { ChatInput } from './ChatInput';
+import { useUser } from '../../../hooks/userHooks';
 
 export const Chat: React.FC<ChatProps> = ({
   conversation,
@@ -11,7 +12,9 @@ export const Chat: React.FC<ChatProps> = ({
   loadingMessage,
   chatEndRef,
   handleMarkdown,
+  schedule,
 }) => {
+  const u = useUser();
   return (
     <div className="chat-content">
       <div className="chat">
@@ -56,6 +59,18 @@ export const Chat: React.FC<ChatProps> = ({
           setSendingMessage={setSendingMessage}
           handleSendMessage={handleSendMessage}
           loadingMessage={loadingMessage}
+          disabled={
+            schedule?.data.is_host
+              ? schedule.data.status === 'pending' ||
+                schedule.data.status === 'scheduled'
+              : schedule?.data.status === 'planning' ||
+                schedule?.data.status === 'reviewing' ||
+                schedule?.data.status === 'scheduled' ||
+                (schedule?.data.invites ?? []).find(
+                  (invite) =>
+                    invite.user_id === u.user?.id && invite.status !== 'pending'
+                ) !== undefined
+          }
         />
       </div>
     </div>

@@ -1,8 +1,29 @@
 import { Request, Response } from 'express';
-import { chatServices } from '../services/chatServices';
 import errorResponse from '../utils/errorResponse';
+import { sendMessageToClient } from '../utils/webSocket';
 
 export const chatController = {
+  handleChatWebSocket: async (
+    userId: string,
+    message: string,
+    schedule_id: string
+  ): Promise<void> => {
+    try {
+      if (!schedule_id) {
+        throw new Error('O chat precisa de um id de agendamento!');
+      }
+
+      if (!message) {
+        throw new Error('O chat precisa de uma mensagem!');
+      }
+
+      // Enviar a mensagem para o serviço
+      await sendMessageToClient(userId, message, schedule_id);
+    } catch (error: any) {
+      console.error('Erro no controlador de chat:', error);
+    }
+  },
+
   handleChat: async (req: Request, res: Response): Promise<void> => {
     const { message, schedule_id } = req.body;
     const user = req.user!;
@@ -25,11 +46,11 @@ export const chatController = {
         return;
       }
 
-      const aiMessage = await chatServices.chat(message, schedule_id, user.id);
+      // Enviar a mensagem para o serviço
+      await sendMessageToClient(user.id, message, schedule_id);
 
       res.status(200).json({
-        data: aiMessage,
-        sucess: true,
+        success: true,
         message: 'Mensagem enviada para o chat!',
       });
     } catch (error: any) {

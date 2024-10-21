@@ -10,6 +10,7 @@ import { Register } from '../pages/Register';
 import { RecoverPassword } from '../pages/RecoverPassword';
 import { useCheckAuth } from '../Utils/ValidateAuth';
 import { InvitedRegister } from '../pages/InvitedRegister';
+import { getCookie } from '../Utils/Cookies';
 
 interface ChildrenTypes {
   children: ReactElement;
@@ -32,8 +33,12 @@ const Public = ({ children }: ChildrenTypes) => {
 const PrivateRoute = ({ children }: ChildrenTypes) => {
   const { user } = useUser();
   const { checkAuth } = useCheckAuth();
-  if (!user) {
+  const token = getCookie('logged_in');
+  if (!user && !token) {
     checkAuth();
+  }
+  if (token) {
+    return children;
   }
   return user ? children : <Navigate to="/login" />;
 };
