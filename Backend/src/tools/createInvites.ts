@@ -35,7 +35,7 @@ const createInvites = tool(
 
       const formatedAvailabilities = hostAvailabilities
         .map((availability) => formatAvailability(availability))
-        .join('\n');
+        .join('<br>');
 
       invites.forEach(async (invite) => {
         const dialog = await dialogServices.createDialog(
@@ -44,7 +44,8 @@ const createInvites = tool(
           invite.id
         );
 
-        const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe em se tem disponibilide em uma ou mais das seguintes disponibilidades:\n\n${formatedAvailabilities}
+        const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)
+        O anfitrião tem as seguintes disponibilidades:\n\n${formatedAvailabilities}
         `;
 
         await dialogRepository.saveMessage(dialog.id, message, 'IA');
@@ -60,7 +61,7 @@ const createInvites = tool(
   {
     name: 'createInvites',
     description:
-      'Após o usuário fornecer todas as informações sobre um agendamento e confirmar as informações, cria os convites dos usuários que já têm conta na plataforma, e retorna o link de convite para ser mandado para os que não têm conta.',
+      'Esse tool é exclusivo para host, após o usuário fornecer todas as informações sobre um agendamento e confirmar as informações, cria os convites dos usuários que já têm conta na plataforma, e retorna o link de convite para ser mandado para os que não têm conta.',
     schema: createInvitesSchema,
   }
 );
