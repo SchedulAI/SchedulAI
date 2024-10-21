@@ -4,7 +4,6 @@ import { availabilityRepository } from '../repository/availabilityRepository';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import pool from '../db';
 import { Availability } from '../entities/availabilityEntity';
-import { proposedDateRepository } from '../repository/proposedDateRepository';
 
 const availabilitySchema = z
   .array(
@@ -77,54 +76,12 @@ const createAvailabilities = tool(
           );
 
         createdAvailabilities.push(createdAvailability);
-
-        const currentDate = new Date(startTimeString);
-        while (currentDate < endTimeDate) {
-          const year = currentDate.getFullYear();
-          const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-          const day = String(currentDate.getDate()).padStart(2, '0');
-          const hours = String(currentDate.getHours()).padStart(2, '0');
-          const minutes = String(currentDate.getMinutes()).padStart(2, '0');
-          const seconds = String(currentDate.getSeconds()).padStart(2, '0');
-
-          // Obtenha o offset do fuso horário em horas e minutos
-          const timezoneOffset = -currentDate.getTimezoneOffset();
-          const offsetHours = String(
-            Math.floor(Math.abs(timezoneOffset) / 60)
-          ).padStart(2, '0');
-          const offsetMinutes = String(Math.abs(timezoneOffset) % 60).padStart(
-            2,
-            '0'
-          );
-          const offsetSign = timezoneOffset >= 0 ? '+' : '-';
-
-          // Formate a string de data e hora no formato desejado
-          const proposedDateStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}${offsetSign}${offsetHours}:${offsetMinutes}`;
-          // Criar proposed date
-          const createdProposedData =
-            await proposedDateRepository.createProposedDate(
-              client,
-              schedule_id,
-              proposedDateStr,
-              'pending'
-            );
-          // Avançar para o próximo intervalo
-
-          currentDate.setMinutes(currentDate.getMinutes() + duration);
-
-          // Se o próximo intervalo ultrapassar o horário final, parar
-          if (currentDate > endTimeDate) {
-            break;
-          }
-        }
       }
 
-      // Commit da transação se tudo der certo
       await client.query('COMMIT');
 
       return 'As disponibilidades do usuário para esse agendamento foram criadas com sucesso!';
     } catch (error: any) {
-      // Rollback em caso de erro
       await client.query('ROLLBACK');
       return error.message;
     } finally {
@@ -133,8 +90,14 @@ const createAvailabilities = tool(
   },
   {
     name: 'createAvailabilities',
-    description:
-      'Cria a lista de datas de disponibilidades do usuário para aquele agendamento, ele deve conter a "range" de horas obrigatoriamente para a data e esse range tem que ser igual ou maior que a duração da reunião, além disso antes de executar esse tool confirme com o usuário se a data e hora estão corretas, em caso de erro peça novamente a disponibilidade.',
+    description: `
+Este tool cria uma lista de datas de disponibilidades do usuário para um agendamento específico, com base nas informações fornecidas. Ele requer que o usuário forneça a data e um intervalo de horas, que deve ser igual ou maior que a duração mínima da reunião.
+
+- Para o **host**, cria as disponibilidades iniciais com base nas datas que ele forneceu para a reunião.
+- Para o **convidado**, cria as disponibilidades com base nas datas fornecidas pelo host e na resposta do convidado, que informa os dias e horários que ele pode participar. Se o convidado não puder comparecer, o tool não cria nenhuma disponibilidade para ele.
+
+Antes de executar o tool, confirme com o usuário se as informações estão corretas. Em caso de erro, solicite que o usuário forneça os dados novamente.
+`,
     schema: z.object({
       availabilities: availabilitySchema,
     }),

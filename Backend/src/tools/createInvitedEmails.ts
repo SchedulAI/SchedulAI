@@ -19,7 +19,7 @@ const createInvitedEmails = tool(
         await invitedEmailsRepository.createInvitedEmail(email, scheduleId);
       }
 
-      return 'Os emails dos convidados foram criados com sucesso!';
+      return 'Os emails dos convidados foram criados com sucesso! Pergunte ao host se já deve ser enviado os convites!';
     } catch (error: any) {
       return error.message;
     }
@@ -27,7 +27,7 @@ const createInvitedEmails = tool(
   {
     name: 'createInvitedEmails',
     description:
-      'Cria a lista de e-emails dos convidados para aquele agendamento, após o usuário fornecer os emails.',
+      'Esse tool é exclusivo para hosts, cria a lista de e-emails dos convidados para aquele agendamento, após o usuário fornecer os emails.',
     schema: z.object({
       invitedEmails: invitedEmailSchema,
     }),
