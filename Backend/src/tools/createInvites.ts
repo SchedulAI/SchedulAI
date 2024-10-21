@@ -7,6 +7,7 @@ import { dialogRepository } from '../repository/dialogRepository';
 import { availabilityRepository } from '../repository/availabilityRepository';
 import formatAvailability from '../utils/formatAvailability';
 import { dialogServices } from '../services/dialogServices';
+import { AIMessage } from '@langchain/core/messages';
 
 const createInvitesSchema = z
   .object({
@@ -44,11 +45,16 @@ const createInvites = tool(
           invite.id
         );
 
-        const message = `Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)
-        O anfitrião tem as seguintes disponibilidades:\n\n${formatedAvailabilities}
-        `;
+        const message =
+          new AIMessage(`Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)
+        O anfitrião tem as seguintes disponibilidades:<br><br>${formatedAvailabilities}
+        `);
 
-        await dialogRepository.saveMessage(dialog.id, message, 'IA');
+        await dialogRepository.saveMessage(
+          dialog.id,
+          JSON.stringify(message.toDict(), null, 2),
+          'IA'
+        );
       });
 
       await scheduleRepository.updateScheduleStatus(scheduleId, 'pending');
