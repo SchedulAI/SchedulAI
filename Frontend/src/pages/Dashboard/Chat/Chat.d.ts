@@ -7,4 +7,5 @@ interface ChatProps {
   loadingMessage: boolean;
   chatEndRef: React.RefObject<HTMLDivElement>;
   handleMarkdown: showdown.Converter;
+  schedule: ScheduleCreateResponse | null;
 }
