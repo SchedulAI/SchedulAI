@@ -75,7 +75,6 @@ export const Register = () => {
       if (schedule_id) {
         setCookie('schedule_id', schedule_id, 864000);
         const invite = await createInvite(data.id);
-        console.log(invite);
         if (invite.sucess) {
           addSnackbar(invite.message, 'success');
         } else {

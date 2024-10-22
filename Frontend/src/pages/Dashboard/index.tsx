@@ -124,7 +124,6 @@ export const Dashboard = () => {
       });
 
       const res: ScheduleCreateResponse = await data.json();
-      console.log(res);
       setCurrentSchedule(res);
       await getSchedules();
       return res;
