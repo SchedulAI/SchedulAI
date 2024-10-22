@@ -2,7 +2,7 @@ import { Icon } from '../Icon';
 import { Button } from '../Button';
 import apiUrl from '../../config/api';
 import { ModalStyled } from './ModalStyled';
-import { formatDate } from '../../Utils/FormatDate';
+
 import {
   handleRenderStatus,
   handleStatusColor,
