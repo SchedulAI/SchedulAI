@@ -22,8 +22,8 @@ export const scheduleServices = {
       description,
       userId
     );
-
-    return schedule;
+    const is_host = userId === schedule.user_id;
+    return {...schedule, is_host};
   },
 
   getScheduleById: async (

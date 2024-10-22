@@ -4,9 +4,16 @@ import { Icon } from '../../components/Icon';
 import { Navbar } from '../../components/Navbar';
 import { useNavigate } from 'react-router-dom';
 import { Footer } from '../../components/Footer';
+import { useUser } from '../../hooks/userHooks';
+import apiUrl from '../../config/api';
+import { deleteCookie, getCookie } from '../../Utils/Cookies';
+import { useEffect } from 'react';
 
 export const Home = () => {
   const navigate = useNavigate();
+
+  const { setUser } = useUser();
+  const logged_in = getCookie('logged_in');
 
   const handleScrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
@@ -14,6 +21,32 @@ export const Home = () => {
       section.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  const checkAuth = async () => {
+    if (!logged_in) return;
+    try {
+      const response = await fetch(apiUrl('/auth/validate'), {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.auth) {
+          setUser(data.user);
+          return;
+        } else {
+          deleteCookie('logged_in');
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao validar autenticação:', error);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
   return (
     <HomeStyled className="home-div">

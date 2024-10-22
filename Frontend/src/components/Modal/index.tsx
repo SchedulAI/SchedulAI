@@ -11,6 +11,8 @@ import {
 } from '../../Utils/HandleStatus';
 import { useRef, useState, useEffect } from 'react';
 import { copyLinkToClipboard } from '../../Utils/CopyLink';
+import { renderDateInfo } from '../../Utils/RenderDateInfo';
+import { FormatTime } from '../../Utils/FormatTime';
 
 export const Modal = ({
   onClick,
@@ -54,6 +56,11 @@ export const Modal = ({
 
       const reviewSchedule: ScheduleCreateResponse = await response.json();
 
+      if (!reviewSchedule.success) {
+        addSnackbar(reviewSchedule.message, 'error');
+        return;
+      }
+
       if (schedules) {
         setSchedules({
           ...schedules,
@@ -89,6 +96,12 @@ export const Modal = ({
       );
 
       const canceledSchedule: ScheduleCreateResponse = await response.json();
+
+      if (!canceledSchedule.success) {
+        addSnackbar(canceledSchedule.message, 'error');
+        return;
+      }
+
       if (canceledSchedule.data.status === 'deleted') {
         setActiveModalId(null);
         setConversation([]);
@@ -122,6 +135,7 @@ export const Modal = ({
         setActiveModalId(null);
       }
       const data: ConversationMessage[] = await result.json();
+
       if (data) {
         setConversation(
           data.map((msg) => ({
@@ -227,9 +241,7 @@ export const Modal = ({
                   <p className="proposed-date">
                     <span>Data Proposta:</span>
                     <span>
-                      {typeof schedule.proposed_date === 'string'
-                        ? formatDate(schedule.proposed_date)
-                        : formatDate(schedule.proposed_date.proposed_date)}
+                      {renderDateInfo(schedule.status, schedule.proposed_date)?.toString()}
                     </span>
                   </p>
                 ) : (
@@ -238,7 +250,12 @@ export const Modal = ({
                     <span>A definir</span>
                   </p>
                 )}
-
+                {schedule.duration && schedule.status !== 'cancelled' && (
+                  <p className="duration">
+                    <span>Duração:</span>
+                    <span>{FormatTime(schedule.duration)}</span>
+                  </p>
+                )}
                 {schedule.invites &&
                   schedule.invites.length > 0 &&
                   schedule.status !== 'cancelled' && (
@@ -332,7 +349,8 @@ export const Modal = ({
                       <div className="button-sides">
                         {schedule.status !== 'reviewing' &&
                           schedule.is_host &&
-                          schedule.status !== 'scheduled' && (
+                          schedule.status !== 'scheduled' &&
+                          schedule.status !== 'planning' && (
                             <div className="button-sides-1">
                               <Button
                                 width="full"

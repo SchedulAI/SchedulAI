@@ -8,6 +8,7 @@ import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { useUser } from '../../hooks/userHooks';
 import { LoginStyled } from './LoginStyled';
 import apiUrl from '../../config/api';
+import { setCookie } from '../../Utils/Cookies';
 
 export const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -48,7 +49,8 @@ export const Login = () => {
       const data = await response.json();
       setLoading(false);
       if (data.auth) {
-        setUser(email);
+        setUser({ id: data.userId, email });
+        setCookie('logged_in', data.user, 84600)
         if (rememberMe) {
           localStorage.setItem('email', email);
           localStorage.setItem('password', password);
