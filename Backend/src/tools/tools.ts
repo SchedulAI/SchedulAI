@@ -3,6 +3,8 @@ import createInvitedEmails from './createInvitedEmails';
 import createAvailabilities from './createAvailabilities';
 import createInvites from './createInvites';
 import updateInviteStatus from './updateInviteStatus';
+import confirmSchedule from './confirmSchedule';
+import newRound from './newRound';
 
 const tools = [
   updateScheduleInfo,
@@ -10,6 +12,8 @@ const tools = [
   createAvailabilities,
   createInvites,
   updateInviteStatus,
+  confirmSchedule,
+  newRound,
 ];
 
 export const toolsByName: { [key: string]: any } = {
@@ -18,6 +22,8 @@ export const toolsByName: { [key: string]: any } = {
   createAvailabilities: createAvailabilities,
   createInvites: createInvites,
   updateInviteStatus: updateInviteStatus,
+  confirmSchedule: confirmSchedule,
+  newRound: newRound,
 };
 
 export default tools;
