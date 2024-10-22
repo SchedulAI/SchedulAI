@@ -67,7 +67,7 @@ export const StyledDashboard = styled.div<{
     justify-content: center;
     align-items: center;
 
-    a{
+    a {
       color: #5353df;
     }
   }
@@ -214,6 +214,7 @@ export const StyledDashboard = styled.div<{
 
     p {
       font-size: 12px;
+      color: ${(props) => props.theme.colors.backgroundPrimary};
     }
   }
 
@@ -314,6 +315,11 @@ export const StyledDashboard = styled.div<{
       box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
         rgba(0, 0, 0, 0.23) 0px 3px 6px;
 
+      &.disabled {
+        background-color: #1a1a1a;
+        border: 1px solid #333333;
+      }
+
       textarea {
         border: none;
         border-radius: 4px;
@@ -327,6 +333,7 @@ export const StyledDashboard = styled.div<{
         overflow-y: auto;
         word-wrap: break-word;
         white-space: pre-wrap;
+        padding: 1rem;
 
         &::placeholder {
           color: #0a0a1579;
@@ -348,6 +355,10 @@ export const StyledDashboard = styled.div<{
         &::-webkit-scrollbar-track {
           background-color: #4c4c4c;
           border-radius: 10px;
+        }
+
+        &:disabled {
+          background-color: #bebecb;
         }
       }
 
