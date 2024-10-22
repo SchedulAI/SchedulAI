@@ -54,7 +54,7 @@ export const Home = () => {
       <section className="main-section" id="main-section">
         <div className="title-div">
           <h1 className="h1-title">
-            Organize-se com a IA e Assuma o Controle do Seu Futuro
+            Agende suas reuniões com IA e otimize seu tempo
           </h1>
         </div>
         <div className="start-now-div">
