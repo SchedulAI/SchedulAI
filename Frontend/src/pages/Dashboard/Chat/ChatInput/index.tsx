@@ -6,6 +6,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   setSendingMessage,
   handleSendMessage,
   loadingMessage,
+  disabled,
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -26,6 +27,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           setSendingMessage(e.target.value);
         }}
         onKeyDown={handleKeyPress}
+        disabled={disabled}
       />
       <button
         onClick={() => {

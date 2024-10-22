@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { chatServices } from '../services/chatServices';
 import errorResponse from '../utils/errorResponse';
+import { scheduleServices } from '../services/scheduleServices';
 
 export const chatController = {
   handleChat: async (req: Request, res: Response): Promise<void> => {
@@ -26,11 +27,13 @@ export const chatController = {
       }
 
       const aiMessage = await chatServices.chat(message, schedule_id, user.id);
+      const schedule = await scheduleServices.getScheduleById(schedule_id, user.id)
 
       res.status(200).json({
         data: aiMessage,
         sucess: true,
         message: 'Mensagem enviada para o chat!',
+        schedule: schedule
       });
     } catch (error: any) {
       errorResponse(res, error);

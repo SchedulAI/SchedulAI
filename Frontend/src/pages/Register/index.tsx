@@ -75,7 +75,6 @@ export const Register = () => {
       if (schedule_id) {
         setCookie('schedule_id', schedule_id, 864000);
         const invite = await createInvite(data.id);
-        console.log(invite);
         if (invite.sucess) {
           addSnackbar(invite.message, 'success');
         } else {
@@ -101,12 +100,10 @@ export const Register = () => {
 
   return (
     <RegisterStyled className="register-main-div">
-      <div className="btn-back-div">
-        <Button onClick={() => navigate('/')}>
-          <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
-          <span>Voltar</span>
-        </Button>
-      </div>
+      <Button onClick={() => navigate('/')}>
+        <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
+        <span>Voltar</span>
+      </Button>
       <div className="register-div-section">
         <div className="register-title-div">
           <h1>Pronto para começar? 👋</h1>
@@ -163,7 +160,7 @@ export const Register = () => {
             onClick={() => registerFetch()}
             disabled={!name || !email || !password || loading}
           >
-            Registrar
+            <p>Registrar</p>
           </Button>
           <a id="register-a-create-account" onClick={() => navigate('/login')}>
             Já possui uma conta? <span>Acesse agora</span>

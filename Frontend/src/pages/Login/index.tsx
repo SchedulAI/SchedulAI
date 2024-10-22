@@ -8,6 +8,7 @@ import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { useUser } from '../../hooks/userHooks';
 import { LoginStyled } from './LoginStyled';
 import apiUrl from '../../config/api';
+import { setCookie } from '../../Utils/Cookies';
 
 export const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -48,7 +49,8 @@ export const Login = () => {
       const data = await response.json();
       setLoading(false);
       if (data.auth) {
-        setUser(email);
+        setUser({ id: data.userId, email });
+        setCookie('logged_in', data.user, 84600)
         if (rememberMe) {
           localStorage.setItem('email', email);
           localStorage.setItem('password', password);
@@ -82,12 +84,10 @@ export const Login = () => {
 
   return (
     <LoginStyled className="login-main-div">
-      <div className="btn-back-div">
-        <Button onClick={() => navigate('/')}>
-          <Icon icon="back" size={18} weight="fill" color="#0A0A15" />
-          <span>Voltar</span>
-        </Button>
-      </div>
+      <Button onClick={() => navigate('/')}>
+        <Icon icon="back" size={18} weight="fill" color="#f8f8fc" />
+        <span>Voltar</span>
+      </Button>
       <div className="login-div-section">
         <div className="login-title-div">
           <h1>Bem-Vindo De volta 👋</h1>
@@ -141,7 +141,7 @@ export const Login = () => {
             onClick={loginFetch}
             disabled={!email || !password || loading}
           >
-            Entrar
+            <p>Entrar</p>
           </Button>
           <a id="login-a-create-account" onClick={() => navigate('/register')}>
             Não tem uma conta? <span>Registre-se</span>
