@@ -12,7 +12,7 @@ export const ModalStyled = styled.div`
   background-color: #0a0a1580;
 
   .modal {
-    background: #f8f8fc;
+    background: ${(props) => props.theme.colors.backgroundDark};
     border-radius: 4px;
     width: 40rem;
     height: 35rem;
@@ -129,7 +129,7 @@ export const ModalStyled = styled.div`
             }
 
             &::-webkit-scrollbar-thumb {
-              background-color: #8380e5;
+              background-color: #4641c4;
               border-radius: 10px;
             }
 
@@ -148,12 +148,10 @@ export const ModalStyled = styled.div`
 
         .cancel-button {
           button {
-            background-color: #ec9191;
-            border: #dc282875;
+            background-color: #d62828;
 
             &:hover {
-              background-color: #eb7171;
-              border: #dc282875;
+              background-color: #d01f1f;
             }
           }
         }
@@ -213,17 +211,16 @@ export const ModalStyled = styled.div`
   .button-sides {
     display: flex;
     width: 100%;
-    gap: 1rem;
+    gap: 4px;
 
     .button-sides-1 {
       width: 100%;
 
       button {
-        background-color: #75b0ee;
-        border-color: #6998d1;
+        background-color: #6a994e;
 
         &:hover {
-          background-color: #4581ca;
+          background-color: #4d774c;
         }
       }
     }
@@ -232,11 +229,10 @@ export const ModalStyled = styled.div`
       width: 100%;
 
       button {
-        background-color: #f7f7f7;
-        border-color: #4c4c4c;
+        background-color: #363030;
 
         &:hover {
-          background-color: #ebe9e9;
+          background-color: #2b2323;
         }
       }
     }

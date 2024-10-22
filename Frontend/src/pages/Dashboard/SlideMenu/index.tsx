@@ -62,7 +62,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
               setCurrentSchedule(null);
             }}
           >
-            <Icon icon="plus" size={24}></Icon> <p>Novo chat</p>
+            <Icon icon="plus" size={24} color="#f8f8fc"></Icon> <p>Novo chat</p>
           </Button>
           <div className="host-div">
             {schedules &&

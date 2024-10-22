@@ -75,6 +75,10 @@ export const LoginStyled = styled.div`
     gap: 8px;
     width: 390px;
     font-size: 0.875rem;
+
+    label {
+      color: ${(props) => props.theme.colors.textPrimary};
+    }
   }
 
   #forget-password {

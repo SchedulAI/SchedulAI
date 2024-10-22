@@ -7,4 +7,4 @@ export const lightTheme = {
     backgroundDark: '#e2e2ea',
     textPrimary: '#0A0A15',
   },
-};
+};  
