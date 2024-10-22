@@ -87,7 +87,7 @@ export const Dashboard = () => {
       });
 
       const res = await data.json();
-      if (!res.success) {
+      if (!data.ok) {
         addSnackbar(res.message, 'error');
         setLoadingMessage(false);
         return;
