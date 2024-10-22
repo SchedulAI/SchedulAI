@@ -87,6 +87,11 @@ export const Dashboard = () => {
       });
 
       const res = await data.json();
+      if (!res.success) {
+        addSnackbar(res.message, 'error');
+        setLoadingMessage(false);
+        return;
+      }
       const iaResponse = res.data;
       setSendingMessage('');
       setConversation((prevConversation) => [
@@ -124,6 +129,10 @@ export const Dashboard = () => {
       });
 
       const res: ScheduleCreateResponse = await data.json();
+      if (!res.success) {
+        addSnackbar(res.message, 'error');
+        return null;
+      }
       setCurrentSchedule(res);
       await getSchedules();
       return res;
@@ -158,6 +167,9 @@ export const Dashboard = () => {
         credentials: 'include',
       });
       const schedules: ScheduleResponse = await response.json();
+      if (!schedules.success) {
+        addSnackbar(schedules.message, 'error');
+      }
       if (schedules.success) {
         schedules.data.sort(compareStatus);
         setSchedules(schedules);
@@ -246,7 +258,12 @@ export const Dashboard = () => {
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
       <div className="logo">
-        <Button onClick={() => logout()}>
+        <Button
+          onClick={() => {
+            logout();
+            deleteCookie('logged_in');
+          }}
+        >
           <p>Sair</p>
         </Button>
       </div>

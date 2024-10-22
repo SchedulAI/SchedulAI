@@ -133,9 +133,10 @@ export const Modal = ({
       if (!result.ok) {
         setConversation([]);
         setActiveModalId(null);
+        addSnackbar('Erro ao buscar conversa', 'error');
+        return;
       }
       const data: ConversationMessage[] = await result.json();
-
       if (data) {
         setConversation(
           data.map((msg) => ({
