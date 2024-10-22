@@ -93,6 +93,16 @@ export const Dashboard = () => {
         ...prevConversation,
         { sender: 'ia', message: iaResponse },
       ]);
+      if (res.schedule && schedules) {
+        const updatedSchedules = schedules.data.map((schedule) =>
+          schedule.id === schedule_id ? res.schedule : schedule
+        );
+
+        setSchedules({
+          ...schedules,
+          data: updatedSchedules,
+        });
+      }
       setLoadingMessage(false);
     } catch (error) {
       addSnackbar((error as Error).message, 'error');
@@ -114,7 +124,7 @@ export const Dashboard = () => {
       });
 
       const res: ScheduleCreateResponse = await data.json();
-
+      console.log(res);
       setCurrentSchedule(res);
       await getSchedules();
       return res;
@@ -122,8 +132,6 @@ export const Dashboard = () => {
       addSnackbar((error as Error).message, 'error');
     }
   };
-
-
 
   const logout = async () => {
     try {
@@ -134,7 +142,7 @@ export const Dashboard = () => {
         },
         credentials: 'include',
       });
-      setUser('');
+      setUser(null);
       navigate('/');
     } catch (error) {
       addSnackbar((error as Error).message, 'error');
@@ -265,6 +273,7 @@ export const Dashboard = () => {
         loadingMessage={loadingMessage}
         chatEndRef={chatEndRef}
         handleMarkdown={handleMarkdown}
+        schedule={currentSchedule}
       />
       <SnackbarContainer
         anchororigin={{ vertical: 'bottom', horizontal: 'right' }}

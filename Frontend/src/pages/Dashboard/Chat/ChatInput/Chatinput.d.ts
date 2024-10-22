@@ -4,4 +4,5 @@ interface ChatInputProps {
   setSendingMessage: React.Dispatch<React.SetStateAction<string>>;
   handleSendMessage: () => Promise<void>;
   loadingMessage: boolean;
+  disabled?: boolean;
 }

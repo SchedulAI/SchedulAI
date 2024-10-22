@@ -21,7 +21,7 @@ export const loginController = {
     }
 
     try {
-      const { auth, token } = await loginServices.authenticateUser(
+      const { auth, token, user } = await loginServices.authenticateUser(
         email,
         password
       );
@@ -30,7 +30,7 @@ export const loginController = {
         httpOnly: true,
         expires: new Date(Date.now() + 864000000),
       });
-      res.status(200).json({ auth });
+      res.status(200).json({ auth, user });
       return;
     } catch (error: any) {
       errorResponse(res, error);
