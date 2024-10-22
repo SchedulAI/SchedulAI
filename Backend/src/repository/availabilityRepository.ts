@@ -140,4 +140,22 @@ export const availabilityRepository = {
       client.release();
     }
   },
+  deleteAllAvailability: async (
+    scheduleId: string
+  ): Promise<Availability[]> => {
+    const client = await pool.connect();
+    const deleteQuery = `
+        DELETE FROM availability
+        WHERE schedule_id = $1
+        RETURNING *;
+      `;
+    try {
+      const { rows } = await client.query(deleteQuery, [scheduleId]);
+      return rows;
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao deletar disponibilidade');
+    } finally {
+      client.release();
+    }
+  },
 };

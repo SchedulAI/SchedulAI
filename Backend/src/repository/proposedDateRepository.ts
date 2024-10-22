@@ -33,11 +33,26 @@ export const proposedDateRepository = {
     const client = await pool.connect();
     const query = `
         SELECT * FROM proposed_date
-        WHERE schedule_id = $1;
+        WHERE schedule_id = $1 AND status = 'accepted';
       `;
     try {
       const { rows } = await client.query(query, [scheduleId]);
       return rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao listar as datas propostas');
+    } finally {
+      client.release(); // Certifique-se de liberar a conexão
+    }
+  },
+  listAllProposedDate: async (scheduleId: string): Promise<ProposedDate[]> => {
+    const client = await pool.connect();
+    const query = `
+        SELECT * FROM proposed_date
+        WHERE schedule_id = $1;
+      `;
+    try {
+      const { rows } = await client.query(query, [scheduleId]);
+      return rows;
     } catch (error: any) {
       throw new InternalServerException('Erro ao listar as datas propostas');
     } finally {
@@ -71,7 +86,26 @@ export const proposedDateRepository = {
       client.release(); // Certifique-se de liberar a conexão
     }
   },
-
+  updateProposedDateStatus: async (
+    proposedDateId: string,
+    status: string
+  ): Promise<ProposedDate> => {
+    const client = await pool.connect();
+    const query = `
+        UPDATE proposed_date
+        SET status = $1
+        WHERE id = $2
+        RETURNING *;
+      `;
+    try {
+      const { rows } = await client.query(query, [status, proposedDateId]);
+      return rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao atualizar o status da data proposta');
+    } finally {
+      client.release(); // Certifique-se de liberar a conexão
+    }
+  },
   // Deletar data proposta
   deleteProposedDate: async (id: number): Promise<ProposedDate> => {
     const client = await pool.connect();
@@ -89,4 +123,21 @@ export const proposedDateRepository = {
       client.release(); // Certifique-se de liberar a conexão
     }
   },
+  deleteAllProposedDate: async (scheduleId: string): Promise<ProposedDate[]> => {
+    const client = await pool.connect();
+    const query = `
+        DELETE FROM proposed_date
+        WHERE schedule_id = $1
+        RETURNING *;
+      `;
+    try {
+      const { rows } = await client.query(query, [scheduleId]);
+      return rows;
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao deletar a data proposta');
+    } finally {
+      client.release();
+    }
+  },
+
 };
