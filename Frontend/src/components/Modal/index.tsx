@@ -133,9 +133,10 @@ export const Modal = ({
       if (!result.ok) {
         setConversation([]);
         setActiveModalId(null);
+        addSnackbar('Erro ao buscar conversa', 'error');
+        return;
       }
       const data: ConversationMessage[] = await result.json();
-
       if (data) {
         setConversation(
           data.map((msg) => ({
@@ -241,7 +242,10 @@ export const Modal = ({
                   <p className="proposed-date">
                     <span>Data Proposta:</span>
                     <span>
-                      {renderDateInfo(schedule.status, schedule.proposed_date)?.toString()}
+                      {renderDateInfo(
+                        schedule.status,
+                        schedule.proposed_date
+                      )?.toString()}
                     </span>
                   </p>
                 ) : (
@@ -369,8 +373,10 @@ export const Modal = ({
                               </Button>
                             </div>
                           )}
-                        {schedule?.is_host &&
-                          schedule?.status !== 'planning' && (
+                        {schedule.is_host &&
+                          schedule.status !== 'planning' &&
+                          schedule.status !== 'scheduled' &&
+                          schedule.status !== 'reviewing' && (
                             <div className="button-sides-2">
                               <Button
                                 width="full"
@@ -386,20 +392,22 @@ export const Modal = ({
                       </div>
                     </>
                   )}
-                  {schedule && schedule.is_host && (
-                    <div className="cancel-button">
-                      <Button
-                        onClick={() => cancelSchedule(schedule.id)}
-                        width="full"
-                      >
-                        <p>
-                          {schedule.status === 'cancelled'
-                            ? 'Excluir reunião'
-                            : 'Cancelar reunião'}
-                        </p>
-                      </Button>
-                    </div>
-                  )}
+                  {schedule &&
+                    schedule.is_host &&
+                    schedule.status !== 'scheduled' && (
+                      <div className="cancel-button">
+                        <Button
+                          onClick={() => cancelSchedule(schedule.id)}
+                          width="full"
+                        >
+                          <p>
+                            {schedule.status === 'cancelled'
+                              ? 'Excluir reunião'
+                              : 'Cancelar reunião'}
+                          </p>
+                        </Button>
+                      </div>
+                    )}
                 </div>
               )}
             </div>

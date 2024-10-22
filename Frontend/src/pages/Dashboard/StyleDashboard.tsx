@@ -316,8 +316,11 @@ export const StyledDashboard = styled.div<{
         rgba(0, 0, 0, 0.23) 0px 3px 6px;
 
       &.disabled {
-        background-color: #1a1a1a;
-        border: 1px solid #333333;
+        background-color: #bebecb;
+
+        &:hover {
+          background-color: #bebecb;
+        }
       }
 
       textarea {
@@ -359,6 +362,11 @@ export const StyledDashboard = styled.div<{
 
         &:disabled {
           background-color: #bebecb;
+          cursor: not-allowed;
+
+          &:hover {
+            background-color: #bebecb;
+          }
         }
       }
 
