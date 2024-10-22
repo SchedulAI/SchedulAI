@@ -11,6 +11,7 @@ import {
 } from '../../Utils/HandleStatus';
 import { useRef, useState, useEffect } from 'react';
 import { copyLinkToClipboard } from '../../Utils/CopyLink';
+import { renderDateInfo } from '../../Utils/RenderDateInfo';
 
 export const Modal = ({
   onClick,
@@ -227,9 +228,7 @@ export const Modal = ({
                   <p className="proposed-date">
                     <span>Data Proposta:</span>
                     <span>
-                      {typeof schedule.proposed_date === 'string'
-                        ? formatDate(schedule.proposed_date)
-                        : formatDate(schedule.proposed_date.proposed_date)}
+                      {renderDateInfo(schedule.status, schedule.proposed_date)?.toString()}
                     </span>
                   </p>
                 ) : (

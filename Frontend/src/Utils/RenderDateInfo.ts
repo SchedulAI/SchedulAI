@@ -1,13 +1,12 @@
 export const renderDateInfo = (
   status: 'planning' | 'pending' | 'reviewing' | 'scheduled' | 'cancelled',
-  proposed_date: proposed_date | string
+  proposedDate: proposed_date | string
 ) => {
-  if (status === 'pending' || status === 'planning') {
+  if (status !== 'scheduled') {
     return 'A definir';
-  } else if (status === 'scheduled') {
-    return typeof proposed_date === 'string'
-      ? proposed_date
-      : proposed_date.proposed_date;
+  } else if (typeof proposedDate === 'string') {
+    return new Date(proposedDate).toLocaleString();
+  } else {
+    return new Date(proposedDate.proposed_date).toLocaleString();
   }
-  return null;
 };
