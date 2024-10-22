@@ -18,7 +18,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="chat-input">
+    <div className={`chat-input ${disabled ? 'disabled' : ''}`}>
       <textarea
         placeholder="Mensagem SchedulAI"
         value={message ? message : ''}
