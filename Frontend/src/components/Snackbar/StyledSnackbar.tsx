@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 export const StyledSnackbar = styled.div<SnackbarContainerProps>`
   position: fixed;
-  z-index: 1000;
+  z-index: 10;
   ${({ anchororigin }) => css`
     ${anchororigin.vertical}: 20px;
     ${anchororigin.horizontal}: 20px;

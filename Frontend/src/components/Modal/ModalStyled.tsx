@@ -10,6 +10,7 @@ export const ModalStyled = styled.div`
   align-items: center;
   justify-content: center;
   background-color: #0a0a1580;
+  z-index: 15;
 
   .modal {
     background: ${(props) => props.theme.colors.backgroundDark};
@@ -192,10 +193,10 @@ export const ModalStyled = styled.div`
 
         .cancel-button {
           button {
-            background-color: #d62828;
+            background-color: #a32121;
 
             &:hover {
-              background-color: #d01f1f;
+              background-color: #9a1e1e;
             }
           }
         }

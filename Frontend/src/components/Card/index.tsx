@@ -9,6 +9,7 @@ export const Card = ({
   status,
   title,
   Display,
+  visibility,
   proposed_date,
   onClick,
 }: CardProps) => {
@@ -16,7 +17,8 @@ export const Card = ({
     <>
       {status === 'deleted' ? null : (
         <CardStyled
-          display={Display === 'Flex' ? 'flex' : 'none'}
+          // display={Display === 'Flex' ? 'flex' : 'none'}
+          visibility={visibility === true ? '1' : '0'}
           className="container-card"
           onClick={onClick}
         >
@@ -28,7 +30,7 @@ export const Card = ({
               <p>Data: {renderDateInfo(status, proposed_date)?.toString()}</p>
             )}
             <div className="div-status">
-              <p>Status: {handleRenderStatus(status)}</p>
+              <p>{`Status: ${handleRenderStatus(status)}`}</p>
               <div className={`status-circle ${handleStatusColor(status)}`} />
             </div>
           </div>

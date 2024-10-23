@@ -5,7 +5,7 @@ import apiUrl from '../../config/api';
 import { deleteCookie, getCookie } from '../../Utils/Cookies';
 import { compareStatus } from '../../Utils/sortSchedules';
 import showdown from 'showdown';
-import { StyledDashboard } from './StyleDashboard';
+import { StyledDashboard } from './style';
 import { Button } from '../../components/Button';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { SideMenu } from './SlideMenu/';
