@@ -14,8 +14,8 @@ export const ModalStyled = styled.div`
   .modal {
     background: ${(props) => props.theme.colors.backgroundDark};
     border-radius: 4px;
-    width: 40rem;
-    height: 35rem;
+    width: 50%;
+    height: 90%;
     opacity: 1;
     padding: 1rem;
     display: flex;
@@ -32,7 +32,7 @@ export const ModalStyled = styled.div`
     .header {
       padding: 0.5rem 0rem;
       display: flex;
-      justify-content: space-between;
+      gap: 1rem;
       width: 80%;
 
       div {
@@ -47,6 +47,14 @@ export const ModalStyled = styled.div`
         color: #0a0a15;
         font-weight: 500;
       }
+
+      .delete-event {
+        border-radius: 8px;
+        cursor: pointer;
+        &:hover {
+          background-color: #cdccee;
+        }
+      }
     }
 
     .content {
@@ -54,6 +62,111 @@ export const ModalStyled = styled.div`
       flex-direction: column;
       gap: 0.5rem;
       height: 100%;
+      justify-content: space-between;
+
+      .detail-main-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .guests {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        background-color: #cfcfcf1d;
+        border-radius: 8px;
+        padding: 1rem;
+        gap: 2rem;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+        p {
+          font-size: 1rem;
+          font-weight: 500;
+          width: fit-content;
+        }
+        .main-detail-section {
+          padding: 1rem;
+          max-height: 300px;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+
+          &::-webkit-scrollbar {
+            width: 10px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background-color: #4641c4;
+            border-radius: 10px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background-color: #4c4c4c;
+            border-radius: 10px;
+          }
+        }
+
+        .status-guest {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 1rem;
+        }
+
+        .guests-list {
+          display: flex;
+          gap: 4px;
+          flex-direction: column;
+          align-items: center;
+          width: 80%;
+          overflow-y: auto;
+          height: 100%;
+          max-height: 5rem;
+          width: 100%;
+          padding-right: 1rem;
+
+          .guest-item {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+          }
+
+          .guest-status-item {
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            justify-content: space-between;
+          }
+
+          &::-webkit-scrollbar {
+            width: 10px;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background-color: #4641c4;
+            border-radius: 10px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background-color: #4c4c4c;
+            border-radius: 10px;
+          }
+        }
+      }
+
+      .main-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        .main-section-right {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+      }
 
       .info {
         display: flex;
@@ -68,75 +181,6 @@ export const ModalStyled = styled.div`
           gap: 4px;
           span {
             font-weight: 500;
-          }
-        }
-
-        .guests {
-          display: flex;
-          gap: 1rem;
-          align-items: center;
-          background-color: #cfcfcf1d;
-          border-radius: 8px;
-          padding: 1rem;
-          box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-
-          p {
-            font-size: 1rem;
-            font-weight: 500;
-            width: fit-content;
-          }
-
-          .guest-section {
-            padding: 1rem;
-            max-height: 10rem;
-            overflow-y: auto;
-          }
-
-          .status-guest {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 1rem;
-          }
-
-          .guests-list {
-            display: flex;
-            gap: 4px;
-            flex-direction: column;
-            align-items: center;
-            width: 80%;
-            overflow-y: auto;
-            height: 100%;
-            max-height: 5rem;
-            width: 100%;
-            padding-right: 1rem;
-
-            .guest-item {
-              display: flex;
-              flex-direction: column;
-              width: 100%;
-            }
-
-            .guest-status-item {
-              display: flex;
-              flex-direction: row;
-              width: 100%;
-              justify-content: space-between;
-            }
-
-            &::-webkit-scrollbar {
-              width: 10px;
-            }
-
-            &::-webkit-scrollbar-thumb {
-              background-color: #4641c4;
-              border-radius: 10px;
-            }
-
-            &::-webkit-scrollbar-track {
-              background-color: #4c4c4c;
-              border-radius: 10px;
-            }
           }
         }
       }
@@ -224,27 +268,29 @@ export const ModalStyled = styled.div`
         }
       }
     }
+  }
+  .button-sides-2 {
+    width: 100%;
 
-    .button-sides-2 {
-      width: 100%;
+    button {
+      background-color: #363030;
 
-      button {
-        background-color: #363030;
-
-        &:hover {
-          background-color: #2b2323;
-        }
+      &:hover {
+        background-color: #2b2323;
       }
     }
   }
 
   .not-created-accounts-div {
     display: flex;
+    gap: 4px;
     flex-direction: column;
-    padding: 1rem;
-    height: 100%;
-    width: 100%;
+    align-items: flex-start;
+    width: 80%;
     overflow-y: auto;
-    max-height: 6rem;
+    height: 100%;
+    max-height: 5rem;
+    width: 100%;
+    padding-right: 1rem;
   }
 `;

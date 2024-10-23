@@ -14,3 +14,5 @@ interface Props {
     variant: 'success' | 'error' | 'info' | 'warning'
   ) => void;
 }
+
+type Modal = "cancel" | "delete" | null
