@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { dialogServices } from '../services/dialogServices';
 import errorResponse from '../utils/errorResponse';
+import { scheduleServices } from '../services/scheduleServices';
 
 export const dialogController = {
   getMessages: async (req: Request, res: Response): Promise<void> => {
@@ -17,8 +18,11 @@ export const dialogController = {
       }
 
       const messages = await dialogServices.getMessages(scheduleId, user.id);
-
-      res.status(200).json(messages);
+      const schedule = await scheduleServices.getScheduleById(
+        scheduleId,
+        user.id
+      );
+      res.status(200).json({ messages, schedule });
     } catch (error: any) {
       console.log(error);
       errorResponse(res, error);

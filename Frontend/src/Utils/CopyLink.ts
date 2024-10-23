@@ -1,6 +1,6 @@
 export const copyLinkToClipboard = (scheduleId: string) => {
-  const currentUrl = window.location.href;
-  const inviteLink = `${currentUrl}/invites/${scheduleId}`;
+  const currentUrl = window.location.origin;
+  const inviteLink = `${currentUrl}/invite/${scheduleId}`;
 
   navigator.clipboard.writeText(inviteLink);
 };

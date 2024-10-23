@@ -1,20 +1,20 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ScheduleContext } from '../../providers/ScheduleProvider';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Navbar } from '../../components/Navbar';
 import { InvitedStyled, Dot } from './InvitedStyled';
 import { Icon } from '../../components/Icon';
+import { useSchedule } from '../../hooks/scheduleHooks';
 
 export const InvitedRegister = () => {
   const navigate = useNavigate();
   const { schedule_id } = useParams<{ schedule_id: string }>();
-  const scheduleContext = useContext(ScheduleContext);
   const [loading, setLoading] = useState(true);
   const [showMessage, setShowMessage] = useState(false);
+  const { setScheduleId } = useSchedule();
 
   useEffect(() => {
-    if (schedule_id && scheduleContext) {
-      scheduleContext.setScheduleId(schedule_id);
+    if (schedule_id) {
+      setScheduleId(schedule_id);
     }
 
     const timer = setTimeout(() => {
@@ -23,7 +23,7 @@ export const InvitedRegister = () => {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [schedule_id, scheduleContext]);
+  }, []);
 
   return (
     <InvitedStyled>

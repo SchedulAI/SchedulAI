@@ -57,13 +57,13 @@ export const Dashboard = () => {
 
   const handleSendMessage = async () => {
     if (!message) return;
-
-    const schedule = currentSchedule || (await createSchedule());
-
     setConversation((prevConversation) => [
       ...prevConversation,
-      { sender: 'user', message: message! },
+      { sender: 'user', message: sendingMessage! },
     ]);
+    setMessage('');
+
+    const schedule = currentSchedule || (await createSchedule());
 
     if (schedule) {
       await sendMessageToAi(sendingMessage, schedule.data.id);
@@ -71,7 +71,6 @@ export const Dashboard = () => {
   };
 
   const sendMessageToAi = async (message: string, schedule_id: string) => {
-    setMessage('');
     try {
       setLoadingMessage(true);
       const data = await fetch(apiUrl('/chat/'), {
@@ -99,10 +98,18 @@ export const Dashboard = () => {
         { sender: 'ia', message: iaResponse },
       ]);
       if (res.schedule && schedules) {
-        const updatedSchedules = schedules.data.map((schedule) =>
-          schedule.id === schedule_id ? res.schedule : schedule
+        const scheduleExists = schedules.data.some(
+          (schedule) => schedule.id === schedule_id
         );
 
+        const updatedSchedules = scheduleExists
+          ? schedules.data.map((schedule) =>
+              schedule.id === schedule_id
+                ? { ...schedule, ...res.schedule }
+                : schedule
+            )
+          : [...schedules.data, res.schedule];
+        schedules.data.sort(compareStatus);
         setSchedules({
           ...schedules,
           data: updatedSchedules,
@@ -184,7 +191,6 @@ export const Dashboard = () => {
 
   const getInviteConversation = async (): Promise<void> => {
     const id = getCookie('schedule_id');
-    deleteCookie('schedule_id');
     if (id) {
       try {
         const result = await fetch(apiUrl(`/dialog/messages/${id}`), {
@@ -197,27 +203,26 @@ export const Dashboard = () => {
         if (!result.ok) {
           setConversation([]);
         }
-        const data: ConversationMessage[] = await result.json();
+        const data: GetConversation = await result.json();
         if (data) {
           setConversation(
-            data.map((msg) => ({
+            data.messages.map((msg) => ({
               sender: msg.sender === 'user' ? 'user' : 'ia',
               message: msg.message.data.content,
+              messages: [
+                {
+                  sender: msg.sender === 'user' ? 'user' : 'ia',
+                  message: msg.message.data.content,
+                },
+              ],
             }))
           );
         }
-        if (schedules) {
-          const foundSchedule = schedules.data.find(
-            (schedule) => schedule.id === id
-          );
-          if (foundSchedule) {
-            setCurrentSchedule({
-              data: foundSchedule,
-              message: 'Operação realizada com sucesso',
-              success: true,
-            });
-          }
-        }
+        setCurrentSchedule({
+          data: data.schedule,
+          message: 'Operação realizada com sucesso',
+          success: true,
+        });
       } catch (error) {
         console.error(error);
       }
