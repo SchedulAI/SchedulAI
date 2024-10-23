@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import backgroundImage from '../../assets/background/4861091.png';
 
 export const Dot = styled.span`
   display: inline-block;
@@ -18,6 +19,18 @@ export const StyledDashboard = styled.div<{
   height: 100%;
   background: #f8f8fc;
   position: relative;
+  background-image: url(${backgroundImage});
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  .logo {
+    > Button {
+      position: absolute;
+      right: 0.75rem;
+      top: 0.75rem;
+      z-index: 12;
+    }
+  }
 
   .schedules-counter {
     position: absolute;
@@ -46,6 +59,7 @@ export const StyledDashboard = styled.div<{
     height: 100%;
     width: 100%;
     gap: 1rem;
+    background-image: url(bac);
     position: relative;
 
     h2 {

@@ -262,7 +262,7 @@ export const Dashboard = () => {
 
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
-      {/* <div className="logo">
+      <div className="logo">
         <Button
           onClick={() => {
             logout();
@@ -271,7 +271,7 @@ export const Dashboard = () => {
         >
           <p>Sair</p>
         </Button>
-      </div> */}
+      </div>
       <SideMenu
         slideMenuOpen={slideMenuOpen}
         setSlideMenuOpen={setSlideMenuOpen}

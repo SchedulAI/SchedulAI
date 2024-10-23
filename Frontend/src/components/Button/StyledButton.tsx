@@ -14,6 +14,7 @@ export const StyledButton = styled.button<{
   cursor: pointer;
   border-radius: 4px;
   justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px;
 
   > * {
     white-space: nowrap;

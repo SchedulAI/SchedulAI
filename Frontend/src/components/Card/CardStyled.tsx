@@ -14,6 +14,7 @@ export const CardStyled = styled.div<{ visibility: '1' | '0' }>`
   color: black;
   cursor: pointer;
   user-select: none;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px;
 
   .div-subject {
     font-weight: 500;
