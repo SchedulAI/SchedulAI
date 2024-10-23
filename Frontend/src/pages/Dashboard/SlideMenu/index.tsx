@@ -59,7 +59,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
             <Icon icon="plus" size={24} color="#f8f8fc"></Icon> <p>Novo chat</p>
           </Button>
           <div className="host-div">
-            {schedules && <p className="bold-card">Reuniões como anfitrião</p>}
+            <p className="bold-card">Reuniões como anfitrião</p>
             <div className="host-cards">
               {schedules &&
               schedules.data.some(
@@ -71,7 +71,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     schedule.status !== 'deleted' && (
                       <div key={schedule.id}>
                         <Card
-                          // Display={slideMenuOpen ? 'Flex' : 'none'}
                           visibility={slideMenuOpen}
                           key={String(schedule.id)}
                           status={schedule.status}
@@ -109,7 +108,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
             </div>
           </div>
           <div className="guest-div">
-            {schedules && <p className="bold-card">Reuniões como convidado</p>}
+            <p className="bold-card">Reuniões como convidado</p>
             <div className="guest-cards">
               {schedules &&
               schedules.data.some(

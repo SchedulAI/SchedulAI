@@ -61,4 +61,8 @@ export const SideMenuStyled = styled.div`
       width: 100%;
     }
   }
+
+  .bold-card {
+    font-weight: 600;
+  }
 `;

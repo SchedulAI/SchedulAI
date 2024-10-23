@@ -185,7 +185,7 @@ export const Dashboard = () => {
         return;
       }
     } catch (error) {
-      addSnackbar((error as Error).message, 'error');
+     console.log(error);
     }
   };
 
