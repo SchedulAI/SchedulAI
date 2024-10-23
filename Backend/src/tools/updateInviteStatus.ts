@@ -1,14 +1,16 @@
+import { invitedEmailsRepository } from './../repository/invitedEmailsRepository';
 import { invitesRepository } from './../repository/invitesRepository';
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
 import { scheduleRepository } from '../repository/scheduleRepository';
 import { availabilityRepository } from '../repository/availabilityRepository';
-import findPossibleScheduleDates from '../utils/findPossibleScheduleDates';
+// import findPossibleScheduleDates from '../utils/findPossibleScheduleDates';
 import pool from '../db';
 import { proposedDateRepository } from '../repository/proposedDateRepository';
 import formatProposedDate from '../utils/formatProposedDate';
 import { dialogRepository } from '../repository/dialogRepository';
 import { AIMessage } from '@langchain/core/messages';
+import matchAvailabilities from '../utils/matchAvailabilities';
 
 const updateInviteStatusSchema = z.object({
   inviteId: z.string().describe('O id do convite.'),
@@ -33,9 +35,16 @@ const updateInviteStatus = tool(
         (invite) => invite.status !== 'pending'
       );
 
-      if (isEverythingAnswered) {
+      const invitedEmails =
+        await invitedEmailsRepository.getInvitedEmailsByScheduleId(scheduleId);
+
+      const everyInviteWasSent = invites.length === invitedEmails.length;
+
+      if (isEverythingAnswered && everyInviteWasSent) {
         const allAvailabilities =
           await availabilityRepository.getAllAvailabilities(scheduleId);
+
+        console.log('All availailabilities:', allAvailabilities);
 
         const hostAvailabilities = allAvailabilities!.filter(
           (availability) => availability.user_id === schedule.user_id
@@ -45,34 +54,14 @@ const updateInviteStatus = tool(
           (availability) => availability.user_id !== schedule.user_id
         );
 
-        const proposedDates = findPossibleScheduleDates(
+        const proposedDates = matchAvailabilities(
           hostAvailabilities,
-          guestAvailabilities,
-          schedule.duration
+          guestAvailabilities
         );
 
-        const client = await pool.connect(); // Obtenha a conexão do pool
-
-        await client.query('BEGIN');
-
-        proposedDates.forEach(async (proposedDate) => {
-          const createdProposedDate =
-            await proposedDateRepository.createProposedDate(
-              client,
-              scheduleId,
-              proposedDate.proposed_date,
-              'pending'
-            );
-        });
-
-        await client.query('COMMIT');
-
-        client.release();
-
-        const formatedProposedDate = proposedDates
-          .map((proposed_data) =>
-            formatProposedDate(proposed_data.proposed_date, schedule.duration)
-          )
+        const proposedDatesString = proposedDates
+          .filter((proposedDate) => proposedDate.accepted.length > 0)
+          .map((proposedDate) => formatProposedDate(proposedDate))
           .join('<br>');
 
         const dialog = await dialogRepository.getDialog(
@@ -81,7 +70,7 @@ const updateInviteStatus = tool(
         );
 
         const message = new AIMessage(
-          `Olá, após obter e analisar todas as disponibilidades, obtivemos as seguintes possiveis datas para o agendamento:<br><br>${formatedProposedDate}<br><br>Escolha alguma das datas para confirmar a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
+          `Olá, após obter e analisar todas as disponibilidades, obtivemos as seguintes intervalos de horários possiveis para o agendamento:<br><br>${proposedDatesString}<br><br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
         );
 
         await dialogRepository.saveMessage(
@@ -96,7 +85,7 @@ const updateInviteStatus = tool(
       return 'O status do convite foi atualizado!';
     } catch (error: any) {
       console.log('error do tool de invite:', error);
-      return error.message;
+      return 'Houve um erro ao atualizar o invite status, peça para o usuário mandar novamente';
     }
   },
   {
@@ -104,7 +93,7 @@ const updateInviteStatus = tool(
     description: `
 Este tool é utilizado para atualizar o status de um convite enviado para um convidado após o tool de disponibilidade ter retornado sua mensagem de sucesso.
 
-- Se o convidado puder comparecer dentro de uma das disponibilidades do host, o status do convite será atualizado para "accepted".
+- Se o convidado puder comparecer dentro de uma das disponibilidades do host e após a disponibilidade ser criada com sucesso, o status do convite será atualizado para "accepted".
 - Se o convidado não puder comparecer em nenhuma das datas disponíveis do host, o status do convite será "rejected".
 
 O tool também verifica se todos os convites foram respondidos. Caso todos os convidados tenham respondido, o sistema iniciará o processo de criação das datas propostas com base nas disponibilidades fornecidas.

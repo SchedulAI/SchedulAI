@@ -1,3 +1,4 @@
+import { invitesRepository } from './../repository/invitesRepository';
 import { tool } from '@langchain/core/tools';
 import { date, z } from 'zod';
 import { scheduleRepository } from '../repository/scheduleRepository';
@@ -14,7 +15,7 @@ const confirmScheduleSchema = z.object({
   proposedDate: z
     .string()
     .describe(
-      'A data proposta escolhida pelo host, ela tem que ser uma das que está proposta no chat. (Deve ter o fuso horarío do Brasil)'
+      'A data proposta escolhida pelo host, ela tem que ser uma das que está proposta no chat. (Deve ter o fuso horarío do Brasil no formato AAAA-MM-DDThh:mm:ss-03:00)'
     ),
 });
 
@@ -30,42 +31,20 @@ const confirmSchedule = tool(
 
         console.log('ppd obj:', proposedDateObj);
 
-        const proposedDates = await proposedDateRepository.listAllProposedDate(
-          scheduleId
-        );
-
-        console.log('ppds:', proposedDates);
-
-        const selectedProposedDate = proposedDates.find((date) => {
-          const proposedDateAsDate = date.proposed_date as Date;
-
-          return (
-            proposedDateAsDate.toISOString() === proposedDateObj.toISOString()
-          );
-        });
-
-        if (!selectedProposedDate) {
-          throw new Error(
-            'A data proposta escolhida não está na lista de datas propostas.'
-          );
-        }
-
-        console.log('SelectedProposedDate:', selectedProposedDate);
-
-        const updatedProposedDate =
-          proposedDateRepository.updateProposedDateStatus(
-            selectedProposedDate!.id,
+        const createdProposedDate =
+          await proposedDateRepository.createProposedDate(
+            scheduleId,
+            proposedDate,
             'accepted'
           );
 
-        console.log('updatedProposeDate:', updatedProposedDate);
+        console.log('ppd created:', createdProposedDate);
 
         const schedule = await scheduleRepository.updateScheduleStatus(
           scheduleId,
           'scheduled'
         );
 
-        console.log('Schedule:', schedule);
         return 'O agendamento foi concluído!';
       }
 
@@ -73,13 +52,15 @@ const confirmSchedule = tool(
         await availabilityRepository.deleteAllAvailability(scheduleId);
         await proposedDateRepository.deleteAllProposedDate(scheduleId);
 
+        await invitesRepository.updateAllInvitesToPending(scheduleId);
+
         return 'O usuário rejeitou as datas propostas, desconsidere todas as informações de datas propostas e disponibilidades anteriores, uma nova tentativa de marcar uma reunião será feita (Novo round), peça ao host suas novas disponibilidades para isso utilize a tool "createAvailabilities" quando o usuário fornecer as novas disponibilidades, e após ele fornecer, confirme com o host se já deve ser enviada as novas propostas para os convidados, para isso utilize a tool "newRound"';
       }
 
-      if (response === "cancel") {
+      if (response === 'cancel') {
         await scheduleRepository.cancelSchedule(scheduleId);
 
-        return "O agendamento foi cancelado a pedido do host."
+        return 'O agendamento foi cancelado a pedido do host.';
       }
     } catch (error: any) {
       console.log('error do tool de confirm schedule:', error);

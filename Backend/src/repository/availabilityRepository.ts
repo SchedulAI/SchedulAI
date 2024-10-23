@@ -2,7 +2,8 @@ import { PoolClient } from 'pg';
 import pool from '../db';
 import { Availability } from '../entities/availabilityEntity';
 import { InternalServerException } from '../utils/exceptions';
-import { AvailabilityWithUser } from '../utils/findPossibleScheduleDates';
+import { AvailabilityWithUser } from '../utils/matchAvailabilities';
+
 
 export const availabilityRepository = {
   getAvailability: async (

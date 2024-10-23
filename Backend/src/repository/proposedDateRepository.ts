@@ -6,11 +6,11 @@ import { InternalServerException } from '../utils/exceptions';
 export const proposedDateRepository = {
   // Criar uma nova data proposta
   createProposedDate: async (
-    client: PoolClient,
     scheduleId: string,
     proposedDate: string,
     status: string
   ): Promise<ProposedDate> => {
+    const client = await pool.connect();
     const query = `
         INSERT INTO proposed_date (schedule_id, proposed_date, status)
         VALUES ($1, $2, $3)
@@ -25,6 +25,8 @@ export const proposedDateRepository = {
       return rows[0];
     } catch (error: any) {
       throw new InternalServerException('Erro ao criar a data proposta');
+    } finally {
+      client.release(); // Certifique-se de liberar a conexão
     }
   },
 
@@ -101,7 +103,9 @@ export const proposedDateRepository = {
       const { rows } = await client.query(query, [status, proposedDateId]);
       return rows[0];
     } catch (error: any) {
-      throw new InternalServerException('Erro ao atualizar o status da data proposta');
+      throw new InternalServerException(
+        'Erro ao atualizar o status da data proposta'
+      );
     } finally {
       client.release(); // Certifique-se de liberar a conexão
     }
@@ -123,7 +127,9 @@ export const proposedDateRepository = {
       client.release(); // Certifique-se de liberar a conexão
     }
   },
-  deleteAllProposedDate: async (scheduleId: string): Promise<ProposedDate[]> => {
+  deleteAllProposedDate: async (
+    scheduleId: string
+  ): Promise<ProposedDate[]> => {
     const client = await pool.connect();
     const query = `
         DELETE FROM proposed_date
@@ -139,5 +145,4 @@ export const proposedDateRepository = {
       client.release();
     }
   },
-
 };
