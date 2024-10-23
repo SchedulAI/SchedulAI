@@ -8,7 +8,6 @@ interface CardProps {
     | 'deleted';
   proposed_date: proposed_date | string;
   title?: string;
-  Display?: 'Flex' | 'none';
   visibility?: boolean;
   onClick?: () => void;
 }

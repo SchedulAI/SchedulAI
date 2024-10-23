@@ -8,7 +8,6 @@ import { renderDateInfo } from '../../Utils/RenderDateInfo';
 export const Card = ({
   status,
   title,
-  Display,
   visibility,
   proposed_date,
   onClick,
@@ -17,7 +16,6 @@ export const Card = ({
     <>
       {status === 'deleted' ? null : (
         <CardStyled
-          // display={Display === 'Flex' ? 'flex' : 'none'}
           visibility={visibility === true ? '1' : '0'}
           className="container-card"
           onClick={onClick}
