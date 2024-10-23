@@ -122,7 +122,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     schedule.status !== 'deleted' && (
                       <div key={schedule.id}>
                         <Card
-                          // Display={slideMenuOpen ? 'Flex' : 'none'}
                           visibility={slideMenuOpen}
                           key={String(schedule.id)}
                           status={schedule.status}
