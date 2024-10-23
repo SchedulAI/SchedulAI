@@ -19,6 +19,7 @@ import {
   FacebookLogo,
   At,
   CaretUp,
+  Trash
 } from '@phosphor-icons/react';
 
 const IconList: IconTypes = {
@@ -41,6 +42,7 @@ const IconList: IconTypes = {
   instagramLogo: InstagramLogo,
   facebookLogo: FacebookLogo,
   at: At,
+  exclude: Trash,
 };
 
 interface PropTypes {
