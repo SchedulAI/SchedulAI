@@ -19,7 +19,7 @@ const formatProposedDate = (proposed_data: IntervalResult) => {
       ? `Não podem ir nesse horário: ${rejectedUsers}`
       : 'Todos podem ir nesse periodo.';
 
-  return `<br>**${day}/${month}/${year}** das **${proposed_data.start}** até **${proposed_data.end}** - [${detail}]<br>`;
+  return `<br>**${day}/${month}/${year}** das **${proposed_data.start}** até **${proposed_data.end}** - [${detail}]</br>`;
 };
 
 export default formatProposedDate;
