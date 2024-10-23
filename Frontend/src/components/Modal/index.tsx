@@ -471,17 +471,15 @@ export const Modal = ({
                       </div>
                     </>
                   )}
-                  {schedule && schedule.is_host && (
-                    <div className="cancel-button">
-                      <Button onClick={handleCancelClick} width="full">
-                        <p>
-                          {schedule.status === 'cancelled'
-                            ? 'Excluir reunião'
-                            : 'Cancelar reunião'}
-                        </p>
-                      </Button>
-                    </div>
-                  )}
+                  {schedule &&
+                    schedule.is_host &&
+                    schedule.status !== 'cancelled' && (
+                      <div className="cancel-button">
+                        <Button onClick={handleCancelClick} width="full">
+                          <p>Cancelar Reunião</p>
+                        </Button>
+                      </div>
+                    )}
                 </div>
               )}
             </div>
