@@ -2,21 +2,21 @@
   <img src="https://github.com/user-attachments/assets/5476d416-ffd0-48f8-9be9-20c1fb75638a" width="100%">
 </p>
 
-# ScheduleAI <img src="https://github.com/user-attachments/assets/ed999ff8-176c-4eec-8927-b187f184e186" width="2%">
+# SchedulAI <img src="https://github.com/user-attachments/assets/ed999ff8-176c-4eec-8927-b187f184e186" width="2%">
 
 ---
 
 ## Descrição
 
-ScheduleAI é uma plataforma inteligente de agendamento desenvolvida para simplificar o processo de organizar reuniões. O aplicativo utiliza inteligência artificial para ajudar os usuários a encontrar os melhores horários, eliminando a necessidade de longas trocas de mensagens.
+SchedulAI é uma plataforma inteligente de agendamento desenvolvida para simplificar o processo de organizar reuniões. O aplicativo utiliza inteligência artificial para ajudar os usuários a encontrar os melhores horários, eliminando a necessidade de longas trocas de mensagens.
 
 ## Principais Funcionalidades
 
-- **Agendamento com IA:** O anfitrião do evento pode inserir a data e o horário propostos, e o ScheduleAI, alimentado por um modelo de linguagem avançado (LLM), convida todas as pessoas que o anfitrião indicar e repassa essas informações para elas, verificando a disponibilidade de cada uma e retornando ao anfitrião com os possíveis horários para agendamento da reunião.
+- **Agendamento com IA:** O anfitrião do evento pode inserir a data e o horário propostos, e o SchedulAI, alimentado por um modelo de linguagem avançado (LLM), convida todas as pessoas que o anfitrião indicar e repassa essas informações para elas, verificando a disponibilidade de cada uma e retornando ao anfitrião com os possíveis horários para agendamento da reunião.
 - **Interação com os Usuários:** Após o anfitrião agendar um evento, ele recebe um link exclusivo para compartilhar com os convidados. Caso um convidado já possua conta na plataforma, o convite aparecerá diretamente no seu painel. Os convidados podem criar uma conta através do link recebido e informar a sua disponibilidade dentro da disponibilidade do anfitrião.
 - **Comparação de Disponibilidade em Tempo Real:** O sistema compara a disponibilidade do anfitrião com a dos convidados, priorizando as datas escolhidas pela maioria.
 - **Interface Amigável:** Desenvolvido com frontend em React e backend em TypeScript, o aplicativo oferece uma experiência de usuário simples e intuitiva.
-- **Segurança e Confiabilidade:** O ScheduleAI garante interações seguras através da autenticação de usuários.
+- **Segurança e Confiabilidade:** O SchedulAI garante interações seguras através da autenticação de usuários.
 
 ## Tecnologias Utilizadas
 
@@ -98,15 +98,15 @@ ScheduleAI é uma plataforma inteligente de agendamento desenvolvida para simpli
 
 ## Description
 
-ScheduleAI is an intelligent scheduling platform designed to simplify the process of organizing meetings. The application uses artificial intelligence to help users find the best times, eliminating the need for lengthy back-and-forth messaging.
+SchedulAI is an intelligent scheduling platform designed to simplify the process of organizing meetings. The application uses artificial intelligence to help users find the best times, eliminating the need for lengthy back-and-forth messaging.
 
 ## Key Features
 
-- **AI Scheduling:** The event host can enter the proposed date and time, and ScheduleAI, powered by an advanced language model (LLM), invites all individuals specified by the host and relays that information to them, checking each person's availability and returning possible or unavailable time slots for scheduling that meeting back to the host.
+- **AI Scheduling:** The event host can enter the proposed date and time, and SchedulAI, powered by an advanced language model (LLM), invites all individuals specified by the host and relays that information to them, checking each person's availability and returning possible or unavailable time slots for scheduling that meeting back to the host.
 - **User Interaction:** After the host schedules an event, they receive a unique link to share with guests. If a guest already has an account on the platform, the invitation will appear directly on their dashboard. Guests can create an account via the received link and indicate their availability within the host's timeframe.
 - **Real-Time Availability Comparison:** The system compares the host's availability with that of the guests, prioritizing the dates chosen by the majority.
 - **User-Friendly Interface:** Developed with a React frontend and a TypeScript backend, the app provides a simple and intuitive user experience.
-- **Security and Reliability:** ScheduleAI ensures secure interactions through user authentication.
+- **Security and Reliability:** SchedulAI ensures secure interactions through user authentication.
 
 ## Technologies Used
 
