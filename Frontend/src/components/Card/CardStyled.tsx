@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
-  display: ${(props) => props.display};
+export const CardStyled = styled.div<{ visibility: '1' | '0' }>`
+  opacity: ${(props) => props.visibility};
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
@@ -9,15 +9,11 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
   width: 100%;
   padding: 0.5rem;
   gap: 8px;
-  border: 1px solid #c8c6ee;
   border-radius: 4px;
   background-color: #bbbae1;
   color: black;
-  transition: all ease-in-out 0.3s;
   cursor: pointer;
   user-select: none;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
 
   .div-subject {
     font-weight: 500;
@@ -58,9 +54,14 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
     display: flex;
     align-items: center;
     gap: 8px;
+    max-width: 100%;
 
     p {
-      color: #0a0a1575;
+      word-wrap: break-word;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 14rem;
+      flex-grow: 1;
     }
   }
 
@@ -84,6 +85,5 @@ export const CardStyled = styled.div<{ display: 'none' | 'flex' }>`
 
   &:hover {
     background-color: #c9c8e9;
-    border: 1px solid #b4b2e1;
   }
 `;

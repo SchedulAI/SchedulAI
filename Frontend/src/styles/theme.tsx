@@ -5,6 +5,7 @@ export const lightTheme = {
     buttonPrimaryActiveBackground: '#3732b8',
     backgroundPrimary: '#f8f8fc',
     backgroundDark: '#e2e2ea',
+    backgroundDarker: '#cfcfdd',
     textPrimary: '#0A0A15',
   },
-};  
+};

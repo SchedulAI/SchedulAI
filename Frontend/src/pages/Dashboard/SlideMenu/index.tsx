@@ -3,6 +3,7 @@ import { Button } from '../../../components/Button';
 import { Card } from '../../../components/Card';
 import { Modal } from '../../../components/Modal';
 import { formatDate } from '../../../Utils/FormatDate';
+import { SideMenuStyled } from './style';
 
 export const SideMenu: React.FC<SideMenuProps> = ({
   slideMenuOpen,
@@ -18,41 +19,34 @@ export const SideMenu: React.FC<SideMenuProps> = ({
   addSnackbar,
 }) => {
   return (
-    <div
-      className={slideMenuOpen ? 'div-cover-open' : 'div-cover-closed'}
+    <SideMenuStyled
+      className={slideMenuOpen ? 'div-cover-open' : ''}
       onClick={() => setSlideMenuOpen(!slideMenuOpen)}
     >
       <div
-        className={
-          slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-closed'
-        }
+        className={'slide-bar-div-button'}
+        onClick={() => setSlideMenuOpen(!slideMenuOpen)}
+      >
+        {schedules &&
+          schedules.data.some((schedule) => schedule.status !== 'deleted') && (
+            <div className="schedules-counter">
+              <p>
+                {
+                  schedules.data.filter(
+                    (schedule) => schedule.status !== 'deleted'
+                  ).length
+                }
+              </p>
+            </div>
+          )}
+        <Icon icon="sidebarSimple" size={32} weight="regular" color="#0A0A15" />
+      </div>
+      <div
+        className={`slide-bar-menu
+          ${slideMenuOpen ? 'slide-bar-menu-open' : 'slide-bar-menu-close'}
+        `}
         onClick={(e) => e.stopPropagation()}
       >
-        <div
-          className={'slide-bar-div-button'}
-          onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-        >
-          {schedules &&
-            schedules.data.some(
-              (schedule) => schedule.status !== 'deleted'
-            ) && (
-              <div className="schedules-counter">
-                <p>
-                  {
-                    schedules.data.filter(
-                      (schedule) => schedule.status !== 'deleted'
-                    ).length
-                  }
-                </p>
-              </div>
-            )}
-          <Icon
-            icon="sidebarSimple"
-            size={32}
-            weight="regular"
-            color="#0A0A15"
-          />
-        </div>
         <div className="sideBar-content">
           <Button
             width="full"
@@ -76,7 +70,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     schedule.is_host && (
                       <div key={schedule.id}>
                         <Card
-                          Display={slideMenuOpen ? 'Flex' : 'none'}
+                          // Display={slideMenuOpen ? 'Flex' : 'none'}
+                          visibility={slideMenuOpen}
                           key={String(schedule.id)}
                           status={schedule.status}
                           title={schedule.title}
@@ -121,7 +116,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                     !schedule.is_host && (
                       <div key={schedule.id}>
                         <Card
-                          Display={slideMenuOpen ? 'Flex' : 'none'}
+                          // Display={slideMenuOpen ? 'Flex' : 'none'}
+                          visibility={slideMenuOpen}
                           key={String(schedule.id)}
                           status={schedule.status}
                           title={schedule.title}
@@ -156,6 +152,6 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </SideMenuStyled>
   );
 };

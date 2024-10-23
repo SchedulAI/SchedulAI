@@ -5,7 +5,7 @@ import apiUrl from '../../config/api';
 import { deleteCookie, getCookie } from '../../Utils/Cookies';
 import { compareStatus } from '../../Utils/sortSchedules';
 import showdown from 'showdown';
-import { StyledDashboard } from './StyleDashboard';
+import { StyledDashboard } from './style';
 import { Button } from '../../components/Button';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { SideMenu } from './SlideMenu/';
@@ -257,7 +257,7 @@ export const Dashboard = () => {
 
   return (
     <StyledDashboard slidemenuopen={slideMenuOpen ? 'true' : undefined}>
-      <div className="logo">
+      {/* <div className="logo">
         <Button
           onClick={() => {
             logout();
@@ -266,7 +266,7 @@ export const Dashboard = () => {
         >
           <p>Sair</p>
         </Button>
-      </div>
+      </div> */}
       <SideMenu
         slideMenuOpen={slideMenuOpen}
         setSlideMenuOpen={setSlideMenuOpen}

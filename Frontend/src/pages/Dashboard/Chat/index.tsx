@@ -1,7 +1,8 @@
 import { Icon } from '../../../components/Icon';
-import { Dot } from '../StyleDashboard';
+import { Dot } from '../style';
 import { ChatInput } from './ChatInput';
 import { useUser } from '../../../hooks/userHooks';
+import { ChatInputStyled } from './style';
 
 export const Chat: React.FC<ChatProps> = ({
   conversation,
@@ -16,7 +17,7 @@ export const Chat: React.FC<ChatProps> = ({
 }) => {
   const u = useUser();
   return (
-    <div className="chat-content">
+    <ChatInputStyled className="chat-content">
       <div className="chat">
         {conversation.length === 0 ? (
           <h2>O que gostaria de agendar hoje?</h2>
@@ -73,6 +74,6 @@ export const Chat: React.FC<ChatProps> = ({
           }
         />
       </div>
-    </div>
+    </ChatInputStyled>
   );
 };

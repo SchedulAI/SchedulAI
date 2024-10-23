@@ -9,7 +9,7 @@ export const NavbarStyled = styled.div`
   background: ${(props) => props.theme.colors.backgroundPrimary};
   border: 1px solid ${(props) => props.theme.colors.backgroundDark};
   width: 100%;
-  z-index: 100;
+  z-index: 10;
 
   .logo {
     display: flex;
