@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
-import { Checkbox } from '../../components/Checkbox';
 import { Icon } from '../../components/Icon';
 import { Input } from '../../components/Input';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
@@ -13,13 +12,10 @@ import { setCookie } from '../../Utils/Cookies';
 export const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [rememberMe, setRememberMe] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [containerVisible, setContainerVisible] = useState<boolean>(true);
   const { user, setUser } = useUser();
   const navigate = useNavigate();
-
-  const handleRememberMeChange = () => setRememberMe(!rememberMe);
 
   const addSnackbar = (
     message: string,
@@ -39,6 +35,7 @@ export const Login = () => {
 
   const loginFetch = async () => {
     setLoading(true);
+
     try {
       const response = await fetch(apiUrl('/login'), {
         method: 'POST',
@@ -47,40 +44,25 @@ export const Login = () => {
         credentials: 'include',
       });
       const data = await response.json();
+
       setLoading(false);
       if (data.auth) {
-        setUser({ id: data.userId, email });
-        setCookie('logged_in', data.user, 84600)
-        if (rememberMe) {
-          localStorage.setItem('email', email);
-          localStorage.setItem('password', password);
-        } else {
-          localStorage.removeItem('email');
-          localStorage.removeItem('password');
-        }
+        setUser({ id: data.user.id, email });
+        setCookie('logged_in', data.user.id, 84600);
         navigate('/dashboard');
       } else {
-        addSnackbar(data.error, 'error');
+        addSnackbar(data.message, 'error');
       }
     } catch (error) {
-      addSnackbar((error as Error).message, 'error');
-      setLoading(false);
+      console.log(error);
     }
   };
 
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
-    } else {
-      const savedEmail = localStorage.getItem('email');
-      const savedPassword = localStorage.getItem('password');
-      if (savedEmail && savedPassword) {
-        setEmail(savedEmail);
-        setPassword(savedPassword);
-        setRememberMe(true);
-      }
     }
-  }, [user, navigate]);
+  }, []);
 
   return (
     <LoginStyled className="login-main-div">
@@ -126,11 +108,6 @@ export const Login = () => {
           </div>
         </div>
         <div className="login-remember-me-div">
-          <Checkbox
-            label="Lembrar-me"
-            checked={rememberMe}
-            onChange={handleRememberMeChange}
-          />
           <a id="forget-password" onClick={() => navigate('/recover-password')}>
             Esqueceu a senha? <span>Recupere agora</span>
           </a>
