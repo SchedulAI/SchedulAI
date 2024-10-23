@@ -65,15 +65,16 @@ export const SideMenu: React.FC<SideMenuProps> = ({
             <Icon icon="plus" size={24} color="#f8f8fc"></Icon> <p>Novo chat</p>
           </Button>
           <div className="host-div">
-            {schedules &&
-              schedules.data.some(
-                (schedule) => schedule.status !== 'deleted'
-              ) && <p className="bold-card">Anfitrião</p>}
+            {schedules && <p className="bold-card">Reuniões como anfitrião</p>}
             <div className="host-cards">
               {schedules &&
+              schedules.data.some(
+                (schedule) => schedule.status !== 'deleted' && schedule.is_host
+              ) ? (
                 schedules.data.map(
                   (schedule) =>
-                    schedule.is_host && (
+                    schedule.is_host &&
+                    schedule.status !== 'deleted' && (
                       <div key={schedule.id}>
                         <Card
                           Display={slideMenuOpen ? 'Flex' : 'none'}
@@ -106,53 +107,60 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         )}
                       </div>
                     )
-                )}
+                )
+              ) : (
+                <p>Não há reuniões marcadas</p>
+              )}
             </div>
           </div>
           <div className="guest-div">
+            {schedules && <p className="bold-card">Reuniões como convidado</p>}
             {schedules &&
               schedules.data.some(
-                (schedule) => schedule.status !== 'deleted'
-              ) && <p className="bold-card">Convidado</p>}
-            <div className="guest-cards">
-              {schedules &&
-                schedules.data.map(
-                  (schedule) =>
-                    !schedule.is_host && (
-                      <div key={schedule.id}>
-                        <Card
-                          Display={slideMenuOpen ? 'Flex' : 'none'}
-                          key={String(schedule.id)}
-                          status={schedule.status}
-                          title={schedule.title}
-                          proposed_date={
-                            schedule.proposed_date
-                              ? typeof schedule.proposed_date === 'object'
-                                ? formatDate(
-                                    schedule.proposed_date.proposed_date
-                                  )
-                                : formatDate(schedule.proposed_date)
-                              : 'A definir'
-                          }
-                          onClick={() => openModal(schedule.id)}
-                        />
-                        {activeModalId === schedule.id && (
-                          <Modal
-                            onClick={closeModal}
-                            schedule={schedule}
-                            setSchedules={setSchedules}
-                            schedules={schedules}
-                            setCurrentSchedule={setCurrentSchedule}
-                            setConversation={setConversation}
-                            setActiveModalId={setActiveModalId}
-                            setSlideMenuOpen={setSlideMenuOpen}
-                            addSnackbar={addSnackbar}
+                (schedule) => schedule.status !== 'deleted' && !schedule.is_host
+              ) && (
+                <>
+                  <div className="guest-cards">
+                    {schedules.data.map((schedule) =>
+                      !schedule.is_host && schedule.status !== 'deleted' ? (
+                        <div key={schedule.id}>
+                          <Card
+                            Display={slideMenuOpen ? 'Flex' : 'none'}
+                            key={String(schedule.id)}
+                            status={schedule.status}
+                            title={schedule.title}
+                            proposed_date={
+                              schedule.proposed_date
+                                ? typeof schedule.proposed_date === 'object'
+                                  ? formatDate(
+                                      schedule.proposed_date.proposed_date
+                                    )
+                                  : formatDate(schedule.proposed_date)
+                                : 'A definir'
+                            }
+                            onClick={() => openModal(schedule.id)}
                           />
-                        )}
-                      </div>
-                    )
-                )}
-            </div>
+                          {activeModalId === schedule.id && (
+                            <Modal
+                              onClick={closeModal}
+                              schedule={schedule}
+                              setSchedules={setSchedules}
+                              schedules={schedules}
+                              setCurrentSchedule={setCurrentSchedule}
+                              setConversation={setConversation}
+                              setActiveModalId={setActiveModalId}
+                              setSlideMenuOpen={setSlideMenuOpen}
+                              addSnackbar={addSnackbar}
+                            />
+                          )}
+                        </div>
+                      ) : (
+                        <p>Não há reuniões marcadas</p>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
           </div>
         </div>
       </div>

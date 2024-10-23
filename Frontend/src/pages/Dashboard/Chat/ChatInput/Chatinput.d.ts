@@ -5,4 +5,5 @@ interface ChatInputProps {
   handleSendMessage: () => Promise<void>;
   loadingMessage: boolean;
   disabled?: boolean;
+  placeholder?: string;
 }

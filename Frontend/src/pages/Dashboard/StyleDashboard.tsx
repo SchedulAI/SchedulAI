@@ -411,4 +411,56 @@ export const StyledDashboard = styled.div<{
     flex-direction: column;
     padding: 1rem;
   }
+
+  .confirm-modal {
+    position: fixed;
+    z-index: 99;
+    top: 50%;
+    left: 50%;
+    height: 100%;
+    width: 100%;
+    background-color: #0a0a1580;
+    color: #0a0a15;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+
+    .confirm-modal-content {
+      background-color: #e2e2ea;
+      height: 40%;
+      width: 40%;
+      padding: 2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      gap: 2rem;
+      border-radius: 8px;
+
+      .modal-confirm-title {
+        color: #5353df;
+      }
+
+      .confirm-modal-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+
+        .button-no {
+          button {
+            background-color: #d62828;
+
+            &&:hover {
+              background-color: #d01f1f;
+            }
+          }
+        }
+      }
+    }
+  }
 `;
