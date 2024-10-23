@@ -19,4 +19,6 @@ export interface Schedule {
 
   invites?: Invites[] | null;
   availability?: Availability[] | null;
+
+  pending_account?: string[];
 }
