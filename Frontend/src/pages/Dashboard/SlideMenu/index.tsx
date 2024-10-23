@@ -115,52 +115,53 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           </div>
           <div className="guest-div">
             {schedules && <p className="bold-card">Reuniões como convidado</p>}
-            {schedules &&
+            <div className="guest-cards">
+              {schedules &&
               schedules.data.some(
-                (schedule) => schedule.status !== 'deleted' && !schedule.is_host
-              ) && (
-                <>
-                  <div className="guest-cards">
-                    {schedules.data.map((schedule) =>
-                      !schedule.is_host && schedule.status !== 'deleted' ? (
-                        <div key={schedule.id}>
-                          <Card
-                            Display={slideMenuOpen ? 'Flex' : 'none'}
-                            key={String(schedule.id)}
-                            status={schedule.status}
-                            title={schedule.title}
-                            proposed_date={
-                              schedule.proposed_date
-                                ? typeof schedule.proposed_date === 'object'
-                                  ? formatDate(
-                                      schedule.proposed_date.proposed_date
-                                    )
-                                  : formatDate(schedule.proposed_date)
-                                : 'A definir'
-                            }
-                            onClick={() => openModal(schedule.id)}
+                (schedule: any) =>
+                  schedule.status !== 'deleted' && !schedule.is_host
+              ) ? (
+                schedules.data.map(
+                  (schedule: any) =>
+                    !schedule.is_host &&
+                    schedule.status !== 'deleted' && (
+                      <div key={schedule.id}>
+                        <Card
+                          Display={slideMenuOpen ? 'Flex' : 'none'}
+                          key={String(schedule.id)}
+                          status={schedule.status}
+                          title={schedule.title}
+                          proposed_date={
+                            schedule.proposed_date
+                              ? typeof schedule.proposed_date === 'object'
+                                ? formatDate(
+                                    schedule.proposed_date.proposed_date
+                                  )
+                                : formatDate(schedule.proposed_date)
+                              : 'A definir'
+                          }
+                          onClick={() => openModal(schedule.id)}
+                        />
+                        {activeModalId === schedule.id && (
+                          <Modal
+                            onClick={closeModal}
+                            schedule={schedule}
+                            setSchedules={setSchedules}
+                            schedules={schedules}
+                            setCurrentSchedule={setCurrentSchedule}
+                            setConversation={setConversation}
+                            setActiveModalId={setActiveModalId}
+                            setSlideMenuOpen={setSlideMenuOpen}
+                            addSnackbar={addSnackbar}
                           />
-                          {activeModalId === schedule.id && (
-                            <Modal
-                              onClick={closeModal}
-                              schedule={schedule}
-                              setSchedules={setSchedules}
-                              schedules={schedules}
-                              setCurrentSchedule={setCurrentSchedule}
-                              setConversation={setConversation}
-                              setActiveModalId={setActiveModalId}
-                              setSlideMenuOpen={setSlideMenuOpen}
-                              addSnackbar={addSnackbar}
-                            />
-                          )}
-                        </div>
-                      ) : (
-                        <p>Não há reuniões marcadas</p>
-                      )
-                    )}
-                  </div>
-                </>
+                        )}
+                      </div>
+                    )
+                )
+              ) : (
+                <p>Não há reuniões marcadas</p>
               )}
+            </div>
           </div>
         </div>
       </div>
