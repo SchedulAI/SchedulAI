@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/ed999ff8-176c-4eec-8927-b187f184e186" width="40%">
+  <img src="https://github.com/user-attachments/assets/5476d416-ffd0-48f8-9be9-20c1fb75638a" width="100%">
 </p>
 
-# ScheduleAI
+# ScheduleAI <img src="https://github.com/user-attachments/assets/ed999ff8-176c-4eec-8927-b187f184e186" width="2%">
 
 ---
 

@@ -5,9 +5,9 @@ import { Input } from '../../components/Input';
 
 import { RegisterStyled } from './RegisterStyled';
 import apiUrl from '../../config/api';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
-import { ScheduleContext } from '../../providers/ScheduleProvider';
+import { useSchedule } from '../../hooks/scheduleHooks';
 import { setCookie } from '../../Utils/Cookies';
 
 export const Register = () => {
@@ -16,12 +16,15 @@ export const Register = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [containerVisible, setContainerVisible] = useState(true);
-  const scheduleContext = useContext(ScheduleContext);
-  const schedule_id = scheduleContext?.schedule_id;
+  const { schedule_id } = useSchedule();
+  const id = schedule_id;
+
+  const emailRegex: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const specialCharsRegex: RegExp = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?\s]+/;
 
   const navigate = useNavigate();
 
-  const createInvite = async (id: string) => {
+  const createInvite = async (id: string, userId: string) => {
     try {
       const result = await fetch(apiUrl('/invite/create'), {
         method: 'POST',
@@ -29,8 +32,8 @@ export const Register = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          schedule_id: schedule_id,
-          user_id: id,
+          schedule_id: id,
+          user_id: userId,
         }),
       });
       return result.json();
@@ -57,6 +60,44 @@ export const Register = () => {
 
   const registerFetch = async () => {
     setLoading(true);
+    if (email === '' || password === '') {
+      addSnackbar('Preencha todos os campos', 'error');
+      setLoading(false);
+      return;
+    }
+    if (!email.includes('@') || !email.includes('.')) {
+      addSnackbar('Email inválido', 'error');
+      setLoading(false);
+      return;
+    }
+    if (password.length < 6) {
+      addSnackbar('A senha deve ter no mínimo 6 caracteres', 'error');
+      setLoading(false);
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      addSnackbar('Email inválido', 'error');
+      setLoading(false);
+      return;
+    }
+    if (!specialCharsRegex.test(password)) {
+      addSnackbar(
+        'A senha deve conter ao menos um caracter especial (!@#$%^&*()_+-=[]{};\':"\\|,.<>/?)',
+        'error'
+      );
+      setLoading(false);
+      return;
+    }
+    if (!name) {
+      addSnackbar('Nome é obrigatório', 'error');
+      setLoading(false);
+      return;
+    }
+    if (name.length < 3) {
+      addSnackbar('Nome deve ter no mínimo 3 caracteres', 'error');
+      setLoading(false);
+      return;
+    }
     try {
       const response = await fetch(apiUrl('/user/create'), {
         method: 'POST',
@@ -72,9 +113,9 @@ export const Register = () => {
       const { data, message }: RegisterResponse = await response.json();
       setCookie('isFirstLogin', 'true', 8640000);
 
-      if (schedule_id) {
-        setCookie('schedule_id', schedule_id, 864000);
-        const invite = await createInvite(data.id);
+      if (id) {
+        setCookie('schedule_id', id, 864000);
+        const invite = await createInvite(id, data.id);
         if (invite.sucess) {
           addSnackbar(invite.message, 'success');
         } else {

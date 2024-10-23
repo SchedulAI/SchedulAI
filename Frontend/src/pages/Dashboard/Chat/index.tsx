@@ -60,6 +60,17 @@ export const Chat: React.FC<ChatProps> = ({
           setSendingMessage={setSendingMessage}
           handleSendMessage={handleSendMessage}
           loadingMessage={loadingMessage}
+          placeholder={
+            schedule?.data.status === 'planning'
+              ? 'Mensagem SchedulAI'
+              : schedule?.data.status === 'pending'
+              ? 'Aguarde a resposta dos convidados para continuar'
+              : schedule?.data.status === 'reviewing'
+              ? 'Revise o seu agendamento'
+              : schedule?.data.status === 'scheduled'
+              ? 'Agendamento realizado'
+              : 'O que posso agendar para você hoje ?'
+          }
           disabled={
             schedule?.data.is_host
               ? schedule.data.status === 'pending' ||

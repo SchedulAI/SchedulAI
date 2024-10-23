@@ -59,15 +59,16 @@ export const SideMenu: React.FC<SideMenuProps> = ({
             <Icon icon="plus" size={24} color="#f8f8fc"></Icon> <p>Novo chat</p>
           </Button>
           <div className="host-div">
-            {schedules &&
-              schedules.data.some(
-                (schedule) => schedule.status !== 'deleted'
-              ) && <p className="bold-card">Anfitrião</p>}
+            {schedules && <p className="bold-card">Reuniões como anfitrião</p>}
             <div className="host-cards">
               {schedules &&
+              schedules.data.some(
+                (schedule) => schedule.status !== 'deleted' && schedule.is_host
+              ) ? (
                 schedules.data.map(
                   (schedule) =>
-                    schedule.is_host && (
+                    schedule.is_host &&
+                    schedule.status !== 'deleted' && (
                       <div key={schedule.id}>
                         <Card
                           // Display={slideMenuOpen ? 'Flex' : 'none'}
@@ -101,19 +102,24 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         )}
                       </div>
                     )
-                )}
+                )
+              ) : (
+                <p>Não há reuniões marcadas</p>
+              )}
             </div>
           </div>
           <div className="guest-div">
-            {schedules &&
-              schedules.data.some(
-                (schedule) => schedule.status !== 'deleted'
-              ) && <p className="bold-card">Convidado</p>}
+            {schedules && <p className="bold-card">Reuniões como convidado</p>}
             <div className="guest-cards">
               {schedules &&
+              schedules.data.some(
+                (schedule: any) =>
+                  schedule.status !== 'deleted' && !schedule.is_host
+              ) ? (
                 schedules.data.map(
-                  (schedule) =>
-                    !schedule.is_host && (
+                  (schedule: any) =>
+                    !schedule.is_host &&
+                    schedule.status !== 'deleted' && (
                       <div key={schedule.id}>
                         <Card
                           // Display={slideMenuOpen ? 'Flex' : 'none'}
@@ -147,7 +153,10 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                         )}
                       </div>
                     )
-                )}
+                )
+              ) : (
+                <p>Não há reuniões marcadas</p>
+              )}
             </div>
           </div>
         </div>

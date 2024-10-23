@@ -1,13 +1,11 @@
 import { Icon } from '../Icon';
 import { Button } from '../Button';
 import { useNavigate } from 'react-router-dom';
-import { useCheckAuth } from '../../Utils/ValidateAuth';
 import { NavbarStyled } from './NavbarStyled';
 import { getCookie } from '../../Utils/Cookies';
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const checkAuth = useCheckAuth();
   const handleScrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
@@ -73,7 +71,7 @@ export const Navbar = () => {
           <>
             <a
               onClick={() => {
-                checkAuth.checkAuth();
+                navigate('/login');
               }}
             >
               Entrar

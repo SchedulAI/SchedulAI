@@ -38,6 +38,24 @@ export const scheduleServices = {
 
     const is_host = userId === schedule.user_id;
 
+    const invitedEmails =
+    await invitedEmailsRepository.getInvitedEmailsByScheduleId(
+      schedule.id
+    );
+
+    const pending_account = await Promise.all(
+      invitedEmails.map(async (e) => {
+        const user = await userRepository.findByEmail(e.email);
+        return user ? null : e.email;
+      })
+    ).then((results) => {
+      // Filtrar nulos e remover duplicatas
+      const uniqueEmails = new Set(
+        results.filter((email) => email !== null)
+      );
+      return Array.from(uniqueEmails);
+    });
+
     // Buscar as informações complementares
     const [proposedDate, invites, availability] = await Promise.all([
       proposedDateRepository.listProposedDate(scheduleId),
@@ -52,6 +70,7 @@ export const scheduleServices = {
       proposed_date: proposedDate || null,
       invites,
       availability,
+      pending_account,
     };
   },
 

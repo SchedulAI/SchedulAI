@@ -7,6 +7,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   handleSendMessage,
   loadingMessage,
   disabled,
+  placeholder,
 }) => {
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -20,7 +21,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   return (
     <div className={`chat-input ${disabled ? 'disabled' : ''}`}>
       <textarea
-        placeholder="Mensagem SchedulAI"
+        placeholder={placeholder}
         value={message ? message : ''}
         onChange={(e) => {
           setMessage(e.target.value);
