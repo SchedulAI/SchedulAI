@@ -96,4 +96,22 @@ export const invitesRepository = {
       client.release();
     }
   },
+
+  updateAllInvitesToPending: async (scheduleId: string): Promise<Invites> => {
+    const client = await pool.connect();
+    const queryUpdate = `
+          UPDATE invites
+          SET status = 'pending'
+          WHERE schedule_id = $1
+          RETURNING *;
+        `;
+    try {
+      const updateResult = await client.query(queryUpdate, [scheduleId]);
+      return updateResult.rows[0];
+    } catch (error: any) {
+      throw new InternalServerException('Erro ao atualizar o convite');
+    } finally {
+      client.release();
+    }
+  },
 };
