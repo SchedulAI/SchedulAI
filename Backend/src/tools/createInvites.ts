@@ -46,7 +46,7 @@ const createInvites = tool(
         );
 
         const message =
-          new AIMessage(`Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)<br>O anfitrião tem as seguintes disponibilidades:<br><br>${formatedAvailabilities}
+          new AIMessage(`Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}" a previsão de duração para o encontro é de ${schedule.duration} minutos, por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)<br>O anfitrião tem as seguintes disponibilidades:<br><br>${formatedAvailabilities}
         `);
 
         await dialogRepository.saveMessage(

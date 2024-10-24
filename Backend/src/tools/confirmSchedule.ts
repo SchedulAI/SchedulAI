@@ -57,7 +57,6 @@ const confirmSchedule = tool(
         return 'O agendamento foi cancelado a pedido do host.';
       }
     } catch (error: any) {
-      console.log('error do tool de confirm schedule:', error);
       return error.message;
     }
   },

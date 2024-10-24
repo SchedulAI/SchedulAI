@@ -1,3 +1,4 @@
+import { AvailabilityWithUser } from '../utils/matchAvailabilities';
 import { Availability } from './availabilityEntity';
 import { Invites } from './invitesEntity';
 import { ProposedDate } from './proposedDateEntity';
@@ -18,7 +19,7 @@ export interface Schedule {
   proposed_date?: ProposedDate;
 
   invites?: Invites[] | null;
-  availability?: Availability[] | null;
+  availability?: AvailabilityWithUser[] | null;
 
   pending_account?: string[];
 }
