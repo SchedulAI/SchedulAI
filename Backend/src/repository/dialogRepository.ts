@@ -56,7 +56,6 @@ export const dialogRepository = {
       const { rows } = await client.query(query, [dialogId, message, sender]);
       return rows[0]; // Retorna a mensagem salva
     } catch (error: any) {
-      console.log('erro no saveMessage:', error);
       throw new InternalServerException('Erro ao salvar mensagem');
     } finally {
       client.release(); // Certifique-se de liberar a conexão
@@ -116,7 +115,7 @@ export const dialogRepository = {
       console.log('Erro ao pegar mensagem:', error);
       throw new InternalServerException('Erro ao buscar mensagens do diálogo');
     } finally {
-      client.release(); // Certifique-se de liberar a conexão
+      client.release();
     }
   },
 };

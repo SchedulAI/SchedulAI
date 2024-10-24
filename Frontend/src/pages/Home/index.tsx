@@ -58,7 +58,7 @@ export const Home = () => {
           </h1>
         </div>
         <div className="start-now-div">
-          <Button onClick={() => navigate('/register')}>
+          <Button onClick={() => navigate('/login')}>
             <p>Começar Agora</p>
           </Button>
           <a
