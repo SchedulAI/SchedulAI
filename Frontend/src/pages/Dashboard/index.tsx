@@ -25,6 +25,7 @@ export const Dashboard = () => {
   const [activeModalId, setActiveModalId] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [containerVisible, setContainerVisible] = useState(true);
+  const [update, setUpdate] = useState(false);
 
   const navigate = useNavigate();
   const { setUser } = useUser();
@@ -114,6 +115,11 @@ export const Dashboard = () => {
           ...schedules,
           data: updatedSchedules,
         });
+        setCurrentSchedule({
+          data: res.schedule,
+          success: true,
+          message: 'Agenda atualizada com sucesso!'
+        });
       }
       setLoadingMessage(false);
     } catch (error) {
@@ -185,7 +191,67 @@ export const Dashboard = () => {
         return;
       }
     } catch (error) {
-     console.log(error);
+      console.error(error);
+    }
+  };
+
+  const getOldConversation = async (id: string): Promise<void> => {
+    try {
+      const result = await fetch(apiUrl(`/dialog/messages/${id}`), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const data: GetConversation = await result.json();
+      if (data) {
+        setConversation(
+          data.messages.map((msg) => ({
+            sender: msg.sender === 'user' ? 'user' : 'ia',
+            message: msg.message.data.content,
+            messages: [
+              {
+                sender: msg.sender === 'user' ? 'user' : 'ia',
+                message: msg.message.data.content,
+              },
+            ],
+          }))
+        );
+      }
+    } catch (error) {
+      addSnackbar((error as Error).message, 'error');
+    }
+  };
+
+  const scheduleLongPollin = async () => {
+    try {
+      const response = await fetch(apiUrl('/schedule/longpolling'), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const schedules: ScheduleResponse = await response.json();
+      if (schedules.update) {
+        schedules.data.sort(compareStatus);
+        setSchedules(schedules);
+        scheduleLongPollin();
+      }
+      if (!schedules.update) {
+        scheduleLongPollin();
+      }
+      if (schedules.success && schedules.data.length === 0) {
+        return;
+      }
+      if (schedules.update) {
+        setUpdate(true);
+      } else {
+        setUpdate(false);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -236,7 +302,7 @@ export const Dashboard = () => {
   }, [conversation]);
 
   useEffect(() => {
-    getSchedules();
+    scheduleLongPollin();
   }, []);
 
   useEffect(() => {
@@ -247,6 +313,20 @@ export const Dashboard = () => {
       setSlideMenuOpen(true);
     }
   }, []);
+
+  useEffect(() => {
+    getSchedules();
+  }, [])
+
+  useEffect(() => {
+    if (update) {
+      if (currentSchedule) {
+        getOldConversation(currentSchedule?.data.id);
+      }
+    } else {
+      return;
+    }
+  }, [update]);
 
   useEffect(() => {
     getInviteConversation();

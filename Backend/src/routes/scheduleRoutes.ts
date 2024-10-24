@@ -10,6 +10,12 @@ export const scheduleRouter = Router();
 // Parte da gestão do Próprio Schedule
 scheduleRouter.post('/', permissionVerify, scheduleController.createSchedule);
 
+scheduleRouter.get(
+  '/longpolling',
+  permissionVerify,
+  scheduleController.getSchedulesLongPolling
+);
+
 scheduleRouter.get('/', permissionVerify, scheduleController.getSchedules);
 
 scheduleRouter.get(
@@ -17,6 +23,7 @@ scheduleRouter.get(
   permissionVerify,
   scheduleController.getSchedule
 );
+
 
 scheduleRouter.patch(
   '/:scheduleId/cancel',
@@ -28,13 +35,13 @@ scheduleRouter.patch(
   '/:scheduleId/delete',
   permissionVerify,
   scheduleController.deleteSchedule
-)
+);
 
 scheduleRouter.patch(
   '/:scheduleId/review',
   permissionVerify,
   scheduleController.reviewSchedule
-)
+);
 
 scheduleRouter.patch(
   '/:scheduleId',

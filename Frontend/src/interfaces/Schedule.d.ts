@@ -51,6 +51,7 @@ interface ScheduleResponse {
   data: Schedule[];
   message: string;
   success: boolean;
+  update?: boolean;
 }
 
 interface ScheduleCreateResponse {

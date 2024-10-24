@@ -4,6 +4,9 @@ import { Card } from '../../../components/Card';
 import { Modal } from '../../../components/Modal';
 import { formatDate } from '../../../Utils/FormatDate';
 import { SideMenuStyled } from './style';
+import { useState } from 'react';
+import { compareStatus } from '../../../Utils/sortSchedules';
+import apiUrl from '../../../config/api';
 
 export const SideMenu: React.FC<SideMenuProps> = ({
   slideMenuOpen,
@@ -18,28 +21,75 @@ export const SideMenu: React.FC<SideMenuProps> = ({
   setActiveModalId,
   addSnackbar,
 }) => {
+  const [rotate, setRotate] = useState(false);
+
+  const getSchedules = async () => {
+    setRotate(true);
+    try {
+      const response = await fetch(apiUrl('/schedule'), {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      const schedules: ScheduleResponse = await response.json();
+      setRotate(false);
+      if (!schedules.success) {
+        addSnackbar(schedules.message, 'error');
+      }
+      if (schedules.success) {
+        schedules.data.sort(compareStatus);
+        setSchedules(schedules);
+      }
+      if (schedules.success && schedules.data.length === 0) {
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      setRotate(false);
+    }
+  };
+
   return (
-    <SideMenuStyled
-      className={slideMenuOpen ? 'div-cover-open' : ''}
-      onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-    >
-      <div
-        className={'slide-bar-div-button'}
-        onClick={() => setSlideMenuOpen(!slideMenuOpen)}
-      >
-        {schedules &&
-          schedules.data.some((schedule) => schedule.status !== 'deleted') && (
-            <div className="schedules-counter">
-              <p>
-                {
-                  schedules.data.filter(
-                    (schedule) => schedule.status !== 'deleted'
-                  ).length
-                }
-              </p>
-            </div>
-          )}
-        <Icon icon="sidebarSimple" size={32} weight="regular" color="#0A0A15" />
+    <SideMenuStyled className={slideMenuOpen ? 'div-cover-open' : ''}>
+      <div className="slidemenu-header">
+        <div
+          className={'slide-bar-div-button'}
+          onClick={() => setSlideMenuOpen(!slideMenuOpen)}
+        >
+          {schedules &&
+            schedules.data.some(
+              (schedule) => schedule.status !== 'deleted'
+            ) && (
+              <div className="schedules-counter">
+                <p>
+                  {
+                    schedules.data.filter(
+                      (schedule) => schedule.status !== 'deleted'
+                    ).length
+                  }
+                </p>
+              </div>
+            )}
+          <Icon
+            icon="sidebarSimple"
+            size={32}
+            weight="regular"
+            color="#0A0A15"
+          />
+        </div>
+        <div
+          className={`refresh-div ${!slideMenuOpen ? 'hidden' : ''} ${
+            rotate ? 'rotate' : ''
+          }`}
+          onClick={() => {
+            getSchedules();
+            setSlideMenuOpen(true);
+          }}
+        >
+          <Icon icon="refresh" size={32} color="#0A0A15"></Icon>
+        </div>
       </div>
       <div
         className={`slide-bar-menu
