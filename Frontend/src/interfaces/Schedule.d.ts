@@ -58,3 +58,7 @@ interface ScheduleCreateResponse {
   message: string;
   success: boolean;
 }
+
+interface Polling {
+  update: boolean;
+}

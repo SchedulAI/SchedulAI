@@ -283,12 +283,12 @@ export const Modal = ({
                           )?.toString()}
                         </span>
                       </p>
-                    ) : (
+                    ) : schedule.status !== 'cancelled' ? (
                       <p className="proposed-date">
                         <span>Data:</span>
-                        <span>A definir</span>
+                        <span>Definindo</span>
                       </p>
-                    )}
+                    ) : null}
                     {schedule.duration && schedule.status !== 'cancelled' && (
                       <p className="duration">
                         <span>Duração:</span>

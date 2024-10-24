@@ -73,8 +73,6 @@ export const chatServices = {
         history.push(res);
 
         for (const toolCall of res.tool_calls!) {
-          // console.log('Tool call:', toolCall);
-
           const selectedTool = toolsByName[toolCall.name];
           const toolResponse = await selectedTool.invoke(toolCall);
 
@@ -95,8 +93,6 @@ export const chatServices = {
         'IA'
       );
       history.push(res);
-
-      console.log(history);
 
       const aiResponse = res.content as string;
 

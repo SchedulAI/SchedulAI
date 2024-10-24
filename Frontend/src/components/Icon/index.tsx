@@ -20,7 +20,8 @@ import {
   At,
   CaretUp,
   Trash,
-  SignOut
+  ArrowsClockwise,
+  SignOut,
 } from '@phosphor-icons/react';
 
 const IconList: IconTypes = {
@@ -44,6 +45,7 @@ const IconList: IconTypes = {
   facebookLogo: FacebookLogo,
   at: At,
   exclude: Trash,
+  refresh: ArrowsClockwise,
   signOut: SignOut,
 };
 

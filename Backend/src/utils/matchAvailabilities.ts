@@ -37,9 +37,6 @@ function matchAvailabilities(
   hostAvailability: AvailabilityWithUser[],
   guestAvailabilities: AvailabilityWithUser[]
 ): IntervalResult[] {
-  console.log('Host availability:', hostAvailability);
-  console.log('guest Availability:', guestAvailabilities);
-
   // Group host availabilities by date
   const groupedHostAvailabilities = hostAvailability.reduce(
     (acc, availability) => {
