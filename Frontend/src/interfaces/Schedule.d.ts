@@ -51,11 +51,14 @@ interface ScheduleResponse {
   data: Schedule[];
   message: string;
   success: boolean;
-  update?: boolean;
 }
 
 interface ScheduleCreateResponse {
   data: Schedule;
   message: string;
   success: boolean;
+}
+
+interface Polling {
+  update: boolean;
 }

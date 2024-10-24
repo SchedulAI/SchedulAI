@@ -118,7 +118,7 @@ export const Dashboard = () => {
         setCurrentSchedule({
           data: res.schedule,
           success: true,
-          message: 'Agenda atualizada com sucesso!'
+          message: 'Agenda atualizada com sucesso!',
         });
       }
       setLoadingMessage(false);
@@ -233,21 +233,14 @@ export const Dashboard = () => {
         },
         credentials: 'include',
       });
-      const schedules: ScheduleResponse = await response.json();
-      if (schedules.update) {
-        schedules.data.sort(compareStatus);
-        setSchedules(schedules);
+      const pooling: Polling = await response.json();
+      if (pooling.update) {
+        getSchedules();
         scheduleLongPollin();
-      }
-      if (!schedules.update) {
-        scheduleLongPollin();
-      }
-      if (schedules.success && schedules.data.length === 0) {
-        return;
-      }
-      if (schedules.update) {
         setUpdate(true);
-      } else {
+      }
+      if (!pooling.update) {
+        scheduleLongPollin();
         setUpdate(false);
       }
     } catch (error) {
@@ -316,7 +309,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     getSchedules();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (update) {
