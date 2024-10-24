@@ -22,14 +22,8 @@ const confirmScheduleSchema = z.object({
 const confirmSchedule = tool(
   async ({ response, scheduleId, proposedDate }) => {
     try {
-      console.log('Response:', response);
-
       if (response === 'accepted') {
-        console.log('ppd:', proposedDate);
-
         const proposedDateObj = new Date(proposedDate);
-
-        console.log('ppd obj:', proposedDateObj);
 
         const createdProposedDate =
           await proposedDateRepository.createProposedDate(
@@ -37,8 +31,6 @@ const confirmSchedule = tool(
             proposedDate,
             'accepted'
           );
-
-        console.log('ppd created:', createdProposedDate);
 
         const schedule = await scheduleRepository.updateScheduleStatus(
           scheduleId,
@@ -52,7 +44,9 @@ const confirmSchedule = tool(
         await availabilityRepository.deleteAllAvailability(scheduleId);
         await proposedDateRepository.deleteAllProposedDate(scheduleId);
 
-        await invitesRepository.updateAllInvitesToPending(scheduleId);
+        const invites = await invitesRepository.updateAllInvitesToPending(
+          scheduleId
+        );
 
         return 'O usuário rejeitou as datas propostas, desconsidere todas as informações de datas propostas e disponibilidades anteriores, uma nova tentativa de marcar uma reunião será feita (Novo round), peça ao host suas novas disponibilidades para isso utilize a tool "createAvailabilities" quando o usuário fornecer as novas disponibilidades, e após ele fornecer, confirme com o host se já deve ser enviada as novas propostas para os convidados, para isso utilize a tool "newRound"';
       }
@@ -70,10 +64,10 @@ const confirmSchedule = tool(
   {
     name: 'confirmSchedule',
     description: `
-Este tool é utilizado para o host confirmar uma data para o agendamento após serem fornecidas as datas propostas para a reunião, cancelar a reunião ou tentar agendar outra data (recomeça o ciclo).
+Este tool é utilizado para o host confirmar uma data para o agendamento após serem fornecidas as datas propostas para a reunião, cancelar a reunião ou tentar agendar outra data, colhendo novas disponibilidades do host.
 
 - Se o host escolher uma das datas propostas a sua resposta será considerada "accepted".
-- Se o convidado disser que não quer nenhuma das opções de datas proposas a sua resposa será considerada "rejected".
+- Se o convidado não afirmar querer alguma das datas, querer tentar outra data ou recusar, a sua resposta será considerada "rejected". Nesse caso, você deve pedir ao host para fornecer novas disponibilidades utilizando o tool "createAvailabilities" **antes** de prosseguir para o "newRound".
 - Se o convidado disser que quer cancelar, sua resposta será considerada "cancel"
 `,
     schema: confirmScheduleSchema,

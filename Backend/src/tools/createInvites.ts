@@ -46,8 +46,7 @@ const createInvites = tool(
         );
 
         const message =
-          new AIMessage(`Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)
-        O anfitrião tem as seguintes disponibilidades:<br><br>${formatedAvailabilities}
+          new AIMessage(`Olá! Você foi convidado para o agendamento "${schedule.title}", criado pelo "${schedule.host_name}", por favor, me informe suas disponibilides! (Exemplo dia x das hh:mm as hh:mm)<br>O anfitrião tem as seguintes disponibilidades:<br><br>${formatedAvailabilities}
         `);
 
         await dialogRepository.saveMessage(
@@ -59,7 +58,7 @@ const createInvites = tool(
 
       await scheduleRepository.updateScheduleStatus(scheduleId, 'pending');
 
-      return `Os convites para os usuários que já possuem conta foram criadas com sucesso, para aqueles que não têm conta devem acessar o seguinte link: ${config.HOSTNAME}:5173/invite/${scheduleId}`;
+      return `Os convites para os usuários que já possuem conta foram criadas com sucesso, para aqueles que não têm conta devem acessar o seguinte link: https://alpha02.alphaedtech.org.br/invite/${scheduleId} (não renderizar como hyperlink)`;
     } catch (error: any) {
       return error.message;
     }

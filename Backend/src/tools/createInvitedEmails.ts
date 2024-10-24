@@ -19,7 +19,7 @@ const createInvitedEmails = tool(
         await invitedEmailsRepository.createInvitedEmail(email, scheduleId);
       }
 
-      return 'Os emails dos convidados foram criados com sucesso! Pergunte ao host se já deve ser enviado os convites!';
+      return 'A lista de emails convidados para esse agendamento foi criada com sucesso! Repasse os emails registrados e pergunte ao host se já deve ser enviado os convites!';
     } catch (error: any) {
       return error.message;
     }

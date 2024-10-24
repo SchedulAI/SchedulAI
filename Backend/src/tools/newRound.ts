@@ -7,7 +7,7 @@ import { dialogRepository } from '../repository/dialogRepository';
 import { availabilityRepository } from '../repository/availabilityRepository';
 import formatAvailability from '../utils/formatAvailability';
 import { dialogServices } from '../services/dialogServices';
-import { AIMessage } from '@langchain/core/messages';
+import { AIMessage, SystemMessage } from '@langchain/core/messages';
 import { invitesRepository } from '../repository/invitesRepository';
 
 const newRoundSchema = z
@@ -34,7 +34,18 @@ const newRound = tool(
       const invites = await invitesRepository.listAllInvites(scheduleId);
 
       invites.forEach(async (invite) => {
-        const dialog = await dialogRepository.getDialog(invite.user_id, scheduleId)
+        const dialog = await dialogRepository.getDialog(
+          invite.user_id,
+          scheduleId
+        );
+
+        const newRoundMessage = new SystemMessage(`Iniciando um novo round!`);
+
+        await dialogRepository.saveMessage(
+          dialog.id,
+          JSON.stringify(newRoundMessage.toDict(), null, 2),
+          'IA'
+        );
 
         const message =
           new AIMessage(`Olá! O anfitrião decidiu tentar outros horários para a reunião "${schedule.title}", por favor, me informe suas disponibilides para as novas disponibilidades do anfitrião! (Exemplo dia x das hh:mm as hh:mm)<br>O anfitrião afirmou as seguintes disponibilidades:<br><br>${formatedAvailabilities}
@@ -43,7 +54,7 @@ const newRound = tool(
         await dialogRepository.saveMessage(
           dialog.id,
           JSON.stringify(message.toDict(), null, 2),
-          'IA'
+          'system'
         );
       });
 
@@ -57,7 +68,7 @@ const newRound = tool(
   {
     name: 'newRound',
     description:
-      'Esse tool é exclusivo para um host, após o host rejeitar as datas propostas de uma reunião e fornecer novas disponibilidades, esse tool deve ser usado para enviar para os convidados as novas disponibilidades do host para a reunião.',
+      'Esse tool é exclusivo para um host e só deve ser usado depois que o host tiver usado um confirmSchedule com a resposta rejected. Após o host rejeitar as datas propostas de uma reunião e fornecer novas disponibilidades, esse tool deve ser usado para enviar para os convidados as novas disponibilidades do host para a reunião.',
     schema: newRoundSchema,
   }
 );
