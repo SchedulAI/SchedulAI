@@ -97,6 +97,8 @@ Este tool é utilizado para atualizar o status de um convite enviado para um con
 - Se o convidado não puder comparecer em nenhuma das datas disponíveis do host, o status do convite será "rejected".
 
 O tool também verifica se todos os convites foram respondidos. Caso todos os convidados tenham respondido, o sistema iniciará o processo de criação das datas propostas com base nas disponibilidades fornecidas.
+
+Esse tool deve ser utilizado novamente após o usuário fornecer novas disponibilidades quando está iniciando um novo round.
 `,
     schema: updateInviteStatusSchema,
   }

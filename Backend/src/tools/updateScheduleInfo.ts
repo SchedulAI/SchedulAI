@@ -28,7 +28,7 @@ const updateScheduleInfo = tool(
         duration
       );
 
-      return 'O titulo e descrição do agendamento foi atualizado!';
+      return 'O titulo, descrição e duração do agendamento foi atualizado, repasse para o usuário essas informações sobre o agendamento!';
     } catch (error: any) {
       return error.message;
     }
@@ -36,7 +36,7 @@ const updateScheduleInfo = tool(
   {
     name: 'updateScheduleInfo',
     description:
-      'Preenche o titulo, descrição e a duração (em horas) do agendamento, quando o user fornecer pela primeira vez.',
+      'Preenche o titulo, descrição e a duração em minutos do agendamento, quando o user fornecer pela primeira vez.',
     schema: updateScheduleInfoSchema,
   }
 );
