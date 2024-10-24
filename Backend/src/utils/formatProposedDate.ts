@@ -1,14 +1,8 @@
 import { IntervalResult } from './matchAvailabilities';
 
 const formatProposedDate = (proposed_data: IntervalResult) => {
-  console.log('proposeddate no format:', proposed_data);
-
-  const startDate = new Date(proposed_data.date);
-
-  // Extraindo o dia, mês e ano
-  const day = String(startDate.getDate()).padStart(2, '0');
-  const month = String(startDate.getMonth() + 1).padStart(2, '0');
-  const year = startDate.getFullYear();
+  // Tratando a data diretamente sem converter para UTC
+  const [year, month, day] = proposed_data.date.split('-');
 
   const rejectedUsers = proposed_data.rejected
     .map((rejected) => rejected.user_name)

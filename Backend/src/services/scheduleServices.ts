@@ -10,6 +10,10 @@ import {
   NotFoundException,
 } from '../utils/exceptions';
 import { invitedEmailsRepository } from '../repository/invitedEmailsRepository';
+import matchAvailabilities from '../utils/matchAvailabilities';
+import formatProposedDate from '../utils/formatProposedDate';
+import { dialogRepository } from '../repository/dialogRepository';
+import { AIMessage } from '@langchain/core/messages';
 
 export const scheduleServices = {
   createSchedule: async (
@@ -23,7 +27,7 @@ export const scheduleServices = {
       userId
     );
     const is_host = userId === schedule.user_id;
-    return {...schedule, is_host};
+    return { ...schedule, is_host };
   },
 
   getScheduleById: async (
@@ -39,9 +43,7 @@ export const scheduleServices = {
     const is_host = userId === schedule.user_id;
 
     const invitedEmails =
-    await invitedEmailsRepository.getInvitedEmailsByScheduleId(
-      schedule.id
-    );
+      await invitedEmailsRepository.getInvitedEmailsByScheduleId(schedule.id);
 
     const pending_account = await Promise.all(
       invitedEmails.map(async (e) => {
@@ -50,9 +52,7 @@ export const scheduleServices = {
       })
     ).then((results) => {
       // Filtrar nulos e remover duplicatas
-      const uniqueEmails = new Set(
-        results.filter((email) => email !== null)
-      );
+      const uniqueEmails = new Set(results.filter((email) => email !== null));
       return Array.from(uniqueEmails);
     });
 
@@ -190,8 +190,59 @@ export const scheduleServices = {
       );
     }
 
-    const reviewingSchedule = await scheduleRepository.reviewSchedule(
+    const allAvailabilities = await availabilityRepository.getAllAvailabilities(
       scheduleId
+    );
+
+    const hostAvailabilities = allAvailabilities!.filter(
+      (availability) => availability.user_id === schedule.user_id
+    );
+
+    const guestAvailabilities = allAvailabilities!.filter(
+      (availability) => availability.user_id !== schedule.user_id
+    );
+
+    const proposedDates = matchAvailabilities(
+      hostAvailabilities,
+      guestAvailabilities
+    );
+
+    const proposedDatesString = proposedDates
+      .filter((proposedDate) => proposedDate.accepted.length > 0)
+      .map((proposedDate) => formatProposedDate(proposedDate))
+      .join('<br>');
+
+    const dialog = await dialogRepository.getDialog(
+      schedule.user_id,
+      scheduleId
+    );
+
+    const invites = await invitesRepository.listAllInvites(scheduleId);
+
+    const rejectedInviteUsers = invites
+      .filter((invite) => invite.status !== 'accepted')
+      .map((invite) => invite.guest_name);
+
+    const formattedRejectedInviteUsers =
+      rejectedInviteUsers.length > 1
+        ? rejectedInviteUsers.slice(0, -1).join(', ') +
+          ' e ' +
+          rejectedInviteUsers[rejectedInviteUsers.length - 1]
+        : rejectedInviteUsers[0] || '';
+
+    const message = new AIMessage(
+      `Olá, os seguintes usuários recusaram ou não responderam o convite: ${formattedRejectedInviteUsers}.<br>Porém obtive as disponibilidades dos outros convidados e foi possivel chegas nos seguintes intervalos de horários possiveis para o agendamento:<br>${proposedDatesString}<br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
+    );
+
+    await dialogRepository.saveMessage(
+      dialog.id,
+      JSON.stringify(message.toDict(), null, 2),
+      'IA'
+    );
+
+    const reviewingSchedule = await scheduleRepository.updateScheduleStatus(
+      scheduleId,
+      'reviewing'
     );
 
     return reviewingSchedule;

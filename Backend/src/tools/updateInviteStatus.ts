@@ -44,8 +44,6 @@ const updateInviteStatus = tool(
         const allAvailabilities =
           await availabilityRepository.getAllAvailabilities(scheduleId);
 
-        console.log('All availailabilities:', allAvailabilities);
-
         const hostAvailabilities = allAvailabilities!.filter(
           (availability) => availability.user_id === schedule.user_id
         );
@@ -53,6 +51,17 @@ const updateInviteStatus = tool(
         const guestAvailabilities = allAvailabilities!.filter(
           (availability) => availability.user_id !== schedule.user_id
         );
+
+        const rejectedInviteUsers = invites
+          .filter((invite) => invite.status !== 'accepted')
+          .map((invite) => invite.guest_name);
+
+        const formattedRejectedInviteUsers =
+          rejectedInviteUsers.length > 1
+            ? rejectedInviteUsers.slice(0, -1).join(', ') +
+              ' e ' +
+              rejectedInviteUsers[rejectedInviteUsers.length - 1]
+            : rejectedInviteUsers[0] || '';
 
         const proposedDates = matchAvailabilities(
           hostAvailabilities,
@@ -70,7 +79,7 @@ const updateInviteStatus = tool(
         );
 
         const message = new AIMessage(
-          `Olá, após obter e analisar todas as disponibilidades, obtivemos as seguintes intervalos de horários possiveis para o agendamento:<br><br>${proposedDatesString}<br><br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
+          `Olá, os seguintes usuários recusaram ou não responderam o convite: ${formattedRejectedInviteUsers}. Porém obtive as disponibilidades dos outros convidados e foi possivel chegas nos seguintes intervalos de horários possiveis para o agendamento:<br>${proposedDatesString}<br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
         );
 
         await dialogRepository.saveMessage(
@@ -84,7 +93,6 @@ const updateInviteStatus = tool(
 
       return 'O status do convite foi atualizado!';
     } catch (error: any) {
-      console.log('error do tool de invite:', error);
       return 'Houve um erro ao atualizar o invite status, peça para o usuário mandar novamente';
     }
   },
