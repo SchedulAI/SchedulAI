@@ -87,9 +87,6 @@ export const scheduleController = {
           if (!responseSent) {
             responseSent = true;
             res.status(200).json({
-              success: true,
-              message: 'Dados atualizados com sucesso',
-              data: schedules,
               update: true,
             });
           }
@@ -110,9 +107,6 @@ export const scheduleController = {
       if (!responseSent) {
         responseSent = true;
         res.status(200).json({
-          success: true,
-          message: 'Nenhuma atualização encontrada',
-          data: lastSchedules,
           update: false,
         });
       }
