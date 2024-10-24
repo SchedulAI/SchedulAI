@@ -59,4 +59,7 @@ interface IconTypes {
   exclude: React.ForwardRefExoticComponent<
     IconProps & React.RefAttributes<SVGSVGElement>
   >;
+  signOut: React.ForwardRefExoticComponent<
+    IconProps & React.RefAttributes<SVGSVGElement>
+  >;
 }

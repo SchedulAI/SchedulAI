@@ -19,7 +19,8 @@ import {
   FacebookLogo,
   At,
   CaretUp,
-  Trash
+  Trash,
+  SignOut
 } from '@phosphor-icons/react';
 
 const IconList: IconTypes = {
@@ -43,6 +44,7 @@ const IconList: IconTypes = {
   facebookLogo: FacebookLogo,
   at: At,
   exclude: Trash,
+  signOut: SignOut,
 };
 
 interface PropTypes {

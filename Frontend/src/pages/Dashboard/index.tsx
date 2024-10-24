@@ -10,6 +10,7 @@ import { Button } from '../../components/Button';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { SideMenu } from './SlideMenu/';
 import { Chat } from './Chat';
+import { Icon } from "../../components/Icon";
 
 export const Dashboard = () => {
   const [message, setMessage] = useState<string | null>(null);
@@ -269,6 +270,7 @@ export const Dashboard = () => {
             deleteCookie('logged_in');
           }}
         >
+          <Icon icon="signOut" size={18} color="#f8f8fc"  />
           <p>Sair</p>
         </Button>
       </div>

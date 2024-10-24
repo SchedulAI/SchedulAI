@@ -5,7 +5,7 @@ export const StyledButton = styled.button<{
 }>`
   width: ${({ width }) => (width === 'full' ? '100%' : 'fit-content')};
   background: ${(props) => props.theme.colors.buttonPrimaryBackground};
-  gap: 4px;
+  gap: 8px;
   padding: 0.75rem 1rem;
   border: none;
   transition: background-color 0.1s ease-in-out;
