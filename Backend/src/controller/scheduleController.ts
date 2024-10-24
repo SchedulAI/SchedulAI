@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { scheduleServices } from '../services/scheduleServices';
 import errorResponse from '../utils/errorResponse';
+import { Schedule } from '../entities/scheduleEntity';
+
+const userSchedulesCache: { [key: string]: Schedule[] } = {};
 
 export const scheduleController = {
   createSchedule: async (req: Request, res: Response): Promise<void> => {
@@ -66,6 +69,58 @@ export const scheduleController = {
     }
   },
 
+  getSchedulesLongPolling: async (
+    req: Request,
+    res: Response
+  ): Promise<void> => {
+    const user = req.user!;
+    const POLLING_INTERVAL = 10000;
+    const TIMEOUT = 60000;
+    let responseSent = false;
+
+    const lastSchedules = userSchedulesCache[user.id] || [];
+    const checkForUpdates = async () => {
+      try {
+        const schedules = await scheduleServices.getAllSchedules(user.id);
+        if (JSON.stringify(schedules) !== JSON.stringify(lastSchedules)) {
+          userSchedulesCache[user.id] = schedules;
+          if (!responseSent) {
+            responseSent = true;
+            res.status(200).json({
+              success: true,
+              message: 'Dados atualizados com sucesso',
+              data: schedules,
+              update: true,
+            });
+          }
+        } else {
+          if (!responseSent) {
+            setTimeout(checkForUpdates, POLLING_INTERVAL);
+          }
+        }
+      } catch (error: any) {
+        if (!responseSent) {
+          responseSent = true;
+          errorResponse(res, error);
+        }
+      }
+    };
+
+    setTimeout(() => {
+      if (!responseSent) {
+        responseSent = true;
+        res.status(200).json({
+          success: true,
+          message: 'Nenhuma atualização encontrada',
+          data: lastSchedules,
+          update: false,
+        });
+      }
+    }, TIMEOUT);
+
+    checkForUpdates();
+  },
+
   deleteSchedule: async (req: Request, res: Response): Promise<void> => {
     const user = req.user!;
     const scheduleId = req.params.scheduleId;
@@ -80,7 +135,10 @@ export const scheduleController = {
         return;
       }
 
-      const schedule = await scheduleServices.deleteSchedule(user.id, scheduleId);
+      const schedule = await scheduleServices.deleteSchedule(
+        user.id,
+        scheduleId
+      );
       res.status(200).json({
         success: true,
         message: 'Agendamento deletado com sucesso',
@@ -133,10 +191,7 @@ export const scheduleController = {
         return;
       }
 
-      const review = await scheduleServices.reviewSchedule(
-        user.id,
-        scheduleId,
-      );
+      const review = await scheduleServices.reviewSchedule(user.id, scheduleId);
 
       res.status(200).json({
         success: true,

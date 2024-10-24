@@ -54,7 +54,7 @@ export const Login = () => {
         addSnackbar(data.message, 'error');
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

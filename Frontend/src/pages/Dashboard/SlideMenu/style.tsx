@@ -14,6 +14,12 @@ export const SideMenuStyled = styled.div`
     width: 0%;
     transition: width 300ms ease;
     gap: 1rem;
+    /* position: relative; */
+
+    .slidemenu-header{
+      width: 100%;
+      position: relative;
+    }
 
     .slide-bar-div-button {
       width: fit-content;
@@ -45,7 +51,7 @@ export const SideMenuStyled = styled.div`
       flex-direction: column;
       overflow: hidden;
 
-      .host-cards {
+      .host-cards, .guest-cards {
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
@@ -64,5 +70,29 @@ export const SideMenuStyled = styled.div`
 
   .bold-card {
     font-weight: 600;
+  }
+
+  .refresh-div {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .rotate {
+    animation: rotate 2s linear infinite;
   }
 `;
