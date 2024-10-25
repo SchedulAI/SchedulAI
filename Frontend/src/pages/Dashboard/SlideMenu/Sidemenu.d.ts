@@ -15,4 +15,5 @@ interface SideMenuProps {
     message: string,
     variant: 'success' | 'error' | 'info' | 'warning'
   ) => void;
+  currentSchedule: ScheduleCreateResponse | null;
 }

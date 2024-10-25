@@ -74,7 +74,7 @@ export const CardStyled = styled.div<{ visibility: '1' | '0' }>`
   }
 
   .yellow {
-    background-color: #e2e21c;
+    background-color: #b69e14;
   }
 
   .green {

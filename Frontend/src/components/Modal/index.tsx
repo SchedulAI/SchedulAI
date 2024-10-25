@@ -13,6 +13,7 @@ import { useRef, useState, useEffect } from 'react';
 import { copyLinkToClipboard } from '../../Utils/CopyLink';
 import { renderDateInfo } from '../../Utils/RenderDateInfo';
 import { FormatTime } from '../../Utils/FormatTime';
+import capitalizeFirstLetter from '../../Utils/capitalizeFirstLetter';
 
 export const Modal = ({
   onClick,
@@ -24,6 +25,7 @@ export const Modal = ({
   setSlideMenuOpen,
   schedules,
   addSnackbar,
+  currentSchedule,
 }: Props) => {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const [openDetails, setOpenDetails] = useState<string | null>(null);
@@ -33,7 +35,6 @@ export const Modal = ({
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [modalType, setModalType] = useState<Modal>(null);
   const [modalText, setModalText] = useState<string | null>(null);
-  const [showReviewButton, setShowReviewButton] = useState(false);
 
   const handleReviewChange = (id: string) => {
     if (isConfirming) {
@@ -92,7 +93,9 @@ export const Modal = ({
       });
 
       const canceledSchedule: ScheduleCreateResponse = await response.json();
-
+      if (currentSchedule?.data.id === id) {
+        setConversation([]);
+      }
       if (!canceledSchedule.success) {
         addSnackbar(canceledSchedule.message, 'error');
         return;
@@ -128,7 +131,11 @@ export const Modal = ({
         addSnackbar(deletedSchedule.message, 'error');
         return;
       }
-
+      if (currentSchedule?.data.id === id) {
+        setConversation([]);
+        setCurrentSchedule(null);
+      }
+      setActiveModalId(null);
       if (schedules) {
         setSchedules({
           ...schedules,
@@ -198,10 +205,8 @@ export const Modal = ({
       const handleToggle = () => {
         if (detailsElement.open) {
           setOpenDetails('created');
-          setShowReviewButton(true);
         } else {
           setOpenDetails(null);
-          setShowReviewButton(false);
         }
       };
       detailsElement.addEventListener('toggle', handleToggle);
@@ -259,6 +264,19 @@ export const Modal = ({
               <div className="detail-main-section">
                 <div className="main-section">
                   <div className="info">
+                    {schedule.status === 'cancelled' && (
+                      <div className="status-cancelled">
+                        <p className="status">
+                          <span>Status:</span>
+                          {handleRenderStatus(schedule.status)}
+                        </p>
+                        <div
+                          className={`status-circle ${handleStatusColor(
+                            schedule.status
+                          )}`}
+                        />
+                      </div>
+                    )}
                     {schedule.description &&
                       schedule.status !== 'cancelled' && (
                         <p className="description">
@@ -269,7 +287,7 @@ export const Modal = ({
                     {schedule.host_name && schedule.status !== 'cancelled' && (
                       <p className="host-name">
                         <span>Criado por:</span>
-                        <span>{schedule.host_name}</span>
+                        <span>{capitalizeFirstLetter(schedule.host_name)}</span>
                       </p>
                     )}
                     {schedule.proposed_date &&
@@ -358,89 +376,111 @@ export const Modal = ({
                               schedule.invites.length > 0 && (
                                 <>
                                   <p>Convidados:</p>
-                                  <div className="guests-list">
-                                    {schedule.invites?.map((invite, index) => (
-                                      <div className="guest-item" key={index}>
-                                        <div className="guest-status-item">
-                                          <p>{invite.guest_name}</p>
-                                          <div className="status-guest">
-                                            <p>
-                                              {handleInviteStatus(
-                                                invite.status
-                                              )}
-                                            </p>
-                                            <div
-                                              className={`status-circle ${handleRenderInviteStatus(
-                                                invite.status
-                                              )}`}
-                                            ></div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ))}
+                                  <div className="table-list">
+                                    <table>
+                                      <thead>
+                                        <tr>
+                                          <th>Nome</th>
+                                          <th>Status</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {schedule.invites?.map(
+                                          (invite, index) => (
+                                            <tr
+                                              key={index}
+                                              className="table-item"
+                                            >
+                                              <td className="table-status-item">
+                                                {capitalizeFirstLetter(
+                                                  invite.guest_name
+                                                )}
+                                              </td>
+                                              <td className="table-status-guest">
+                                                {handleInviteStatus(
+                                                  invite.status
+                                                )}
+                                                <div
+                                                  className={`status-circle ${handleRenderInviteStatus(
+                                                    invite.status
+                                                  )}`}
+                                                ></div>
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
+                                        {schedule &&
+                                          (schedule.pending_account ?? [])
+                                            .length > 0 &&
+                                          schedule.is_host &&
+                                          (schedule.pending_account ?? []).map(
+                                            (info, index) => (
+                                              <tr
+                                                key={`pending-${index}`}
+                                                className="table-item"
+                                              >
+                                                <td className="table-status-item">
+                                                  {info}
+                                                </td>
+                                                <td className="table-status-guest">
+                                                  <div className="div-status">
+                                                    <span>
+                                                      Aguardando criação de
+                                                      conta
+                                                    </span>
+                                                    <div className="status-circle yellow"></div>
+                                                  </div>
+                                                </td>
+                                              </tr>
+                                            )
+                                          )}
+                                      </tbody>
+                                    </table>
                                   </div>
                                 </>
                               )}
                           </div>
-                          <div className="pending-invites-section">
-                            {schedule &&
-                              (schedule.pending_account ?? []).length > 0 &&
-                              schedule.is_host && (
-                                <div>
-                                  <p className="status">
-                                    Aguardando criação de conta:
-                                  </p>
-                                  <div className="not-created-accounts-div">
-                                    {(schedule.pending_account ?? []).map(
-                                      (info) => (
-                                        <p>{info}</p>
-                                      )
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                          </div>
                         </div>
-                        {schedule.status === 'pending' &&
-                          schedule.invites?.some(
-                            (invite) => invite.status !== 'pending'
-                          ) &&
-                          schedule.is_host && (
-                            <div>
-                              <p>
-                                Atualmente você está aguardando os convidados
-                                responderem, porém{' '}
-                                {
-                                  schedule.invites?.filter(
-                                    (invite) => invite.status === 'accepted'
-                                  ).length
-                                }{' '}
-                                {schedule.invites?.filter(
-                                  (invite) => invite.status === 'accepted'
-                                ).length === 1
-                                  ? 'convidado'
-                                  : 'convidados'}{' '}
-                                já{' '}
-                                {schedule.invites?.filter(
-                                  (invite) => invite.status === 'accepted'
-                                ).length === 1
-                                  ? 'aceitou'
-                                  : 'aceitaram'}{' '}
-                                o convite, caso deseje dar continuidade na sua
-                                reunião sem esperar a resposta dos outros
-                                convidados, clique no botão "Continuar
-                                agendamento".
-                              </p>
-                            </div>
-                          )}
                       </details>
+                      {schedule.status === 'pending' &&
+                        schedule.invites?.some(
+                          (invite) => invite.status !== 'pending'
+                        ) &&
+                        schedule.is_host && (
+                          <div className="div-info">
+                            <p>
+                              Atualmente você está aguardando os convidados
+                              responderem, porém{' '}
+                              {
+                                schedule.invites?.filter(
+                                  (invite) => invite.status === 'accepted'
+                                ).length
+                              }{' '}
+                              {schedule.invites?.filter(
+                                (invite) => invite.status === 'accepted'
+                              ).length === 1
+                                ? 'convidado'
+                                : 'convidados'}{' '}
+                              já{' '}
+                              {schedule.invites?.filter(
+                                (invite) => invite.status === 'accepted'
+                              ).length === 1
+                                ? 'aceitou'
+                                : 'aceitaram'}{' '}
+                              o convite, caso deseje dar continuidade na sua
+                              reunião sem esperar a resposta dos outros
+                              convidados, clique no botão "Continuar
+                              agendamento".
+                            </p>
+                          </div>
+                        )}
                     </div>
                   )}
                 </div>
               </div>
               {schedule && (
                 <div className="buttons">
-                  {schedule.status !== 'cancelled' && showReviewButton && (
+                  {schedule.status !== 'cancelled' && (
                     <>
                       <div className="button-sides">
                         {schedule.status !== 'reviewing' &&

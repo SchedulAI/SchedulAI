@@ -121,9 +121,8 @@ export const ModalStyled = styled.div`
         .guests-list {
           display: flex;
           gap: 4px;
-          flex-direction: column;
+          flex-direction: row;
           align-items: center;
-          width: 80%;
           overflow-y: auto;
           height: 100%;
           max-height: 5rem;
@@ -132,7 +131,7 @@ export const ModalStyled = styled.div`
 
           .guest-item {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             width: 100%;
           }
 
@@ -216,7 +215,7 @@ export const ModalStyled = styled.div`
     }
 
     .yellow {
-      background-color: #e2e21c;
+      background-color: #b69e14;
     }
 
     .green {
@@ -290,10 +289,55 @@ export const ModalStyled = styled.div`
     flex-direction: column;
     align-items: flex-start;
     width: 80%;
-    overflow-y: auto;
     height: 100%;
     max-height: 5rem;
     width: 100%;
     padding-right: 1rem;
+  }
+
+  .status-cancelled {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    border-radius: 4px;
+    overflow: hidden;
+    padding: 1rem;
+    border: none;
+
+    th,
+    td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #0a0a1511;
+    }
+
+    th {
+      font-weight: bold;
+    }
+
+    .status-circle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .table-status-guest {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .div-info {
+    padding-top: 10px;
+    font-weight: 500;
   }
 `;
