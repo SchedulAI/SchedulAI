@@ -123,6 +123,12 @@ export const StyledDashboard = styled.div<{
       align-self: flex-end;
       background-color: #d4d3f3;
       color: #0a0a15;
+
+      div {
+        p {
+          overflow-wrap: anywhere;
+        }
+      }
     }
 
     .message.ia {
@@ -132,6 +138,8 @@ export const StyledDashboard = styled.div<{
       gap: 0.5rem;
       background-color: #e0e0e0;
       color: #0a0a15;
+      overflow-wrap: anywhere;
+
     }
 
     .chat-input {

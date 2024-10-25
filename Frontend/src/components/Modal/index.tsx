@@ -250,12 +250,14 @@ export const Modal = ({
         <ModalStyled onClick={onClick} key={schedule.id}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="header">
-              <p>{schedule.title}</p>
-              {schedule && schedule.is_host && (
-                <div className="delete-event" onClick={handleDeleteClick}>
-                  <Icon icon="exclude" size={24} />
-                </div>
-              )}
+              <div className='title-and-delete'>
+                <p>{schedule.title}</p>
+                {schedule && schedule.is_host && (
+                  <div className="delete-event" onClick={handleDeleteClick}>
+                    <Icon icon="exclude" size={24} />
+                  </div>
+                )}
+              </div>
               <div onClick={onClick} className="close-button">
                 <Icon icon="x" size={24} weight="bold" />
               </div>

@@ -56,6 +56,17 @@ export const ModalStyled = styled.div`
           background-color: #cdccee;
         }
       }
+
+      .title-and-delete{
+        display: flex;
+        gap: 1rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        p{
+          overflow: hidden;
+        }
+      }
     }
 
     .content {
