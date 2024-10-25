@@ -147,7 +147,7 @@ export const StyledDashboard = styled.div<{
       background-color: #e0e0e0;
       color: #0a0a15;
       overflow-wrap: anywhere;
-
+      word-break: break-word;
     }
 
     .chat-input {
