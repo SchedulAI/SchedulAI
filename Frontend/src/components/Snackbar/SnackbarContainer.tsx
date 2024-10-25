@@ -52,7 +52,6 @@ const SnackbarContainer: React.FC<SnackbarContainerProps> = ({
           key={snackbar.id}
           message={snackbar.message}
           variant={snackbar.variant}
-          anchororigin={snackbar.anchororigin}
           onClose={() => removeSnackbar(snackbar.id)}
         />
       ))}

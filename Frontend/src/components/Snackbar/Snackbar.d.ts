@@ -9,3 +9,8 @@ interface SnackbarProps {
   message: string;
   onClose: () => void;
 }
+
+interface SnackbarContainerProps {
+  anchororigin: { vertical: 'top' | 'bottom'; horizontal: 'left' | 'right' };
+}
+

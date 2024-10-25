@@ -16,7 +16,6 @@ export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [containerVisible, setContainerVisible] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [textVisible, setTextVisible] = useState(false);
   const { schedule_id } = useSchedule();
   const id = schedule_id;
 
@@ -188,11 +187,9 @@ export const Register = () => {
                   registerFetch();
                 }
               }}
-              onFocus={() => setTextVisible(true)}
-              onBlur={() => setTextVisible(false)}
             />
           </div>
-          <p className={`text-password ${textVisible ? '' : 'hidden'}`}>
+          <p className={`text-password`}>
             {
               'A senha deve conter pelo menos 6 caracteres e um caractere especial (!@#$%^&*()_+-=[]{};\':"\\|,.<>/?)'
             }
