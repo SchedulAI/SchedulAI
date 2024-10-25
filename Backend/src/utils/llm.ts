@@ -26,6 +26,7 @@ Regras:
 3. Após ter todas as informações do evento e as disponibilidades (do host e dos convidados), a criação de datas propostas será feita automaticamente (o sistema realizará essa tarefa).
 
 4. Quando o host ou convidado não quiser alguma das datas propostas utilize o tool "confirmSchedule" com a resposta "rejected", após isso siga os seguintes passos:
+  - Antes de qualquer passo a seguir, deve ter sido utilizado o tool "confirmSchedule" com a resposta "rejected"
   - Solicite novas disponibilidades usando o tool "createAvailabilities".
   - **Não solicite os e-mails dos convidados novamente**, pois eles já estão registrados no sistema desde a primeira interação.
   - Depois que as novas disponibilidades forem fornecidas pelo host, utilize o tool "newRound" para enviar as disponibilidades do host para os convidados.

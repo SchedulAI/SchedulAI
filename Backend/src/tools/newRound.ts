@@ -44,17 +44,17 @@ const newRound = tool(
         await dialogRepository.saveMessage(
           dialog.id,
           JSON.stringify(newRoundMessage.toDict(), null, 2),
-          'IA'
+          'system'
         );
 
         const message =
-          new AIMessage(`Olá! O anfitrião decidiu tentar outros horários para a reunião "${schedule.title}", por favor, me informe suas disponibilides para as novas disponibilidades do anfitrião! (Exemplo dia x das hh:mm as hh:mm)<br>O anfitrião afirmou as seguintes disponibilidades:<br><br>${formatedAvailabilities}
+          new AIMessage(`Olá! O anfitrião decidiu tentar outros horários para a reunião "${schedule.title}", por favor, me informe suas disponibilides para os novos horários do anfitrião! (Exemplo dia x das hh:mm as hh:mm)<br>O anfitrião afirmou as seguintes disponibilidades:<br><br>${formatedAvailabilities}
         `);
 
         await dialogRepository.saveMessage(
           dialog.id,
           JSON.stringify(message.toDict(), null, 2),
-          'system'
+          'IA'
         );
       });
 
