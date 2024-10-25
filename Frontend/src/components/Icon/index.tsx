@@ -20,7 +20,8 @@ import {
   At,
   CaretUp,
   Trash,
-  ArrowsClockwise
+  ArrowsClockwise,
+  SignOut,
 } from '@phosphor-icons/react';
 
 const IconList: IconTypes = {
@@ -45,6 +46,7 @@ const IconList: IconTypes = {
   at: At,
   exclude: Trash,
   refresh: ArrowsClockwise,
+  signOut: SignOut,
 };
 
 interface PropTypes {

@@ -2,10 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/Button';
 import { Icon } from '../../components/Icon';
 import { Input } from '../../components/Input';
-
 import { RegisterStyled } from './RegisterStyled';
 import apiUrl from '../../config/api';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import SnackbarContainer from '../../components/Snackbar/SnackbarContainer';
 import { useSchedule } from '../../hooks/scheduleHooks';
 import { setCookie } from '../../Utils/Cookies';
@@ -16,6 +15,7 @@ export const Register = () => {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [containerVisible, setContainerVisible] = useState(true);
+  const [isFormValid, setIsFormValid] = useState(false);
   const { schedule_id } = useSchedule();
   const id = schedule_id;
 
@@ -60,12 +60,12 @@ export const Register = () => {
 
   const registerFetch = async () => {
     setLoading(true);
-    if (email === '' || password === '') {
+    if (!email || !password || !name) {
       addSnackbar('Preencha todos os campos', 'error');
       setLoading(false);
       return;
     }
-    if (!email.includes('@') || !email.includes('.')) {
+    if (!emailRegex.test(email)) {
       addSnackbar('Email inválido', 'error');
       setLoading(false);
       return;
@@ -75,21 +75,11 @@ export const Register = () => {
       setLoading(false);
       return;
     }
-    if (!emailRegex.test(email)) {
-      addSnackbar('Email inválido', 'error');
-      setLoading(false);
-      return;
-    }
     if (!specialCharsRegex.test(password)) {
       addSnackbar(
         'A senha deve conter ao menos um caracter especial (!@#$%^&*()_+-=[]{};\':"\\|,.<>/?)',
         'error'
       );
-      setLoading(false);
-      return;
-    }
-    if (!name) {
-      addSnackbar('Nome é obrigatório', 'error');
       setLoading(false);
       return;
     }
@@ -138,6 +128,10 @@ export const Register = () => {
       return;
     }
   };
+
+  useEffect(() => {
+    setIsFormValid(!!email && !!password && !!name);
+  }, [email, password, name]);
 
   return (
     <RegisterStyled className="register-main-div">
@@ -190,6 +184,7 @@ export const Register = () => {
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
                   registerFetch();
+                  
                 }
               }}
             />
@@ -199,7 +194,7 @@ export const Register = () => {
           <Button
             width="full"
             onClick={() => registerFetch()}
-            disabled={!name || !email || !password || loading}
+            disabled={!isFormValid || loading}
           >
             <p>Registrar</p>
           </Button>

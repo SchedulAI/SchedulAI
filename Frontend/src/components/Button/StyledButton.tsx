@@ -2,10 +2,14 @@ import styled from 'styled-components';
 
 export const StyledButton = styled.button<{
   width: 'full' | 'fit';
+  disabled?: boolean;
 }>`
   width: ${({ width }) => (width === 'full' ? '100%' : 'fit-content')};
-  background: ${(props) => props.theme.colors.buttonPrimaryBackground};
-  gap: 4px;
+  background: ${(props) =>
+    props.disabled
+      ? props.theme.colors.backgroundDark
+      : props.theme.colors.buttonPrimaryBackground};
+  gap: 8px;
   padding: 0.75rem 1rem;
   border: none;
   transition: background-color 0.1s ease-in-out;
@@ -31,10 +35,16 @@ export const StyledButton = styled.button<{
   }
 
   &:hover {
-    background: ${(props) => props.theme.colors.buttonPrimaryHoverBackground};
+    background: ${(props) =>
+      props.disabled
+        ? props.theme.colors.backgroundDark
+        : props.theme.colors.buttonPrimaryHoverBackground};
   }
 
   &:active {
-    background: ${(props) => props.theme.colors.buttonPrimaryActiveBackground};
+    background: ${(props) =>
+      props.disabled
+        ? props.theme.colors.backgroundDark
+        : props.theme.colors.buttonPrimaryActiveBackground};
   }
 `;

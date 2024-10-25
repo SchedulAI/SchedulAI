@@ -65,6 +65,7 @@ export const StyledDashboard = styled.div<{
     h2 {
       font-size: 3rem;
       font-weight: 600;
+      text-align: center;
     }
 
     .chat-conversation {
@@ -119,6 +120,13 @@ export const StyledDashboard = styled.div<{
         rgba(0, 0, 0, 0.23) 0px 3px 6px;
     }
 
+    .message p {
+      margin: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      white-space: normal;
+    }
+
     .message.user {
       align-self: flex-end;
       background-color: #d4d3f3;
@@ -140,7 +148,8 @@ export const StyledDashboard = styled.div<{
       border-radius: 8px;
       justify-content: center;
       align-items: center;
-      padding: 0.5rem 1rem;
+      padding: 1rem;
+      gap: 0.5rem;
       position: sticky;
       bottom: 0;
       width: 50%;
@@ -163,12 +172,11 @@ export const StyledDashboard = styled.div<{
         background-color: transparent;
         width: 100%;
         max-height: 200px;
-        height: 70px;
+        height: auto;
         resize: none;
         overflow-y: auto;
         word-wrap: break-word;
         white-space: pre-wrap;
-        padding: 1rem;
 
         &::placeholder {
           color: #0a0a1579;
