@@ -32,7 +32,6 @@ function minutesToTime(minutes: number): string {
   return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 }
 
-// Matching function
 function matchAvailabilities(
   hostAvailability: AvailabilityWithUser[],
   guestAvailabilities: AvailabilityWithUser[]
@@ -49,6 +48,13 @@ function matchAvailabilities(
   );
 
   const result: IntervalResult[] = [];
+
+  // Get all unique guests
+  const allGuests = guestAvailabilities.map((guest) => ({
+    user_id: guest.user_id,
+    user_name: guest.user_name,
+    user_email: guest.user_email,
+  }));
 
   // Process each date in host availabilities
   for (const date in groupedHostAvailabilities) {
@@ -67,6 +73,14 @@ function matchAvailabilities(
       (guest) => guest.week_day!.toISOString().split('T')[0] === date
     );
 
+    // Find guests who don't have availability for this date
+    const guestsNotAvailableForDate = allGuests.filter(
+      (guest) =>
+        !guestsForDate.some(
+          (availableGuest) => availableGuest.user_id === guest.user_id
+        )
+    );
+
     // Create current slots based on host availability
     let currentSlots = hostIntervals.map((interval) => ({
       start: interval.start,
@@ -76,7 +90,7 @@ function matchAvailabilities(
         user_name: string;
         user_email: string;
       }[],
-      rejected: [] as {
+      rejected: [...guestsNotAvailableForDate] as {
         user_id: string;
         user_name: string;
         user_email: string;

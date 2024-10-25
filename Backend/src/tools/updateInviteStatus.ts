@@ -78,9 +78,12 @@ const updateInviteStatus = tool(
           scheduleId
         );
 
-        const message = new AIMessage(
-          `Olá, os seguintes usuários recusaram ou não responderam o convite: ${formattedRejectedInviteUsers}. Porém obtive as disponibilidades dos outros convidados e foi possivel chegas nos seguintes intervalos de horários possiveis para o agendamento:<br>${proposedDatesString}<br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
-        );
+        const messageString =
+          rejectedInviteUsers.length > 0
+            ? `Olá, os seguintes usuários recusaram ou não responderam o convite: ${formattedRejectedInviteUsers}. Porém obtive as disponibilidades dos outros convidados e foi possivel chegar nos seguintes intervalos de horários possiveis para o agendamento:<br>${proposedDatesString}<br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`
+            : `Olá, depois de analisar as disponibilidades de todos os envolvidos foi possivel chegar nos seguintes intervalos de horários possiveis para o agendamento:<br>${proposedDatesString}<br>Escolha um desses horários para a reunião, ou se desejar podemos começar outra tentativa de estabelecer uma nova data!`;
+
+        const message = new AIMessage(messageString);
 
         await dialogRepository.saveMessage(
           dialog.id,
