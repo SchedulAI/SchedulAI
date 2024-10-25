@@ -47,4 +47,8 @@ export const StyledButton = styled.button<{
         ? props.theme.colors.backgroundDark
         : props.theme.colors.buttonPrimaryActiveBackground};
   }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
 `;

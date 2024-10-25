@@ -13,6 +13,8 @@ export const Input = ({
   onChange,
   value,
   onKeyDown,
+  onFocus,
+  onBlur,
 }: InputProps) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -24,6 +26,8 @@ export const Input = ({
         onChange={onChange}
         value={value}
         onKeyDown={onKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       {icon && type !== 'password' && (
         <Icon color={color} weight={weight} size={size} icon={icon}></Icon>

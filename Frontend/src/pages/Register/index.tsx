@@ -16,6 +16,7 @@ export const Register = () => {
   const [loading, setLoading] = useState(false);
   const [containerVisible, setContainerVisible] = useState(true);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [textVisible, setTextVisible] = useState(false);
   const { schedule_id } = useSchedule();
   const id = schedule_id;
 
@@ -183,12 +184,19 @@ export const Register = () => {
               value={password}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
+                  if(!isFormValid) return;
                   registerFetch();
-                  
                 }
               }}
+              onFocus={() => setTextVisible(true)}
+              onBlur={() => setTextVisible(false)}
             />
           </div>
+          <p className={`text-password ${textVisible ? '' : 'hidden'}`}>
+            {
+              'A senha deve conter pelo menos 6 caracteres e um caractere especial (!@#$%^&*()_+-=[]{};\':"\\|,.<>/?)'
+            }
+          </p>
         </div>
         <div className="register-enter-register-div">
           <Button
