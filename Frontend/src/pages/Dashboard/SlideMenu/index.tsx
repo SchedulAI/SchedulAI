@@ -20,6 +20,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
   setConversation,
   setActiveModalId,
   addSnackbar,
+  currentSchedule,
 }) => {
   const [rotate, setRotate] = useState(false);
 
@@ -41,6 +42,21 @@ export const SideMenu: React.FC<SideMenuProps> = ({
       if (schedules.success) {
         schedules.data.sort(compareStatus);
         setSchedules(schedules);
+        if (currentSchedule) {
+          setCurrentSchedule(
+            schedules.data.find(
+              (schedule) => schedule.id === currentSchedule.data.id
+            )
+              ? {
+                  data: schedules.data.find(
+                    (schedule) => schedule.id === currentSchedule.data.id
+                  )!,
+                  success: true,
+                  message: 'Schedule found',
+                }
+              : null
+          );
+        }
       }
       if (schedules.success && schedules.data.length === 0) {
         return;
@@ -48,6 +64,46 @@ export const SideMenu: React.FC<SideMenuProps> = ({
     } catch (error) {
       console.error(error);
       setRotate(false);
+    }
+  };
+
+  const getOldConversation = async (id: string): Promise<void> => {
+    try {
+      const result = await fetch(apiUrl(`/dialog/messages/${id}`), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      if (!result.ok) {
+        setConversation([]);
+        addSnackbar('Erro ao buscar conversa', 'error');
+        return;
+      }
+      const data: GetConversation = await result.json();
+      if (data) {
+        setConversation(
+          data.messages.map((msg) => ({
+            sender: msg.sender === 'user' ? 'user' : 'ia',
+            message: msg.message.data.content,
+            messages: [
+              {
+                sender: msg.sender === 'user' ? 'user' : 'ia',
+                message: msg.message.data.content,
+              },
+            ],
+          }))
+        );
+      }
+      setCurrentSchedule({
+        data: data.schedule,
+        message: 'Operação realizada com sucesso',
+        success: true,
+      });
+      setActiveModalId(null);
+    } catch (error) {
+      addSnackbar((error as Error).message, 'error');
     }
   };
 
@@ -85,7 +141,9 @@ export const SideMenu: React.FC<SideMenuProps> = ({
           }`}
           onClick={() => {
             getSchedules();
-            setSlideMenuOpen(true);
+            if (currentSchedule?.data.id) {
+              getOldConversation(currentSchedule.data.id);
+            }
           }}
         >
           <Icon icon="refresh" size={32} color="#0A0A15"></Icon>
@@ -106,7 +164,8 @@ export const SideMenu: React.FC<SideMenuProps> = ({
               setCurrentSchedule(null);
             }}
           >
-            <Icon icon="plus" size={24} color="#f8f8fc"></Icon> <p>Novo chat</p>
+            <Icon icon="plus" size={24} color="#f8f8fc"></Icon>{' '}
+            <p>Novo agendamento</p>
           </Button>
           <div className="host-div">
             <p className="bold-card">Reuniões como anfitrião</p>
@@ -147,6 +206,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                             setConversation={setConversation}
                             setActiveModalId={setActiveModalId}
                             setSlideMenuOpen={setSlideMenuOpen}
+                            currentSchedule={currentSchedule}
                           />
                         )}
                       </div>
@@ -197,6 +257,7 @@ export const SideMenu: React.FC<SideMenuProps> = ({
                             setActiveModalId={setActiveModalId}
                             setSlideMenuOpen={setSlideMenuOpen}
                             addSnackbar={addSnackbar}
+                            currentSchedule={currentSchedule}
                           />
                         )}
                       </div>

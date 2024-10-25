@@ -74,7 +74,7 @@ export const scheduleController = {
     res: Response
   ): Promise<void> => {
     const user = req.user!;
-    const POLLING_INTERVAL = 10000;
+    const POLLING_INTERVAL = 5000;
     const TIMEOUT = 60000;
     let responseSent = false;
 
@@ -88,6 +88,9 @@ export const scheduleController = {
             responseSent = true;
             res.status(200).json({
               update: true,
+              success: true,
+              message: 'Dados atualizados com sucesso',
+              data: schedules,
             });
           }
         } else {
@@ -108,6 +111,9 @@ export const scheduleController = {
         responseSent = true;
         res.status(200).json({
           update: false,
+          success: true,
+          message: 'Nenhuma atualização encontrada',
+          data: lastSchedules,
         });
       }
     }, TIMEOUT);

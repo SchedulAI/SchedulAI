@@ -25,12 +25,13 @@ export const Dashboard = () => {
   const [activeModalId, setActiveModalId] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState(false);
   const [containerVisible, setContainerVisible] = useState(true);
-  const [update, setUpdate] = useState(false);
 
   const navigate = useNavigate();
   const { setUser } = useUser();
 
   const handleMarkdown = new showdown.Converter();
+
+  const currentScheduleRef = useRef(currentSchedule);
 
   const addSnackbar = (
     message: string,
@@ -181,11 +182,26 @@ export const Dashboard = () => {
       });
       const schedules: ScheduleResponse = await response.json();
       if (!schedules.success) {
-        addSnackbar(schedules.message, 'error');
+        return;
       }
       if (schedules.success) {
         schedules.data.sort(compareStatus);
         setSchedules(schedules);
+        if (currentSchedule) {
+          setCurrentSchedule(
+            schedules.data.find(
+              (schedule) => schedule.id === currentSchedule.data.id
+            )
+              ? {
+                  data: schedules.data.find(
+                    (schedule) => schedule.id === currentSchedule.data.id
+                  )!,
+                  success: true,
+                  message: 'Schedule found',
+                }
+              : null
+          );
+        }
       }
       if (schedules.success && schedules.data.length === 0) {
         return;
@@ -224,7 +240,7 @@ export const Dashboard = () => {
     }
   };
 
-  const scheduleLongPollin = async () => {
+  const scheduleLongPolling = async () => {
     try {
       const response = await fetch(apiUrl('/schedule/longpolling'), {
         method: 'GET',
@@ -233,15 +249,37 @@ export const Dashboard = () => {
         },
         credentials: 'include',
       });
-      const pooling: Polling = await response.json();
-      if (pooling.update) {
-        getSchedules();
-        scheduleLongPollin();
-        setUpdate(true);
+      const schedules: ScheduleResponse = await response.json();
+      if (response.status === 404) {
+        setSchedules(null);
       }
-      if (!pooling.update) {
-        scheduleLongPollin();
-        setUpdate(false);
+      if (!response.ok) {
+        setTimeout(scheduleLongPolling, 10000);
+        return;
+      }
+      if (schedules.update) {
+        setSchedules(schedules);
+        scheduleLongPolling();
+        if (currentScheduleRef.current) {
+          getOldConversation(currentScheduleRef.current?.data.id);
+          setCurrentSchedule(
+            schedules.data.find(
+              (schedule) => schedule.id === currentScheduleRef.current!.data.id
+            )
+              ? {
+                  data: schedules.data.find(
+                    (schedule) =>
+                      schedule.id === currentScheduleRef.current!.data.id
+                  )!,
+                  success: true,
+                  message: 'Schedule found',
+                }
+              : null
+          );
+        }
+      }
+      if (!schedules.update) {
+        scheduleLongPolling();
       }
     } catch (error) {
       console.error(error);
@@ -295,7 +333,7 @@ export const Dashboard = () => {
   }, [conversation]);
 
   useEffect(() => {
-    scheduleLongPollin();
+    scheduleLongPolling();
   }, []);
 
   useEffect(() => {
@@ -312,14 +350,8 @@ export const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    if (update) {
-      if (currentSchedule) {
-        getOldConversation(currentSchedule?.data.id);
-      }
-    } else {
-      return;
-    }
-  }, [update]);
+    currentScheduleRef.current = currentSchedule;
+  }, [currentSchedule]);
 
   useEffect(() => {
     getInviteConversation();
@@ -357,6 +389,7 @@ export const Dashboard = () => {
         setConversation={setConversation}
         setActiveModalId={setActiveModalId}
         addSnackbar={addSnackbar}
+        currentSchedule={currentSchedule}
       />
       <Chat
         conversation={conversation}

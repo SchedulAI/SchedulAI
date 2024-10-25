@@ -3,7 +3,7 @@ export const renderDateInfo = (
   proposedDate: proposed_date | string
 ) => {
   if (status !== 'scheduled') {
-    return 'A definir';
+    return 'Definindo';
   } else if (typeof proposedDate === 'string') {
     return new Date(proposedDate).toLocaleString();
   } else {

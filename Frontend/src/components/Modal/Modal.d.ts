@@ -13,6 +13,7 @@ interface Props {
     message: string,
     variant: 'success' | 'error' | 'info' | 'warning'
   ) => void;
+  currentSchedule: ScheduleCreateResponse | null;
 }
 
 type Modal = "cancel" | "delete" | null
