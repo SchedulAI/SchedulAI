@@ -9,4 +9,6 @@ interface InputProps {
   onChange?: FocusEventHandler<HTMLInputElement>;
   value?: string;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }

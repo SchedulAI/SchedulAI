@@ -65,11 +65,13 @@ export const Chat: React.FC<ChatProps> = ({
               ? 'Mensagem SchedulAI'
               : schedule?.data.status === 'pending'
               ? 'Aguarde a resposta dos convidados para continuar'
-              : schedule?.data.status === 'reviewing'
+              : schedule?.data.is_host && schedule?.data.status === 'reviewing'
               ? 'Revise o seu agendamento'
+              : schedule?.data.status === 'reviewing'
+              ? 'Aguardando resposta do anfitrião'
               : schedule?.data.status === 'scheduled'
               ? 'Agendamento realizado'
-              : 'Insira seu próximo compromisso'
+              : 'Digite "Olá" para começar!'
           }
           disabled={
             schedule?.data.is_host

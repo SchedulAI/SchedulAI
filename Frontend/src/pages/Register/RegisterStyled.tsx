@@ -61,6 +61,13 @@ export const RegisterStyled = styled.div`
     gap: 8px;
   }
 
+  .text-password {
+    text-align: center;
+    max-width: 25rem;
+    font-size: 0.875rem;
+    color: #0a0a1580;
+  }
+
   .input-email label,
   .input-password label {
     padding-left: 4px;
@@ -100,5 +107,9 @@ export const RegisterStyled = styled.div`
 
   #register-a-create-account span {
     font-weight: 500;
+  }
+
+  .hidden {
+    display: none;
   }
 `;

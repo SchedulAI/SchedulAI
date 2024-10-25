@@ -101,16 +101,12 @@ export const Login = () => {
               color="#0a0a1579"
               onKeyDown={async (e: React.KeyboardEvent<HTMLInputElement>) => {
                 if (e.key === 'Enter') {
+                  if(!email || !password) return;
                   await loginFetch();
                 }
               }}
             />
           </div>
-        </div>
-        <div className="login-remember-me-div">
-          <a id="forget-password" onClick={() => navigate('/recover-password')}>
-            Esqueceu a senha? <span>Recupere agora</span>
-          </a>
         </div>
         <div className="login-enter-register-div">
           <Button
