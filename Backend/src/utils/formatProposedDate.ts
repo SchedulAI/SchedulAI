@@ -1,7 +1,6 @@
 import { IntervalResult } from './matchAvailabilities';
 
 const formatProposedDate = (proposed_data: IntervalResult) => {
-  // Tratando a data diretamente sem converter para UTC
   const [year, month, day] = proposed_data.date.split('-');
 
   const rejectedUsers = proposed_data.rejected
