@@ -65,6 +65,7 @@ export const StyledDashboard = styled.div<{
     h2 {
       font-size: 3rem;
       font-weight: 600;
+      text-align: center;
     }
 
     .chat-conversation {
@@ -117,6 +118,13 @@ export const StyledDashboard = styled.div<{
       line-height: 1.4;
       box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
         rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    }
+
+    .message p {
+      margin: 0;
+      max-width: 100%;
+      overflow-wrap: break-word;
+      white-space: normal;
     }
 
     .message.user {

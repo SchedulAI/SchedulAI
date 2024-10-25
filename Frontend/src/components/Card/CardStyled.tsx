@@ -26,6 +26,7 @@ export const CardStyled = styled.div<{ visibility: '1' | '0' }>`
     text-overflow: ellipsis;
 
     p {
+      max-width: 20rem;
       width: 100%;
       white-space: nowrap;
       overflow: hidden;

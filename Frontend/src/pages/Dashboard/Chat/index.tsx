@@ -69,7 +69,7 @@ export const Chat: React.FC<ChatProps> = ({
               ? 'Revise o seu agendamento'
               : schedule?.data.status === 'scheduled'
               ? 'Agendamento realizado'
-              : 'O que posso agendar para você hoje ?'
+              : 'Insira seu próximo compromisso'
           }
           disabled={
             schedule?.data.is_host

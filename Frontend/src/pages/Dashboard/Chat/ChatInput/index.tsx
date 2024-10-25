@@ -64,8 +64,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   disabled,
   placeholder,
 }) => {
-  const [textareaHeight, setTextareaHeight] = useState<number>(20); // altura inicial
-  const textareaRef = useRef<HTMLTextAreaElement>(null); // referência para o textarea
+  const [textareaHeight, setTextareaHeight] = useState<number>(20);
+  const textareaRef = useRef<HTMLTextAreaElement>(null); 
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -80,16 +80,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     setMessage(e.target.value);
     setSendingMessage(e.target.value);
 
-    // Redefine a altura do textarea com base no conteúdo
     if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Resetar a altura
-      const newHeight = Math.min(textareaRef.current.scrollHeight, 72); // 72px é a altura máxima (3 linhas)
+      textareaRef.current.style.height = 'auto';
+      const newHeight = Math.min(textareaRef.current.scrollHeight, 72);
       setTextareaHeight(newHeight);
       textareaRef.current.style.height = `${newHeight}px`;
     }
   };
 
-  // Define a altura inicial do textarea ao carregar
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = `${textareaHeight}px`;
@@ -106,7 +104,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         onChange={handleInput}
         onKeyDown={handleKeyPress}
         disabled={disabled}
-        style={{ height: textareaHeight, overflowY: 'hidden', resize: 'none' }} // estilo inline
+        style={{ height: textareaHeight, overflowY: 'hidden', resize: 'none' }}
       />
       <button onClick={handleSendMessage} disabled={!message || loadingMessage}>
         <Icon

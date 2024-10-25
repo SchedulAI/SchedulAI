@@ -283,12 +283,26 @@ export const StyledDashboard = styled.div<{
       line-height: 1.4;
       box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px,
         rgba(0, 0, 0, 0.23) 0px 3px 6px;
+      word-wrap: break-word;
+    }
+
+    .message p {
+      margin: 0;
+      max-width: 20rem;
+      word-break: break-all;
+      overflow-wrap: break-word;
+      white-space: normal;
+      color: red;
     }
 
     .message.user {
       align-self: flex-end;
       background-color: #d4d3f3;
       color: #0a0a15;
+    }
+
+    .message.user {
+      background-color: red;
     }
 
     .message.ia {
@@ -464,4 +478,3 @@ export const StyledDashboard = styled.div<{
     }
   }
 `;
-

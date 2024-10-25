@@ -47,6 +47,8 @@ export const ModalStyled = styled.div`
         font-size: 20px;
         color: #0a0a15;
         font-weight: 500;
+        width: 100%;
+        text-overflow: ellipsis;
       }
 
       .delete-event {
